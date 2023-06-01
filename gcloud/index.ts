@@ -14,7 +14,7 @@ async function createStartupScript(path: string, dockerImageUrl: string) {
 	return startupScript;
 }
 
-async function run() {
+/*async function run() {
 	await uploadFileToBucket(bucketName, "./worker/docker_image.tar");
 	console.log("uploaded");
 	const files = await readFilesInBucket(bucketName);
@@ -34,4 +34,4 @@ async function run() {
 	console.log(vm);
 }
 
-run();
+run();*/
