@@ -6,5 +6,5 @@ module.exports = {
 	trailingComma: "all",
 	bracketSpacing: false,
 	arrowParantheses: "always",
-	printWidth: 100,
+	printWidth: 120,
 };

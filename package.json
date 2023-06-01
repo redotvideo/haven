@@ -1,15 +1,17 @@
 {
   "scripts": {
     "build": "tsc",
-    "dev": "node build/cmd/index.js",
+    "dev": "tsc && node build/cmd/index.js",
     "nodemon": "nodemon --exec \"npm run dev\" --ignore ./build --verbose  --ext ts ."
   },
   "devDependencies": {
+    "@types/express": "^4.17.17",
     "@types/node": "^20.2.1",
     "typescript": "^4.9.5"
   },
   "dependencies": {
     "@google-cloud/storage": "^6.10.1",
+    "express": "^4.18.2",
     "googleapis": "^118.0.0"
   }
 }

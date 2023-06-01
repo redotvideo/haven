@@ -3,5 +3,9 @@
 **/node_modules
 /build
 
+**/venv
+**.tar
+**.bin
+
 # Google Cloud API key
 /key.json

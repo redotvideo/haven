@@ -1,11 +1,12 @@
-FROM python:3.9-alpine
+FROM python:3.9-slim
 
 WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
 
+RUn pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY ./worker.py /app/worker.py
+COPY ./app /app/app
 
-CMD ["python", "worker.py"]
+CMD ["python", "-m", "app"]

@@ -1,8 +1,10 @@
 import * as fs from "fs";
 import {compute_v1, google} from "googleapis";
 
-const projectId = "boreal-charter-379616";
-const zone = "europe-west4-a";
+import {config} from "../lib/config";
+
+const projectId = config.gcloud.projectId;
+const zone = config.gcloud.zone;
 
 export function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -21,18 +23,36 @@ export async function createComputeAPI() {
 }
 
 /**
+ * List all vms in zone.
+ * @param api
+ * @param zone
+ * @returns
+ */
+export async function list(api: compute_v1.Compute, zone: string) {
+	const res = await api.instances.list({
+		project: projectId,
+		zone: zone,
+	});
+
+	const vms = res.data.items || [];
+	return vms.filter((vm) => vm);
+}
+
+/**
  * Get info on vm in zone.
  * @param api
  * @param zone
  * @param vmName
  * @returns
  */
-function get(api: compute_v1.Compute, zone: string, vmName: string) {
-	return api.instances.get({
-		project: projectId,
-		zone: zone,
-		instance: vmName,
-	});
+export async function get(api: compute_v1.Compute, zone: string, vmName: string) {
+	return (
+		await api.instances.get({
+			project: projectId,
+			zone: zone,
+			instance: vmName,
+		})
+	).data;
 }
 
 /**
@@ -70,12 +90,12 @@ export async function start(api: compute_v1.Compute, zone: string, vmName: strin
 	let started = false;
 	while (!started) {
 		const vm = await get(api, zone, vmName);
-		started = vm.data.status === "RUNNING";
+		started = vm.status === "RUNNING";
 		await sleep(10000);
 	}
 
 	const vm = await get(api, zone, vmName);
-	return vm.data.networkInterfaces![0].accessConfigs![0].natIP ?? undefined;
+	return vm.networkInterfaces![0].accessConfigs![0].natIP ?? undefined;
 }
 
 /**
@@ -105,13 +125,13 @@ export async function remove(api: compute_v1.Compute, zone: string, vmName: stri
 export async function createFromTemplate(
 	api: compute_v1.Compute,
 	zone: string,
-	configFilePath: string,
+	configFile: string,
 	startupScript: string,
+	name: string,
 ) {
-	const file = await fs.promises.readFile(configFilePath);
-	const config = JSON.parse(file.toString());
+	const config = JSON.parse(configFile);
 
-	config["name"] = "test-1";
+	config["name"] = name;
 
 	config["metadata"] = {
 		items: [
@@ -134,10 +154,10 @@ export async function createFromTemplate(
 	while (!created) {
 		await sleep(10000);
 		const vm = await get(api, zone, config["name"]);
-		created = vm.data.status === "RUNNING";
-		console.log("VM status:", vm.data.status);
+		created = vm.status === "RUNNING";
+		console.log("VM status:", vm.status);
 	}
 
 	const vm = await get(api, zone, config["name"]);
-	return vm.data.networkInterfaces![0].accessConfigs![0].natIP;
+	return vm.networkInterfaces![0].accessConfigs![0].natIP;
 }

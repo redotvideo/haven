@@ -10,8 +10,9 @@
 			"autoDelete": true,
 			"boot": true,
 			"deviceName": "instance-1",
+			"diskEncryptionKey": {},
 			"initializeParams": {
-				"diskSizeGb": "10",
+				"diskSizeGb": "50",
 				"diskType": "projects/boreal-charter-379616/zones/us-central1-a/diskTypes/pd-balanced",
 				"labels": {},
 				"sourceImage": "projects/debian-cloud/global/images/debian-11-bullseye-v20230509"
@@ -28,11 +29,11 @@
 	"labels": {
 		"goog-ec-src": "vm_add-rest"
 	},
-	"machineType": "projects/boreal-charter-379616/zones/us-central1-a/machineTypes/e2-micro",
+	"machineType": "projects/boreal-charter-379616/zones/us-central1-a/machineTypes/e2-medium",
 	"metadata": {
 		"items": []
 	},
-	"name": "instance-1",
+	"name": "{name}",
 	"networkInterfaces": [
 		{
 			"accessConfigs": [

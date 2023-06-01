@@ -3,14 +3,18 @@ import {Storage} from "@google-cloud/storage";
 
 const storage = new Storage();
 
-export async function readFilesInBucket(bucketName: string) {
-	const [files] = await storage.bucket(bucketName).getFiles();
+export async function readFilesInBucket(bucketName: string, path: string) {
+	const [files] = await storage.bucket(bucketName).getFiles({
+		prefix: path,
+	});
 
 	return files;
 }
 
-export function uploadFileToBucket(bucketName: string, fileName: string) {
-	return storage.bucket(bucketName).upload(fileName);
+export function uploadFileToBucket(bucketName: string, fileName: string, destination: string) {
+	return storage.bucket(bucketName).upload(fileName, {
+		destination,
+	});
 }
 
 export async function generateSignedUrl(bucketName: string, fileName: string) {
