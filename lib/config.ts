@@ -8,9 +8,9 @@ const config = {
 		bucket: "konsti-test-bucket",
 	},
 	worker: {
-		dockerImage: "worker-massive",
-		startupScript: "./gcloud/configurations/simple-big-storage/startup-script.sh",
-		configFile: "./gcloud/configurations/simple-big-storage/simple-big-vps.json",
+		dockerImage: "worker-smol",
+		startupScript: "./gcloud/configurations/startup-script.sh",
+		configFile: "./gcloud/configurations/simple-small-vps.json",
 	},
 };
 
