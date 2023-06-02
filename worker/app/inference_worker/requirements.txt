@@ -1,5 +1,3 @@
-Flask==2.3.2
-scipy
 numpy
 rouge_score
 fire
