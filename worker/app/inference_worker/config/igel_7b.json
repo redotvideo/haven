@@ -1,0 +1,84 @@
+{
+    "model_config":{
+        "model_name": "philschmid/instruct-igel-001",
+        "tokenizer_name": "philschmid/instruct-igel-001",
+        "instruction_prefix": "### Anweisung:\n",
+        "output_prefix": "\n\n### Antwort:",
+        "stop_tokens": [],
+        "context_size": 2048,
+        "dtype": "float16"
+
+    },
+
+
+    "lora_training_config":{
+        "T4":{
+            "fp16": false,
+            "save_strategy": "steps",
+            "save_steps": 2000,
+            "save_total_limit": 1,
+            "weight_decay": 0.0,
+            "warmup_ratio": 0.03,
+            "lr_scheduler_type": "cosine",
+            "logging_steps": 1,
+            "lora": true,
+            "lora_params": ["query_key_value"],
+            "head_param_name": "lm_head",
+            "multi_gpu": false
+        },
+
+        "T4_multi":{
+            "fp16": false,
+            "save_strategy": "steps",
+            "save_steps": 2000,
+            "save_total_limit": 1,
+            "weight_decay": 0.0,
+            "warmup_ratio": 0.03,
+            "lr_scheduler_type": "cosine",
+            "logging_steps": 1,
+            "lora": true,
+            "lora_params": ["query_key_value"],
+            "head_param_name": "lm_head",
+            "multi_gpu": true
+        },
+
+        "A100_40GB":{
+
+        }
+    },
+
+    "full_training_config":{
+        "A100_40GB_multi":{
+
+        }
+    },
+
+
+    "inference_config":{
+        "8bit":{
+            "initialization_args":{
+                "trust_remote_code": false,
+                "low_cpu_mem_usage": true,
+                "device_map": "sequential",
+                "load_in_8bit": true
+            },
+            "torch_dtype": "float16",
+            "context_size": 2048,
+            "GPUs": ["T4", "T4_4x", "A10"]
+
+        },
+        "16bit":{
+            "initialization_args":{
+                "trust_remote_code": false,
+                "low_cpu_mem_usage": true,
+                "device_map": "sequential",
+                "load_in_8bit": false
+            },
+            "torch_dtype": "float16",
+            "context_size": 2048,
+            "GPUs": ["T4","T4_4x", "A10"]
+        }
+
+    }
+
+}
