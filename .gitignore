@@ -7,5 +7,7 @@
 **.tar
 **.bin
 
+**__pycache__
+
 # Google Cloud API key
 /key.json
