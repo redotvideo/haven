@@ -5,6 +5,7 @@ import {config} from "../lib/config";
 import {generateSignedUrl, readFilesInBucket} from "../gcloud/storage";
 import {createComputeAPI, createFromTemplate, list, remove, get, pause} from "../gcloud/resources";
 import {start} from "../gcloud/resources";
+import {createStartupScript, encodeName, mapStatus} from "../lib/misc";
 
 const DOCKER_IMAGE = config.worker.dockerImage;
 const ZONE = config.gcloud.zone;
@@ -12,32 +13,6 @@ const BUCKET = config.gcloud.bucket;
 
 const WORKER_CONFIGURATION = config.worker.configFile;
 const WORKER_STARTUP_SCRIPT = config.worker.startupScript;
-
-function encodeName(name: string) {
-	return "haven-" + Buffer.from(name).toString("base64").toLowerCase();
-}
-
-async function createStartupScript(path: string, dockerImageUrl: string) {
-	const file = await fs.promises.readFile(path);
-	let startupScript = file.toString();
-	startupScript = startupScript.replace("{download_url}", dockerImageUrl);
-	return startupScript;
-}
-
-function mapStatus(status: string) {
-	const map = {
-		PROVISIONING: "starting",
-		STAGING: "starting",
-		RUNNING: "running",
-		STOPPING: "stopping",
-		SUSPENDING: "stopping",
-		SUSPENDED: "stopped",
-		TERMINATED: "paused",
-		REPAIRING: "error",
-	};
-
-	return map[status as keyof typeof map] || "stopped";
-}
 
 /**
  * Temporary UI endpoint.
@@ -70,7 +45,7 @@ export async function getModels(_: Request, res: Response) {
 
 		return {
 			name: name.name,
-			status: mapStatus((worker ? worker.status : "stopped") || "stopped"),
+			status: mapStatus(worker?.status || "stopped"),
 		};
 	});
 
@@ -118,10 +93,10 @@ export async function createWorker(req: Request, res: Response) {
 /**
  * Pauses a VPS instance
  */
-export async function stopWorker(req: Request, res: Response) {
+export async function pauseWorker(req: Request, res: Response) {
 	const {model} = req.params;
 
-	// Check if model exists
+	// Check if worker exists
 	const api = await createComputeAPI();
 	const workers = await list(api, ZONE);
 	const worker = workers.find((worker) => worker.name === encodeName(model));
@@ -141,7 +116,7 @@ export async function stopWorker(req: Request, res: Response) {
 export async function resumeWorker(req: Request, res: Response) {
 	const {model} = req.params;
 
-	// Check if model exists
+	// Check if worker exists
 	const api = await createComputeAPI();
 	const workers = await list(api, ZONE);
 	const worker = workers.find((worker) => worker.name === encodeName(model));
@@ -166,7 +141,7 @@ export async function resumeWorker(req: Request, res: Response) {
 export async function deleteWorker(req: Request, res: Response) {
 	const {model} = req.params;
 
-	// Check if model exists
+	// Check if worker exists
 	const api = await createComputeAPI();
 	const workers = await list(api, ZONE);
 	const worker = workers.find((worker) => worker.name === encodeName(model));
