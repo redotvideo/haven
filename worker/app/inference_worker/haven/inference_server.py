@@ -69,7 +69,7 @@ class InferenceClient:
         streamer = TextIteratorStreamer(self.generative_llm_tokenizer, skip_prompt=True)
 
         generation_kwargs=dict(
-            input_tokenized,
+            inputs=input_tokenized,
             streamer=streamer,
             do_sample=sample, 
             max_new_tokens=max_length, 
@@ -82,5 +82,7 @@ class InferenceClient:
         thread = Thread(target=self.generative_llm.generate, kwargs=generation_kwargs)
         thread.start()
 
+
         return streamer
+
     
