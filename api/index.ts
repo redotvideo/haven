@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import {createWorker, deleteWorker, getModels, getWorker, pauseWorker, resumeWorker} from "./workers";
+import {createWorker, deleteWorker, getModels, pauseWorker, resumeWorker} from "./workers";
 import {predict} from "./predict";
 
 const app = express();
@@ -14,7 +14,6 @@ app.use(express.json());
 
 app.get("/v1/models", getModels);
 
-app.get("/v1/workers/:model", getWorker);
 app.post("/v1/workers/:model/create", createWorker);
 app.post("/v1/workers/:model/pause", pauseWorker);
 app.post("/v1/workers/:model/resume", resumeWorker);
