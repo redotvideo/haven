@@ -33,8 +33,20 @@ def echo():
     config = data["config"]
 
     output = inference_client.generate(text_input=prompt, **config)
-    
+
     return output
+
+
+@app.route("/generate", methods=["POST"])
+def echo():
+    data = request.get_json()
+    prompt = data["prompt"]
+    config = data["config"]
+
+    streamer = inference_client.generate_stream(text_input=prompt, **config)
+
+    return streamer
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)
