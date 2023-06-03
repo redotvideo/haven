@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {createComputeAPI, list} from "../gcloud/resources";
 import {config} from "../lib/config";
-import {encodeName} from "../lib/misc";
+import {encodeName, getWorkerIP} from "../lib/misc";
 import {getPrediction} from "../lib/client";
 
 const ZONE = config.gcloud.zone;
@@ -16,7 +16,7 @@ export async function predict(req: Request, res: Response) {
 	const workers = await list(api, ZONE);
 	const worker = workers.find((worker) => worker.name === encodeName(model));
 
-	const ip = worker?.networkInterfaces?.[0]?.accessConfigs?.[0]?.natIP;
+	const ip = getWorkerIP(worker);
 	if (!ip) {
 		res.status(400).send({error: "Worker not reachable."});
 		return;

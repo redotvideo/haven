@@ -5,7 +5,8 @@ import {config} from "../lib/config";
 import {generateSignedUrl, readFilesInBucket} from "../gcloud/storage";
 import {createComputeAPI, createFromTemplate, list, remove, get, pause} from "../gcloud/resources";
 import {start} from "../gcloud/resources";
-import {createStartupScript, encodeName, mapStatus} from "../lib/misc";
+import {createStartupScript, encodeName, getWorkerIP, mapStatus} from "../lib/misc";
+import {getHealth, sendStopSignal} from "../lib/client";
 
 const DOCKER_IMAGE = config.worker.dockerImage;
 const ZONE = config.gcloud.zone;
@@ -40,36 +41,19 @@ export async function getModels(_: Request, res: Response) {
 	const workers = await list(api, ZONE);
 
 	// Map workers to models
-	const models = namesBase64.map((name) => {
+	const modelPromises = namesBase64.map(async (name) => {
 		const worker = workers.find((worker) => worker.name === name.encoded);
+		const ip = getWorkerIP(worker);
+		const health = ip ? await getHealth(ip) : "offline";
 
 		return {
 			name: name.name,
-			status: mapStatus(worker?.status || "stopped"),
+			status: mapStatus(health, worker?.status),
 		};
 	});
 
+	const models = await Promise.all(modelPromises);
 	res.status(200).send({models});
-}
-
-/**
- * Get worker
- */
-export async function getWorker(req: Request, res: Response) {
-	const {model} = req.params;
-
-	const api = await createComputeAPI();
-	const worker = await get(api, ZONE, encodeName(model));
-
-	if (!worker || !worker.name) {
-		res.status(404).send({error: "Worker not found."});
-		return;
-	}
-
-	res.status(200).send({
-		name: model,
-		status: mapStatus(worker.status || "stopped"),
-	});
 }
 
 /**
@@ -104,6 +88,10 @@ export async function pauseWorker(req: Request, res: Response) {
 	if (!worker || !worker.name) {
 		res.status(404).send({error: "Worker not found."});
 		return;
+	}
+
+	if (getWorkerIP(worker)) {
+		await sendStopSignal(getWorkerIP(worker)!);
 	}
 
 	await pause(api, ZONE, worker.name);
@@ -149,6 +137,10 @@ export async function deleteWorker(req: Request, res: Response) {
 	if (!worker || !worker.name) {
 		res.status(404).send({error: "Worker not found."});
 		return;
+	}
+
+	if (getWorkerIP(worker)) {
+		await sendStopSignal(getWorkerIP(worker)!);
 	}
 
 	await remove(api, ZONE, worker.name);
