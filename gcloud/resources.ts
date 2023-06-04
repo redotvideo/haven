@@ -149,15 +149,4 @@ export async function createFromTemplate(
 	};
 
 	await api.instances.insert(request);
-
-	let created = false;
-	while (!created) {
-		await sleep(10000);
-		const vm = await get(api, zone, config["name"]);
-		created = vm.status === "RUNNING";
-		console.log("VM status:", vm.status);
-	}
-
-	const vm = await get(api, zone, config["name"]);
-	return vm.networkInterfaces![0].accessConfigs![0].natIP;
 }

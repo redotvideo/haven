@@ -4,13 +4,13 @@ const config = {
 	},
 	gcloud: {
 		projectId: "boreal-charter-379616",
-		zone: "us-central1-a",
+		zone: "europe-central2-b",
 		bucket: "konsti-test-bucket",
 	},
 	worker: {
-		dockerImage: "worker-smol",
+		dockerImage: "worker-massive",
 		startupScript: "./gcloud/configurations/startup-script.sh",
-		configFile: "./gcloud/configurations/simple-small-vps.json",
+		configFile: "./gcloud/configurations/inference-mvp.json",
 	},
 };
 

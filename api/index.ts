@@ -21,6 +21,12 @@ app.post("/v1/workers/:model/delete", deleteWorker);
 
 app.post("/v1/predict/:model", predict);
 
+// Handle errors
+app.use((err: Error, _: Request, res: Response, next: any) => {
+	console.error(err);
+	res.status(500).send({error: "Internal server error."});
+});
+
 /*
 TOOO:
 - upload google cloud key
