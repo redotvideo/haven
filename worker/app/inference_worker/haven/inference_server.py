@@ -5,7 +5,6 @@ import json
 from threading import Thread
 
 
-
 class StopOnTokens(StoppingCriteria):
     def __init__(self, tokenizer, stop_token_list):
         super(StopOnTokens, self).__init__()
@@ -57,11 +56,9 @@ class InferenceClient:
         output_text = self.generative_llm_tokenizer.decode(output[0][len(input_tokenized[0]):], skip_special_tokens=True)
 
         return output_text
-
-
+    
 
     def generate_stream(self, text_input, sample=True, top_p=0.8, top_k=100, temperature=0.8, max_length=300):
-
         adapted_text_input = self.model_config["instruction_prefix"] + text_input + self.model_config["output_prefix"]
         input_tokenized = self.generative_llm_tokenizer([adapted_text_input], return_tensors='pt').input_ids.to('cuda')
 
@@ -82,7 +79,13 @@ class InferenceClient:
         thread = Thread(target=self.generative_llm.generate, kwargs=generation_kwargs)
         thread.start()
 
+        generated_text = ""
+        for new_text in streamer:
+            generated_text += new_text
+            print(new_text)
 
-        return streamer
 
+        print("generated text", generated_text)
+
+        
     
