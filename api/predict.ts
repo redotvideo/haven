@@ -9,7 +9,6 @@ const ZONE = config.gcloud.zone;
 export async function predict(req: Request, res: Response) {
 	const {model} = req.params;
 	console.log(req.body);
-	const {prompt} = req.body;
 
 	// Check if model exists and is running
 	const api = await createComputeAPI();

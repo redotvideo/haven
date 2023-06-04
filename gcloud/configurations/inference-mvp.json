@@ -13,7 +13,7 @@
 			"diskEncryptionKey": {},
 			"initializeParams": {
 				"diskSizeGb": "400",
-				"diskType": "projects/boreal-charter-379616/zones/europe-west1-b/diskTypes/pd-balanced",
+				"diskType": "projects/boreal-charter-379616/zones/europe-central2-b/diskTypes/pd-balanced",
 				"labels": {},
 				"sourceImage": "projects/ml-images/global/images/c0-deeplearning-common-cu113-v20230501-debian-10"
 			},
@@ -27,14 +27,14 @@
 	"guestAccelerators": [
 		{
 			"acceleratorCount": 1,
-			"acceleratorType": "projects/boreal-charter-379616/zones/europe-west1-b/acceleratorTypes/nvidia-tesla-t4"
+			"acceleratorType": "projects/boreal-charter-379616/zones/europe-central2-b/acceleratorTypes/nvidia-tesla-t4"
 		}
 	],
 	"keyRevocationActionType": "NONE",
 	"labels": {
 		"goog-ec-src": "vm_add-rest"
 	},
-	"machineType": "projects/boreal-charter-379616/zones/europe-west1-b/machineTypes/n1-standard-4",
+	"machineType": "projects/boreal-charter-379616/zones/europe-central2-b/machineTypes/n1-standard-4",
 	"metadata": {
 		"items": []
 	},
@@ -48,7 +48,7 @@
 				}
 			],
 			"stackType": "IPV4_ONLY",
-			"subnetwork": "projects/boreal-charter-379616/regions/europe-west1/subnetworks/default"
+			"subnetwork": "projects/boreal-charter-379616/regions/europe-central2/subnetworks/default"
 		}
 	],
 	"params": {
@@ -83,5 +83,5 @@
 	"tags": {
 		"items": []
 	},
-	"zone": "projects/boreal-charter-379616/zones/europe-west1-b"
+	"zone": "projects/boreal-charter-379616/zones/europe-central2-b"
 }

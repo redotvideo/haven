@@ -69,7 +69,7 @@ export async function createWorker(req: Request, res: Response) {
 	const workerImageUrl = await generateSignedUrl(BUCKET, `worker/${DOCKER_IMAGE}.tar`);
 	const startupScript = await createStartupScript(WORKER_STARTUP_SCRIPT, workerImageUrl);
 	const configFile = await fs.promises.readFile(WORKER_CONFIGURATION, {encoding: "utf-8"});
-	await createFromTemplate(api, "us-central1-a", configFile, startupScript, encodeName(model));
+	await createFromTemplate(api, ZONE, configFile, startupScript, encodeName(model));
 
 	res.status(200).send({model});
 }
