@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package haven;
+
+service Haven {
+	rpc Generate(GenerateRequest) returns (stream GenerateResponse) {}
+}
+
+message GenerateRequest {
+	string model = 1;
+	string prompt = 2;
+}
+
+message GenerateResponse {
+	string text = 1;
+}
+

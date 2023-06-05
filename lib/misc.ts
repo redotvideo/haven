@@ -4,7 +4,8 @@
 
 import * as fs from "fs";
 import {compute_v1} from "googleapis";
-import {HealthStatus} from "./client";
+import {WorkerStatus} from "./client";
+import {Status} from "./client/pb/worker_pb";
 
 function base36Encode(input: string): string {
 	const hex = Buffer.from(input).toString("hex");
@@ -35,12 +36,14 @@ export async function createStartupScript(path: string, dockerImageUrl: string) 
 /**
  * TODO(konsti): fix naming inconsistencies
  */
-export function mapStatus(health: HealthStatus, status: string | undefined | null) {
-	if (health === "running") {
+export function mapStatus(health: WorkerStatus, status: string | undefined | null) {
+	console.log(health, status);
+
+	if (health === Status.OK) {
 		return "running";
 	}
 
-	if (health === "stopping") {
+	if (health === Status.STOPPING) {
 		return "stopping";
 	}
 

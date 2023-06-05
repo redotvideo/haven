@@ -79,13 +79,4 @@ class InferenceClient:
         thread = Thread(target=self.generative_llm.generate, kwargs=generation_kwargs)
         thread.start()
 
-        generated_text = ""
-        for new_text in streamer:
-            generated_text += new_text
-            print(new_text)
-
-
-        print("generated text", generated_text)
-
-        
-    
+        return streamer

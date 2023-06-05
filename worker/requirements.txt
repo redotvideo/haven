@@ -16,3 +16,4 @@ accelerate
 optimum
 sentence_transformers
 deepspeed
+grpcio

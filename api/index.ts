@@ -1,35 +1,20 @@
-import express, {Request, Response} from "express";
-import {createWorker, deleteWorker, getModels, pauseWorker, resumeWorker} from "./workers";
-import {predict} from "./predict";
+import {fastify} from "fastify";
+import cors from "@fastify/cors";
+import {fastifyConnectPlugin} from "@bufbuild/connect-fastify";
+import {haven} from "./predict";
 
-const app = express();
+/**
+ * Creates and starts the fastify server hosting the GRCP API.
+ */
+export async function runServer() {
+	const port = 50051;
+	const server = fastify();
 
-app.use((_: Request, res: Response, next) => {
-	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Headers", "*");
-	next();
-});
+	// TODO(konsti): Finer cors configuration
+	server.register(cors);
 
-app.use(express.json());
+	await server.register(fastifyConnectPlugin, {routes: haven});
+	await server.listen({host: "localhost", port});
 
-app.get("/v1/models", getModels);
-
-app.post("/v1/workers/:model/create", createWorker);
-app.post("/v1/workers/:model/pause", pauseWorker);
-app.post("/v1/workers/:model/resume", resumeWorker);
-app.post("/v1/workers/:model/delete", deleteWorker);
-
-app.post("/v1/predict/:model", predict);
-
-// Handle errors
-app.use((err: Error, _: Request, res: Response, next: any) => {
-	console.error(err);
-	res.status(500).send({error: "Internal server error."});
-});
-
-/*
-TOOO:
-- upload google cloud key
-*/
-
-export {app};
+	console.log("server is listening at", server.addresses());
+}
