@@ -1,12 +1,12 @@
 import * as fs from "fs";
 import {Request, Response} from "express";
 
-import {config} from "../lib/config";
-import {generateSignedUrl, readFilesInBucket} from "../gcloud/storage";
-import {createComputeAPI, createFromTemplate, list, remove, get, pause} from "../gcloud/resources";
-import {start} from "../gcloud/resources";
-import {createStartupScript, encodeName, getWorkerIP, mapStatus} from "../lib/misc";
-import {getHealth, sendStopSignal} from "../lib/client";
+import {config} from "../../lib/config";
+import {generateSignedUrl, readFilesInBucket} from "../../gcloud/storage";
+import {createComputeAPI, createFromTemplate, list, remove, get, pause} from "../../gcloud/resources";
+import {start} from "../../gcloud/resources";
+import {createStartupScript, encodeName, getWorkerIP, mapStatus} from "../../lib/misc";
+import {InferredStatus, getStatus, getTransport} from "../../lib/client";
 
 const DOCKER_IMAGE = config.worker.dockerImage;
 const ZONE = config.gcloud.zone;
@@ -44,7 +44,7 @@ export async function getModels(_: Request, res: Response) {
 	const modelPromises = namesBase64.map(async (name) => {
 		const worker = workers.find((worker) => worker.name === name.encoded);
 		const ip = getWorkerIP(worker);
-		const health = ip ? await getHealth(ip) : "offline";
+		const health = ip ? await getStatus(ip) : InferredStatus.OFFLINE;
 
 		return {
 			name: name.name,
@@ -91,7 +91,7 @@ export async function pauseWorker(req: Request, res: Response) {
 	}
 
 	if (getWorkerIP(worker)) {
-		await sendStopSignal(getWorkerIP(worker)!);
+		await getTransport(getWorkerIP(worker)!).shutdown({});
 	}
 
 	await pause(api, ZONE, worker.name);
@@ -140,7 +140,7 @@ export async function deleteWorker(req: Request, res: Response) {
 	}
 
 	if (getWorkerIP(worker)) {
-		await sendStopSignal(getWorkerIP(worker)!);
+		await getTransport(getWorkerIP(worker)!).shutdown({});
 	}
 
 	await remove(api, ZONE, worker.name);

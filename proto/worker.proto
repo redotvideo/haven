@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package worker;
+
+service WorkerService {
+	// Check health of the worker.
+	rpc Health(HealthRequest) returns (HealthResponse) {}
+
+	// Shutdown the worker.
+	rpc Shutdown(ShutdownRequest) returns (ShutdownResponse) {}
+
+	// Generate text from a prompt.
+	rpc GenerateStream(GenerateRequest) returns (stream GenerateResponse) {}
+}
+
+enum Status {
+	OK = 0;
+	STOPPING = 1;
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+	Status status = 1;
+}
+
+message ShutdownRequest {}
+
+message ShutdownResponse {}
+
+message GenerateRequest {
+	string prompt = 1;
+}
+
+message GenerateResponse {
+	string text = 1;
+}
