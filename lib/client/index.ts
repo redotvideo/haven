@@ -41,9 +41,6 @@ export type WorkerStatus = Status | InferredStatus;
 export async function getStatus(ip: string): Promise<WorkerStatus> {
 	return getTransport(ip)
 		.health({}, {timeoutMs: 1000})
-		.then((res) => {
-			console.log(`status: ${res}`);
-			return res.status;
-		})
+		.then((res) => res.status)
 		.catch(() => InferredStatus.OFFLINE);
 }
