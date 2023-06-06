@@ -7,6 +7,8 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3 } from "@bufbuild/protobuf";
 
 /**
+ * TODO(konsti): Rename to WorkerStatus for more clarity.
+ *
  * @generated from enum worker.Status
  */
 export enum Status {

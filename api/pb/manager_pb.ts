@@ -35,8 +35,6 @@ export enum Status {
   STOPPING = 3,
 
   /**
-   * Worker is paused.
-   *
    * @generated from enum value: PAUSED = 4;
    */
   PAUSED = 4,

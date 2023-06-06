@@ -24,11 +24,14 @@ class _StatusEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTyp
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     OK: _Status.ValueType  # 0
     STOPPING: _Status.ValueType  # 1
+    OFFLINE: _Status.ValueType  # 99
 
-class Status(_Status, metaclass=_StatusEnumTypeWrapper): ...
+class Status(_Status, metaclass=_StatusEnumTypeWrapper):
+    """TODO(konsti): Rename to WorkerStatus for more clarity."""
 
 OK: Status.ValueType  # 0
 STOPPING: Status.ValueType  # 1
+OFFLINE: Status.ValueType  # 99
 global___Status = Status
 
 @typing_extensions.final

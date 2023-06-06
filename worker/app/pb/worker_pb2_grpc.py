@@ -15,17 +15,17 @@ class WorkerServiceStub(object):
             channel: A grpc.Channel.
         """
         self.Health = channel.unary_unary(
-                '/WorkerService/Health',
+                '/worker.WorkerService/Health',
                 request_serializer=worker__pb2.HealthRequest.SerializeToString,
                 response_deserializer=worker__pb2.HealthResponse.FromString,
                 )
         self.Shutdown = channel.unary_unary(
-                '/WorkerService/Shutdown',
+                '/worker.WorkerService/Shutdown',
                 request_serializer=worker__pb2.ShutdownRequest.SerializeToString,
                 response_deserializer=worker__pb2.ShutdownResponse.FromString,
                 )
         self.GenerateStream = channel.unary_stream(
-                '/WorkerService/GenerateStream',
+                '/worker.WorkerService/GenerateStream',
                 request_serializer=worker__pb2.GenerateRequest.SerializeToString,
                 response_deserializer=worker__pb2.GenerateResponse.FromString,
                 )
@@ -35,19 +35,22 @@ class WorkerServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def Health(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Check health of the worker.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def Shutdown(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Shutdown the worker.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GenerateStream(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Generate text from a prompt.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -72,7 +75,7 @@ def add_WorkerServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'WorkerService', rpc_method_handlers)
+            'worker.WorkerService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -91,7 +94,7 @@ class WorkerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/WorkerService/Health',
+        return grpc.experimental.unary_unary(request, target, '/worker.WorkerService/Health',
             worker__pb2.HealthRequest.SerializeToString,
             worker__pb2.HealthResponse.FromString,
             options, channel_credentials,
@@ -108,7 +111,7 @@ class WorkerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/WorkerService/Shutdown',
+        return grpc.experimental.unary_unary(request, target, '/worker.WorkerService/Shutdown',
             worker__pb2.ShutdownRequest.SerializeToString,
             worker__pb2.ShutdownResponse.FromString,
             options, channel_credentials,
@@ -125,7 +128,7 @@ class WorkerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/WorkerService/GenerateStream',
+        return grpc.experimental.unary_stream(request, target, '/worker.WorkerService/GenerateStream',
             worker__pb2.GenerateRequest.SerializeToString,
             worker__pb2.GenerateResponse.FromString,
             options, channel_credentials,
