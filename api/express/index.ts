@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import {createWorker, deleteWorker, getModels, pauseWorker, resumeWorker} from "./workers";
+import {createWorker, deleteWorker, pauseWorker, resumeWorker} from "./workers";
 
 const app = express();
 
@@ -10,8 +10,6 @@ app.use((_: Request, res: Response, next) => {
 });
 
 app.use(express.json());
-
-app.get("/v1/models", getModels);
 
 app.post("/v1/workers/:model/create", createWorker);
 app.post("/v1/workers/:model/pause", pauseWorker);

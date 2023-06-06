@@ -2,8 +2,14 @@ syntax = "proto3";
 
 package haven;
 
+message Empty {}
+
 service Haven {
+	// Generate text from a prompt.
 	rpc Generate(GenerateRequest) returns (stream GenerateResponse) {}
+
+	// Get the list of models and their descriptions.
+	rpc ListModels(Empty) returns (ListModelsResponse) {}
 }
 
 message GenerateRequest {
@@ -15,3 +21,20 @@ message GenerateResponse {
 	string text = 1;
 }
 
+enum Status {
+	RUNNING = 0;
+	STOPPED = 1; // Worker doesn't exist.
+	STARTING = 2;
+	STOPPING = 3; // When going to STOPPED or PAUSED.
+	PAUSED = 4;
+	ERROR = 5;
+}
+
+message Model {
+	string name = 1;
+	Status status = 2;	
+}
+
+message ListModelsResponse {
+	repeated Model models = 1;
+}

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { GenerateRequest, GenerateResponse } from "./manager_pb.js";
+import { Empty, GenerateRequest, GenerateResponse, ListModelsResponse } from "./manager_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -13,6 +13,8 @@ export const Haven = {
   typeName: "haven.Haven",
   methods: {
     /**
+     * Generate text from a prompt.
+     *
      * @generated from rpc haven.Haven.Generate
      */
     generate: {
@@ -20,6 +22,17 @@ export const Haven = {
       I: GenerateRequest,
       O: GenerateResponse,
       kind: MethodKind.ServerStreaming,
+    },
+    /**
+     * Get the list of models and their descriptions.
+     *
+     * @generated from rpc haven.Haven.ListModels
+     */
+    listModels: {
+      name: "ListModels",
+      I: Empty,
+      O: ListModelsResponse,
+      kind: MethodKind.Unary,
     },
   }
 } as const;

@@ -27,20 +27,9 @@ export function getTransport(ip: string): PromiseClient<typeof WorkerService> {
 	return clients.get(ip)!;
 }
 
-/**
- * Setting this to a high number to make sure it doesn't collide with grpc status codes.
- *
- * TODO(konsti): maybe we could just include OFFLINE in the Status spec?
- */
-export enum InferredStatus {
-	OFFLINE = 99,
-}
-
-export type WorkerStatus = Status | InferredStatus;
-
-export async function getStatus(ip: string): Promise<WorkerStatus> {
+export async function getStatus(ip: string): Promise<Status> {
 	return getTransport(ip)
 		.health({}, {timeoutMs: 1000})
 		.then((res) => res.status)
-		.catch(() => InferredStatus.OFFLINE);
+		.catch(() => Status.OFFLINE);
 }

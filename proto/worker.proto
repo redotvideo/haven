@@ -13,9 +13,11 @@ service WorkerService {
 	rpc GenerateStream(GenerateRequest) returns (stream GenerateResponse) {}
 }
 
+// TODO(konsti): Rename to WorkerStatus for more clarity.
 enum Status {
 	OK = 0;
 	STOPPING = 1;
+	OFFLINE = 99;
 }
 
 message HealthRequest {}
