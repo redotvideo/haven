@@ -19,11 +19,17 @@ export enum Status {
    * @generated from enum value: STOPPING = 1;
    */
   STOPPING = 1,
+
+  /**
+   * @generated from enum value: OFFLINE = 99;
+   */
+  OFFLINE = 99,
 }
 // Retrieve enum metadata with: proto3.getEnumType(Status)
 proto3.util.setEnumType(Status, "worker.Status", [
   { no: 0, name: "OK" },
   { no: 1, name: "STOPPING" },
+  { no: 99, name: "OFFLINE" },
 ]);
 
 /**

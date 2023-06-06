@@ -1,7 +1,7 @@
 import {fastify, FastifyInstance} from "fastify";
 import cors from "@fastify/cors";
 import {fastifyConnectPlugin} from "@bufbuild/connect-fastify";
-import {haven} from "./predict";
+import {haven} from "./api";
 
 async function createServer(server: any, port: number) {
 	// TODO(konsti): Finer cors configuration

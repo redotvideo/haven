@@ -4,8 +4,8 @@
 
 import * as fs from "fs";
 import {compute_v1} from "googleapis";
-import {WorkerStatus} from "./client";
-import {Status} from "./client/pb/worker_pb";
+import * as WorkerAPI from "./client/pb/worker_pb";
+import {Status} from "../api/pb/manager_pb";
 
 function base36Encode(input: string): string {
 	const hex = Buffer.from(input).toString("hex");
@@ -33,30 +33,33 @@ export async function createStartupScript(path: string, dockerImageUrl: string) 
 	return startupScript;
 }
 
-/**
- * TODO(konsti): fix naming inconsistencies
- */
-export function mapStatus(health: WorkerStatus, status: string | undefined | null) {
-	if (health === Status.OK) {
-		return "running";
+export function mapStatus(workerStatus: WorkerAPI.Status, cloudStatus: string | undefined | null): Status {
+	if (workerStatus === WorkerAPI.Status.OK) {
+		return Status.RUNNING;
 	}
 
-	if (health === Status.STOPPING) {
-		return "stopping";
+	if (workerStatus === WorkerAPI.Status.STOPPING) {
+		return Status.STOPPING;
 	}
 
 	const map = {
-		PROVISIONING: "starting",
-		STAGING: "starting",
-		RUNNING: "starting",
-		STOPPING: "stopping",
-		SUSPENDING: "stopping",
-		SUSPENDED: "paused",
-		TERMINATED: "paused",
-		REPAIRING: "error",
+		PROVISIONING: Status.STARTING,
+		STAGING: Status.STARTING,
+
+		/**
+		 * If the underlying cloud vm is running but the worker is not,
+		 * we assume that the worker is starting.
+		 */
+		RUNNING: Status.STARTING,
+
+		STOPPING: Status.STOPPING,
+		SUSPENDING: Status.STOPPING,
+		SUSPENDED: Status.PAUSED,
+		TERMINATED: Status.PAUSED,
+		REPAIRING: Status.ERROR,
 	};
 
-	return map[status as keyof typeof map] || "stopped";
+	return map[cloudStatus as keyof typeof map] || Status.STOPPED;
 }
 
 export function getWorkerIP(worker: compute_v1.Schema$Instance | undefined) {
