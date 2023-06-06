@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "proto": "buf generate --template buf.manager.gen.yaml ./proto/manager.proto && buf generate --template buf.worker.gen.yaml ./proto/worker.proto && ./worker/proto.sh",
+    "proto": "buf generate --template buf.manager.gen.yaml ./proto/manager.proto && buf generate --template buf.worker.gen.yaml ./proto/worker.proto && ./worker/proto.sh && ./sdk/proto.sh",
     "build": "tsc",
     "dev": "tsc && node build/cmd/index.js",
     "nodemon": "nodemon --exec \"npm run dev\" --ignore ./build --verbose  --ext ts ."
