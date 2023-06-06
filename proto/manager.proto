@@ -4,12 +4,29 @@ package haven;
 
 message Empty {}
 
+enum RequestStatus {
+	OK = 0;
+	BAD_REQUEST = 1;
+	INTERNAL_ERROR = 2;
+}
+
+message StatusResponse {
+	RequestStatus status = 1;
+	string message = 2;
+}
+
 service Haven {
 	// Generate text from a prompt.
 	rpc Generate(GenerateRequest) returns (stream GenerateResponse) {}
 
 	// Get the list of models and their descriptions.
 	rpc ListModels(Empty) returns (ListModelsResponse) {}
+
+	// Worker management.
+	rpc CreateWorker(ModelName) returns (StatusResponse) {}
+	rpc PauseWorker(ModelName) returns (StatusResponse) {}
+	rpc ResumeWorker(ModelName) returns (StatusResponse) {}
+	rpc DeleteWorker(ModelName) returns (StatusResponse) {}
 }
 
 message GenerateRequest {
@@ -37,4 +54,8 @@ message Model {
 
 message ListModelsResponse {
 	repeated Model models = 1;
+}
+
+message ModelName {
+	string name = 1;
 }

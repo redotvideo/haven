@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Empty, GenerateRequest, GenerateResponse, ListModelsResponse } from "./manager_pb.js";
+import { Empty, GenerateRequest, GenerateResponse, ListModelsResponse, ModelName, StatusResponse } from "./manager_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -32,6 +32,44 @@ export const Haven = {
       name: "ListModels",
       I: Empty,
       O: ListModelsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * Worker management.
+     *
+     * @generated from rpc haven.Haven.CreateWorker
+     */
+    createWorker: {
+      name: "CreateWorker",
+      I: ModelName,
+      O: StatusResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc haven.Haven.PauseWorker
+     */
+    pauseWorker: {
+      name: "PauseWorker",
+      I: ModelName,
+      O: StatusResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc haven.Haven.ResumeWorker
+     */
+    resumeWorker: {
+      name: "ResumeWorker",
+      I: ModelName,
+      O: StatusResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc haven.Haven.DeleteWorker
+     */
+    deleteWorker: {
+      name: "DeleteWorker",
+      I: ModelName,
+      O: StatusResponse,
       kind: MethodKind.Unary,
     },
   }
