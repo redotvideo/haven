@@ -1,4 +1,4 @@
-import {fastify, FastifyInstance} from "fastify";
+import {fastify} from "fastify";
 import cors from "@fastify/cors";
 import {fastifyConnectPlugin} from "@bufbuild/connect-fastify";
 import {haven} from "./api";
