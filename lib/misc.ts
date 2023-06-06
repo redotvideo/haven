@@ -37,8 +37,6 @@ export async function createStartupScript(path: string, dockerImageUrl: string) 
  * TODO(konsti): fix naming inconsistencies
  */
 export function mapStatus(health: WorkerStatus, status: string | undefined | null) {
-	console.log(health, status);
-
 	if (health === Status.OK) {
 		return "running";
 	}
