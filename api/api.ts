@@ -1,13 +1,23 @@
+import * as fs from "fs";
+
 import {ConnectRouter} from "@bufbuild/connect";
 
 import {Haven} from "./pb/manager_connect";
-import {Empty, GenerateRequest, GenerateResponse, ListModelsResponse} from "./pb/manager_pb";
+import {
+	Empty,
+	GenerateRequest,
+	GenerateResponse,
+	ListModelsResponse,
+	ModelName,
+	RequestStatus,
+	StatusResponse,
+} from "./pb/manager_pb";
 
 import {config} from "../lib/config";
-import {createComputeAPI, list} from "../gcloud/resources";
-import {encodeName, getWorkerIP, mapStatus} from "../lib/misc";
+import {createComputeAPI, createFromTemplate, list, pause, remove, start} from "../gcloud/resources";
+import {createStartupScript, encodeName, getWorkerIP, mapStatus} from "../lib/misc";
 import {getStatus, getTransport} from "../lib/client";
-import {readFilesInBucket} from "../gcloud/storage";
+import {generateSignedUrl, readFilesInBucket} from "../gcloud/storage";
 import {Status} from "../lib/client/pb/worker_pb";
 
 const DOCKER_IMAGE = config.worker.dockerImage;
@@ -16,6 +26,30 @@ const BUCKET = config.gcloud.bucket;
 
 const WORKER_CONFIGURATION = config.worker.configFile;
 const WORKER_STARTUP_SCRIPT = config.worker.startupScript;
+
+/**
+ * Generate text from a prompt.
+ */
+async function* generate(req: GenerateRequest) {
+	const model = req.model;
+	const prompt = req.prompt;
+
+	// Check if model exists and is running
+	const api = await createComputeAPI();
+	const workers = await list(api, ZONE);
+	const worker = workers.find((worker) => worker.name === encodeName(model));
+
+	const ip = getWorkerIP(worker);
+	if (!ip) {
+		return;
+	}
+
+	const stream = getTransport(ip).generateStream({prompt});
+
+	for await (const chunk of stream) {
+		yield new GenerateResponse({text: chunk.text});
+	}
+}
 
 /**
  * Temporary UI endpoint.
@@ -58,32 +92,100 @@ async function listModels(req: Empty) {
 	return new ListModelsResponse({models});
 }
 
-/**
- * Generate text from a prompt.
- */
-async function* generate(req: GenerateRequest) {
-	const model = req.model;
-	const prompt = req.prompt;
+async function createWorker(req: ModelName) {
+	const model = req.name;
 
-	// Check if model exists and is running
+	// TODO(konsti): Check if model exists
+
+	const api = await createComputeAPI();
+
+	const workerImageUrl = await generateSignedUrl(BUCKET, `worker/${DOCKER_IMAGE}.tar`);
+	const startupScript = await createStartupScript(WORKER_STARTUP_SCRIPT, workerImageUrl);
+	const configFile = await fs.promises.readFile(WORKER_CONFIGURATION, {encoding: "utf-8"});
+	await createFromTemplate(api, ZONE, configFile, startupScript, encodeName(model));
+
+	return new StatusResponse({status: RequestStatus.OK});
+}
+
+async function pauseWorker(req: ModelName) {
+	const model = req.name;
+
+	// Check if worker exists
 	const api = await createComputeAPI();
 	const workers = await list(api, ZONE);
 	const worker = workers.find((worker) => worker.name === encodeName(model));
 
-	const ip = getWorkerIP(worker);
-	if (!ip) {
-		return;
+	if (!worker || !worker.name) {
+		return new StatusResponse({
+			status: RequestStatus.BAD_REQUEST,
+			message: `Worker ${model} does not exist`,
+		});
 	}
 
-	const stream = getTransport(ip).generateStream({prompt});
-
-	for await (const chunk of stream) {
-		yield new GenerateResponse({text: chunk.text});
+	if (getWorkerIP(worker)) {
+		await getTransport(getWorkerIP(worker)!).shutdown({});
 	}
+
+	await pause(api, ZONE, worker.name);
+	return new StatusResponse({status: RequestStatus.OK});
+}
+
+async function resumeWorker(req: ModelName) {
+	const model = req.name;
+
+	// Check if worker exists
+	const api = await createComputeAPI();
+	const workers = await list(api, ZONE);
+	const worker = workers.find((worker) => worker.name === encodeName(model));
+
+	if (!worker || !worker.name) {
+		return new StatusResponse({
+			status: RequestStatus.BAD_REQUEST,
+			message: `Worker ${model} does not exist`,
+		});
+	}
+
+	if (worker.status !== "TERMINATED") {
+		return new StatusResponse({
+			status: RequestStatus.BAD_REQUEST,
+			message: `Worker ${model} is not paused`,
+		});
+	}
+
+	await start(api, ZONE, worker.name);
+	return new StatusResponse({status: RequestStatus.OK});
+}
+
+async function deleteWorker(req: ModelName) {
+	const model = req.name;
+
+	// Check if worker exists
+	const api = await createComputeAPI();
+	const workers = await list(api, ZONE);
+	const worker = workers.find((worker) => worker.name === encodeName(model));
+
+	if (!worker || !worker.name) {
+		return new StatusResponse({
+			status: RequestStatus.BAD_REQUEST,
+			message: `Worker ${model} does not exist`,
+		});
+	}
+
+	if (getWorkerIP(worker)) {
+		await getTransport(getWorkerIP(worker)!).shutdown({});
+	}
+
+	await remove(api, ZONE, worker.name);
+	return new StatusResponse({status: RequestStatus.OK});
 }
 
 export const haven = (router: ConnectRouter) =>
 	router.service(Haven, {
 		generate,
 		listModels,
+
+		createWorker,
+		pauseWorker,
+		resumeWorker,
+		deleteWorker,
 	});
