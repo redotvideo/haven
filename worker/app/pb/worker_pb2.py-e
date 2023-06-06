@@ -13,27 +13,27 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cworker.proto\"\x0f\n\rHealthRequest\")\n\x0eHealthResponse\x12\x17\n\x06status\x18\x01 \x01(\x0e\x32\x07.Status\"\x11\n\x0fShutdownRequest\"\x12\n\x10ShutdownResponse\"!\n\x0fGenerateRequest\x12\x0e\n\x06prompt\x18\x01 \x01(\t\" \n\x10GenerateResponse\x12\x0c\n\x04text\x18\x01 \x01(\t*\x1e\n\x06Status\x12\x06\n\x02OK\x10\x00\x12\x0c\n\x08STOPPING\x10\x01\x32\xaa\x01\n\rWorkerService\x12+\n\x06Health\x12\x0e.HealthRequest\x1a\x0f.HealthResponse\"\x00\x12\x31\n\x08Shutdown\x12\x10.ShutdownRequest\x1a\x11.ShutdownResponse\"\x00\x12\x39\n\x0eGenerateStream\x12\x10.GenerateRequest\x1a\x11.GenerateResponse\"\x00\x30\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cworker.proto\x12\x06worker\"\x0f\n\rHealthRequest\"0\n\x0eHealthResponse\x12\x1e\n\x06status\x18\x01 \x01(\x0e\x32\x0e.worker.Status\"\x11\n\x0fShutdownRequest\"\x12\n\x10ShutdownResponse\"!\n\x0fGenerateRequest\x12\x0e\n\x06prompt\x18\x01 \x01(\t\" \n\x10GenerateResponse\x12\x0c\n\x04text\x18\x01 \x01(\t*+\n\x06Status\x12\x06\n\x02OK\x10\x00\x12\x0c\n\x08STOPPING\x10\x01\x12\x0b\n\x07OFFLINE\x10\x63\x32\xd4\x01\n\rWorkerService\x12\x39\n\x06Health\x12\x15.worker.HealthRequest\x1a\x16.worker.HealthResponse\"\x00\x12?\n\x08Shutdown\x12\x17.worker.ShutdownRequest\x1a\x18.worker.ShutdownResponse\"\x00\x12G\n\x0eGenerateStream\x12\x17.worker.GenerateRequest\x1a\x18.worker.GenerateResponse\"\x00\x30\x01\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'worker_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _STATUS._serialized_start=184
-  _STATUS._serialized_end=214
-  _HEALTHREQUEST._serialized_start=16
-  _HEALTHREQUEST._serialized_end=31
-  _HEALTHRESPONSE._serialized_start=33
-  _HEALTHRESPONSE._serialized_end=74
-  _SHUTDOWNREQUEST._serialized_start=76
-  _SHUTDOWNREQUEST._serialized_end=93
-  _SHUTDOWNRESPONSE._serialized_start=95
-  _SHUTDOWNRESPONSE._serialized_end=113
-  _GENERATEREQUEST._serialized_start=115
-  _GENERATEREQUEST._serialized_end=148
-  _GENERATERESPONSE._serialized_start=150
-  _GENERATERESPONSE._serialized_end=182
-  _WORKERSERVICE._serialized_start=217
-  _WORKERSERVICE._serialized_end=387
+  _STATUS._serialized_start=199
+  _STATUS._serialized_end=242
+  _HEALTHREQUEST._serialized_start=24
+  _HEALTHREQUEST._serialized_end=39
+  _HEALTHRESPONSE._serialized_start=41
+  _HEALTHRESPONSE._serialized_end=89
+  _SHUTDOWNREQUEST._serialized_start=91
+  _SHUTDOWNREQUEST._serialized_end=108
+  _SHUTDOWNRESPONSE._serialized_start=110
+  _SHUTDOWNRESPONSE._serialized_end=128
+  _GENERATEREQUEST._serialized_start=130
+  _GENERATEREQUEST._serialized_end=163
+  _GENERATERESPONSE._serialized_start=165
+  _GENERATERESPONSE._serialized_end=197
+  _WORKERSERVICE._serialized_start=245
+  _WORKERSERVICE._serialized_end=457
 # @@protoc_insertion_point(module_scope)
