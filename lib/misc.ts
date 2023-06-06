@@ -26,10 +26,12 @@ export function encodeName(name: string) {
 	return "haven-" + base36Encode(name).toLowerCase();
 }
 
-export async function createStartupScript(path: string, dockerImageUrl: string) {
+export async function createStartupScript(path: string, dockerImageUrl: string, configFileUrl: string) {
 	const file = await fs.promises.readFile(path);
 	let startupScript = file.toString();
-	startupScript = startupScript.replace("{download_url}", dockerImageUrl);
+	startupScript = startupScript.replace("{config_url}", configFileUrl);
+	startupScript = startupScript.replace("{image_url}", dockerImageUrl);
+	console.log(startupScript);
 	return startupScript;
 }
 
@@ -49,6 +51,9 @@ export function mapStatus(workerStatus: WorkerAPI.Status, cloudStatus: string | 
 		/**
 		 * If the underlying cloud vm is running but the worker is not,
 		 * we assume that the worker is starting.
+		 *
+		 * TODO(konsti): this sucks. when the docker container is not running,
+		 * something could also be wrong and we wouldn't know.
 		 */
 		RUNNING: Status.STARTING,
 

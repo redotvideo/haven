@@ -1,4 +1,5 @@
 import os
+import json
 
 import asyncio
 import grpc
@@ -6,8 +7,12 @@ import grpc
 from app.pb import worker_pb2, worker_pb2_grpc
 from app.inference_worker.haven.inference_server import InferenceClient
 
+def get_path():
+	with open("./config.json", "r") as f:
+		return json.load(f)["path"]
+
 ABSOLUTE_PATH = os.path.dirname(__file__)
-inference_client = InferenceClient(config=os.path.join(ABSOLUTE_PATH, "inference_worker/config/mpt_chat_7b.json"), setup_type="16bit")
+inference_client = InferenceClient(config=os.path.join(ABSOLUTE_PATH, get_path()), setup_type="16bit")
 running = True
 
 class WorkerService(worker_pb2_grpc.WorkerServiceServicer):

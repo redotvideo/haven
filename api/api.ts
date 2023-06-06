@@ -1,6 +1,6 @@
 import * as fs from "fs";
 
-import {ConnectRouter} from "@bufbuild/connect";
+import {ConnectRouter, HandlerContext} from "@bufbuild/connect";
 
 import {Haven} from "./pb/manager_connect";
 import {
@@ -19,6 +19,7 @@ import {createStartupScript, encodeName, getWorkerIP, mapStatus} from "../lib/mi
 import {getStatus, getTransport} from "../lib/client";
 import {generateSignedUrl, readFilesInBucket} from "../gcloud/storage";
 import {Status} from "../lib/client/pb/worker_pb";
+import {secure} from "./middleware";
 
 const DOCKER_IMAGE = config.worker.dockerImage;
 const ZONE = config.gcloud.zone;
@@ -47,7 +48,8 @@ async function* generate(req: GenerateRequest) {
 	const stream = getTransport(ip).generateStream({prompt});
 
 	for await (const chunk of stream) {
-		yield new GenerateResponse({text: chunk.text});
+		// TODO(konsti): the end token should not be sent to the manager in the first place
+		yield new GenerateResponse({text: chunk.text.replace("<|im_end|>", "")});
 	}
 }
 
@@ -100,7 +102,9 @@ async function createWorker(req: ModelName) {
 	const api = await createComputeAPI();
 
 	const workerImageUrl = await generateSignedUrl(BUCKET, `worker/${DOCKER_IMAGE}.tar`);
-	const startupScript = await createStartupScript(WORKER_STARTUP_SCRIPT, workerImageUrl);
+	const configFileUrl = await generateSignedUrl(BUCKET, `models/${model}/config.json`);
+
+	const startupScript = await createStartupScript(WORKER_STARTUP_SCRIPT, workerImageUrl, configFileUrl);
 	const configFile = await fs.promises.readFile(WORKER_CONFIGURATION, {encoding: "utf-8"});
 	await createFromTemplate(api, ZONE, configFile, startupScript, encodeName(model));
 
@@ -130,7 +134,7 @@ async function pauseWorker(req: ModelName) {
 	return new StatusResponse({status: RequestStatus.OK});
 }
 
-async function resumeWorker(req: ModelName) {
+async function resumeWorker(req: ModelName, context: HandlerContext) {
 	const model = req.name;
 
 	// Check if worker exists
@@ -181,11 +185,11 @@ async function deleteWorker(req: ModelName) {
 
 export const haven = (router: ConnectRouter) =>
 	router.service(Haven, {
-		generate,
-		listModels,
+		generate: secure(generate),
+		listModels: secure(listModels),
 
-		createWorker,
-		pauseWorker,
-		resumeWorker,
-		deleteWorker,
+		createWorker: secure(createWorker),
+		pauseWorker: secure(pauseWorker),
+		resumeWorker: secure(resumeWorker),
+		deleteWorker: secure(deleteWorker),
 	});
