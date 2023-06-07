@@ -7,32 +7,6 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3 } from "@bufbuild/protobuf";
 
 /**
- * @generated from enum haven.RequestStatus
- */
-export enum RequestStatus {
-  /**
-   * @generated from enum value: OK = 0;
-   */
-  OK = 0,
-
-  /**
-   * @generated from enum value: BAD_REQUEST = 1;
-   */
-  BAD_REQUEST = 1,
-
-  /**
-   * @generated from enum value: INTERNAL_ERROR = 2;
-   */
-  INTERNAL_ERROR = 2,
-}
-// Retrieve enum metadata with: proto3.getEnumType(RequestStatus)
-proto3.util.setEnumType(RequestStatus, "haven.RequestStatus", [
-  { no: 0, name: "OK" },
-  { no: 1, name: "BAD_REQUEST" },
-  { no: 2, name: "INTERNAL_ERROR" },
-]);
-
-/**
  * @generated from enum haven.Status
  */
 export enum Status {
@@ -112,45 +86,39 @@ export class Empty extends Message<Empty> {
 }
 
 /**
- * @generated from message haven.StatusResponse
+ * @generated from message haven.SetupRequest
  */
-export class StatusResponse extends Message<StatusResponse> {
+export class SetupRequest extends Message<SetupRequest> {
   /**
-   * @generated from field: haven.RequestStatus status = 1;
+   * @generated from field: string key_file = 1;
    */
-  status = RequestStatus.OK;
+  keyFile = "";
 
-  /**
-   * @generated from field: string message = 2;
-   */
-  message = "";
-
-  constructor(data?: PartialMessage<StatusResponse>) {
+  constructor(data?: PartialMessage<SetupRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "haven.StatusResponse";
+  static readonly typeName = "haven.SetupRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "status", kind: "enum", T: proto3.getEnumType(RequestStatus) },
-    { no: 2, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "key_file", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StatusResponse {
-    return new StatusResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SetupRequest {
+    return new SetupRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StatusResponse {
-    return new StatusResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SetupRequest {
+    return new SetupRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StatusResponse {
-    return new StatusResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SetupRequest {
+    return new SetupRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: StatusResponse | PlainMessage<StatusResponse> | undefined, b: StatusResponse | PlainMessage<StatusResponse> | undefined): boolean {
-    return proto3.util.equals(StatusResponse, a, b);
+  static equals(a: SetupRequest | PlainMessage<SetupRequest> | undefined, b: SetupRequest | PlainMessage<SetupRequest> | undefined): boolean {
+    return proto3.util.equals(SetupRequest, a, b);
   }
 }
 

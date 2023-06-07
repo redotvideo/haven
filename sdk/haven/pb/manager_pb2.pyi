@@ -18,23 +18,6 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-class _RequestStatus:
-    ValueType = typing.NewType("ValueType", builtins.int)
-    V: typing_extensions.TypeAlias = ValueType
-
-class _RequestStatusEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_RequestStatus.ValueType], builtins.type):
-    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    OK: _RequestStatus.ValueType  # 0
-    BAD_REQUEST: _RequestStatus.ValueType  # 1
-    INTERNAL_ERROR: _RequestStatus.ValueType  # 2
-
-class RequestStatus(_RequestStatus, metaclass=_RequestStatusEnumTypeWrapper): ...
-
-OK: RequestStatus.ValueType  # 0
-BAD_REQUEST: RequestStatus.ValueType  # 1
-INTERNAL_ERROR: RequestStatus.ValueType  # 2
-global___RequestStatus = RequestStatus
-
 class _Status:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
@@ -73,22 +56,19 @@ class Empty(google.protobuf.message.Message):
 global___Empty = Empty
 
 @typing_extensions.final
-class StatusResponse(google.protobuf.message.Message):
+class SetupRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    STATUS_FIELD_NUMBER: builtins.int
-    MESSAGE_FIELD_NUMBER: builtins.int
-    status: global___RequestStatus.ValueType
-    message: builtins.str
+    KEY_FILE_FIELD_NUMBER: builtins.int
+    key_file: builtins.str
     def __init__(
         self,
         *,
-        status: global___RequestStatus.ValueType = ...,
-        message: builtins.str = ...,
+        key_file: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["message", b"message", "status", b"status"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["key_file", b"key_file"]) -> None: ...
 
-global___StatusResponse = StatusResponse
+global___SetupRequest = SetupRequest
 
 @typing_extensions.final
 class GenerateRequest(google.protobuf.message.Message):
