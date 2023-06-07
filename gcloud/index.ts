@@ -1,7 +1,7 @@
 import { all } from "axios";
 import * as fs from "fs";
 
-import {createComputeAPI, createFromTemplate, remove, getAllZones, getAcceleratorsByZone, getAllRegions, checkIfQuotaPermitsGPUs} from "./resources";
+import {createComputeAPI, createFromTemplate, remove, getAllZones, getAcceleratorsByZone, getAllRegions, checkIfQuotaPermitsGPUs, findRegionsWithPermissiveGPUQuotas, getZonesToCreateVM} from "./resources";
 import {generateSignedUrl, readFilesInBucket, uploadFileToBucket} from "./storage";
 
 process.env.GOOGLE_APPLICATION_CREDENTIALS = "./key.json";
@@ -19,27 +19,15 @@ async function createStartupScript(path: string, dockerImageUrl: string) {
 }
 
 
-
-
-async function findRegions(gpuName: string, gpuNum: number){
+async function run() {
 	const api = await createComputeAPI();
-
-	const allRegions = await getAllRegions(api);
-	const quotaPermissibleRegions = [];
-
-	await allRegions.forEach( async (region) => {
-		if (region.name){
-			const quotaPermits = await checkIfQuotaPermitsGPUs(region, gpuNum, gpuName);
-			if(quotaPermits){
-				quotaPermissibleRegions.push(region)
-			}
-		}
-	});
-
-	return quotaPermissibleRegions;
+	const zonesToDeploy = await getZonesToCreateVM(api, "nvidia-tesla-a100", 1)
+	
+	return zonesToDeploy;
 }
 
-findRegions("nvidia-tesla-t4", 4);
+const usableZones = run();
+console.log(usableZones);
 
 /*async function run() {
 	await uploadFileToBucket(bucketName, "./worker/docker_image.tar");

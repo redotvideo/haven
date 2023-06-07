@@ -229,14 +229,70 @@ const gpuTypeToQuota : { [key: string]: string } = {
  * @returns
  */
 export async function checkIfQuotaPermitsGPUs(
-	region: any,
+	region: compute_v1.Schema$Region,
 	gpuNum: number,
 	gpuName: string,
 ) {
 	
 	const quotaName = gpuTypeToQuota[gpuName];
-	const quota = region.quotas.find((q : any) => q.metric == quotaName);
-	const quotaPermits = (quota.limit - quota.usage) >= gpuNum
-	
+	const quota = region.quotas?.find((q : any) => q.metric == quotaName);
+	if (!quota || quota.limit == undefined || quota.usage == undefined) {
+		return
+	}
+
+
+	const quotaPermits = (quota.limit - quota.usage) >= gpuNum;
 	return quotaPermits;
+}
+
+
+/**
+ * Find all regions whose quotas allow specified GPU types and numbers
+ * @param api
+ * @param gpuNum
+ * @param gpuName
+ * @returns
+ */
+export async function findRegionsWithPermissiveGPUQuotas(api: compute_v1.Compute, gpuName: string, gpuNum: number){
+	const allRegions = await getAllRegions(api);
+
+	const res = await Promise.all(allRegions.map( async (region) => {
+		if (!region.name){
+			return 
+		}
+
+		return await checkIfQuotaPermitsGPUs(region, gpuNum, gpuName) ? region : undefined;
+	}));
+
+	const filtered = res.filter((value) => value !== undefined);
+	return filtered;
+}
+
+
+
+export async function getZonesToCreateVM(api: compute_v1.Compute, gpuName: string, gpuNum: number){
+	const permissibleRegions = await findRegionsWithPermissiveGPUQuotas(api, gpuName, gpuNum);
+	const permissibleZones = permissibleRegions.flatMap(region => region?.zones);
+
+	const res = await Promise.all(permissibleZones.map( async (zone) => {
+
+		if(!zone){
+			return
+		}
+
+		const zoneName = zone.split("/").at(-1);
+		if(zoneName){
+			const accelerators = await getAcceleratorsByZone(api, zoneName);
+
+			return accelerators.map(acc => acc.name).includes(gpuName) ? zone : undefined;
+		}else{
+			throw new Error("Google Cloud API returned unexpected string for zone");
+
+		}
+	}));
+
+	const usableZones = res.filter((zoneUrl): zoneUrl is string => zoneUrl !== undefined)
+	const usableZoneNames = usableZones.map(zoneUrl => zoneUrl.split("/").at(-1));
+
+	return usableZoneNames;
 }
