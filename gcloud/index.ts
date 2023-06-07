@@ -1,9 +1,13 @@
+import { all } from "axios";
 import * as fs from "fs";
 
-import {createComputeAPI, createFromTemplate, remove} from "./resources";
+import {createComputeAPI, createFromTemplate, remove, getAllZones, getAcceleratorsByZone, getAllRegions, checkIfQuotaPermitsGPUs} from "./resources";
 import {generateSignedUrl, readFilesInBucket, uploadFileToBucket} from "./storage";
 
+process.env.GOOGLE_APPLICATION_CREDENTIALS = "./key.json";
+
 const bucketName = "konsti-test-bucket";
+
 
 async function createStartupScript(path: string, dockerImageUrl: string) {
 	const file = await fs.promises.readFile(path);
@@ -13,6 +17,29 @@ async function createStartupScript(path: string, dockerImageUrl: string) {
 
 	return startupScript;
 }
+
+
+
+
+async function findRegions(gpuName: string, gpuNum: number){
+	const api = await createComputeAPI();
+
+	const allRegions = await getAllRegions(api);
+	const quotaPermissibleRegions = [];
+
+	await allRegions.forEach( async (region) => {
+		if (region.name){
+			const quotaPermits = await checkIfQuotaPermitsGPUs(region, gpuNum, gpuName);
+			if(quotaPermits){
+				quotaPermissibleRegions.push(region)
+			}
+		}
+	});
+
+	return quotaPermissibleRegions;
+}
+
+findRegions("nvidia-tesla-t4", 4);
 
 /*async function run() {
 	await uploadFileToBucket(bucketName, "./worker/docker_image.tar");

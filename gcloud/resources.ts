@@ -1,7 +1,7 @@
 import * as fs from "fs";
-import {compute_v1, google} from "googleapis";
+import { compute_v1, google } from "googleapis";
 
-import {config} from "../lib/config";
+import { config } from "../lib/config";
 
 const projectId = config.gcloud.projectId;
 const zone = config.gcloud.zone;
@@ -149,4 +149,94 @@ export async function createFromTemplate(
 	};
 
 	await api.instances.insert(request);
+}
+
+
+/**
+ * Gets all zones
+ * @param api
+ * @returns
+ */
+export async function getAllZones(
+	api: compute_v1.Compute,
+) {
+
+	const request = {
+		project: projectId,
+	};
+
+	const res = await api.zones.list(request);
+	const zones = res.data.items || [];
+	
+	return zones.filter((zone) => zone);
+}
+
+
+/**
+ * Gets all regions
+ * @param api
+ * @returns
+ */
+export async function getAllRegions(
+	api: compute_v1.Compute,
+) {
+
+	const request = {
+		project: projectId,
+	};
+
+	const res = await api.regions.list(request);
+	const regions = res.data.items || [];
+	
+	return regions.filter((region) => region);
+}
+
+
+/**
+ * Gets available accelerators in specified zone
+ * @param api
+ * @param configFilePath
+ * @returns
+ */
+export async function getAcceleratorsByZone(
+	api: compute_v1.Compute,
+	zone: string,
+) {
+
+	const request = {
+		project: projectId,
+		zone: zone,
+	};
+
+	const res = await api.acceleratorTypes.list(request);
+	const accelerators = res.data.items || [];
+
+	return accelerators.filter((acc) => acc);
+}
+
+
+const gpuTypeToQuota : { [key: string]: string } = {
+	"nvidia-tesla-a100": "NVIDIA_A100_GPUS",
+	"nvidia-a100-80gb": "NVIDIA_A100_80GB_GPUS",
+	"nvidia-tesla-t4": "NVIDIA_T4_GPUS"
+};
+
+/**
+ * Check if region's quota permits usage of specified number of GPU types
+ * @param region
+ * @param gpuNum
+ * @param gpuName
+ * @returns
+ */
+export async function checkIfQuotaPermitsGPUs(
+	region: any,
+	gpuNum: number,
+	gpuName: string,
+) {
+	
+	const quotaName = gpuTypeToQuota[gpuName];
+	const quota = region.quotas.find((q : any) => q.metric == quotaName);
+	const quotaPermits = (quota.limit - quota.usage) >= gpuNum
+	
+	return quotaPermits;
 }
