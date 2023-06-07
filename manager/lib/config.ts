@@ -1,6 +1,7 @@
 const config = {
 	server: {
 		port: 3000,
+		runFileServer: true,
 	},
 	gcloud: {
 		projectId: "boreal-charter-379616",

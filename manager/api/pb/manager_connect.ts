@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Empty, GenerateRequest, GenerateResponse, ListModelsResponse, ModelName, StatusResponse } from "./manager_pb.js";
+import { Empty, GenerateRequest, GenerateResponse, ListModelsResponse, ModelName, SetupRequest } from "./manager_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -12,6 +12,17 @@ import { MethodKind } from "@bufbuild/protobuf";
 export const Haven = {
   typeName: "haven.Haven",
   methods: {
+    /**
+     * Setup (first time starting the manager)
+     *
+     * @generated from rpc haven.Haven.Setup
+     */
+    setup: {
+      name: "Setup",
+      I: SetupRequest,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
     /**
      * Generate text from a prompt.
      *
@@ -42,7 +53,7 @@ export const Haven = {
     createWorker: {
       name: "CreateWorker",
       I: ModelName,
-      O: StatusResponse,
+      O: Empty,
       kind: MethodKind.Unary,
     },
     /**
@@ -51,7 +62,7 @@ export const Haven = {
     pauseWorker: {
       name: "PauseWorker",
       I: ModelName,
-      O: StatusResponse,
+      O: Empty,
       kind: MethodKind.Unary,
     },
     /**
@@ -60,7 +71,7 @@ export const Haven = {
     resumeWorker: {
       name: "ResumeWorker",
       I: ModelName,
-      O: StatusResponse,
+      O: Empty,
       kind: MethodKind.Unary,
     },
     /**
@@ -69,7 +80,7 @@ export const Haven = {
     deleteWorker: {
       name: "DeleteWorker",
       I: ModelName,
-      O: StatusResponse,
+      O: Empty,
       kind: MethodKind.Unary,
     },
   }

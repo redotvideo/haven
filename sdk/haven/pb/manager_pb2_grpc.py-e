@@ -14,6 +14,11 @@ class HavenStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.Setup = channel.unary_unary(
+                '/haven.Haven/Setup',
+                request_serializer=manager__pb2.SetupRequest.SerializeToString,
+                response_deserializer=manager__pb2.Empty.FromString,
+                )
         self.Generate = channel.unary_stream(
                 '/haven.Haven/Generate',
                 request_serializer=manager__pb2.GenerateRequest.SerializeToString,
@@ -27,27 +32,34 @@ class HavenStub(object):
         self.CreateWorker = channel.unary_unary(
                 '/haven.Haven/CreateWorker',
                 request_serializer=manager__pb2.ModelName.SerializeToString,
-                response_deserializer=manager__pb2.StatusResponse.FromString,
+                response_deserializer=manager__pb2.Empty.FromString,
                 )
         self.PauseWorker = channel.unary_unary(
                 '/haven.Haven/PauseWorker',
                 request_serializer=manager__pb2.ModelName.SerializeToString,
-                response_deserializer=manager__pb2.StatusResponse.FromString,
+                response_deserializer=manager__pb2.Empty.FromString,
                 )
         self.ResumeWorker = channel.unary_unary(
                 '/haven.Haven/ResumeWorker',
                 request_serializer=manager__pb2.ModelName.SerializeToString,
-                response_deserializer=manager__pb2.StatusResponse.FromString,
+                response_deserializer=manager__pb2.Empty.FromString,
                 )
         self.DeleteWorker = channel.unary_unary(
                 '/haven.Haven/DeleteWorker',
                 request_serializer=manager__pb2.ModelName.SerializeToString,
-                response_deserializer=manager__pb2.StatusResponse.FromString,
+                response_deserializer=manager__pb2.Empty.FromString,
                 )
 
 
 class HavenServicer(object):
     """Missing associated documentation comment in .proto file."""
+
+    def Setup(self, request, context):
+        """Setup (first time starting the manager)
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def Generate(self, request, context):
         """Generate text from a prompt.
@@ -91,6 +103,11 @@ class HavenServicer(object):
 
 def add_HavenServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'Setup': grpc.unary_unary_rpc_method_handler(
+                    servicer.Setup,
+                    request_deserializer=manager__pb2.SetupRequest.FromString,
+                    response_serializer=manager__pb2.Empty.SerializeToString,
+            ),
             'Generate': grpc.unary_stream_rpc_method_handler(
                     servicer.Generate,
                     request_deserializer=manager__pb2.GenerateRequest.FromString,
@@ -104,22 +121,22 @@ def add_HavenServicer_to_server(servicer, server):
             'CreateWorker': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateWorker,
                     request_deserializer=manager__pb2.ModelName.FromString,
-                    response_serializer=manager__pb2.StatusResponse.SerializeToString,
+                    response_serializer=manager__pb2.Empty.SerializeToString,
             ),
             'PauseWorker': grpc.unary_unary_rpc_method_handler(
                     servicer.PauseWorker,
                     request_deserializer=manager__pb2.ModelName.FromString,
-                    response_serializer=manager__pb2.StatusResponse.SerializeToString,
+                    response_serializer=manager__pb2.Empty.SerializeToString,
             ),
             'ResumeWorker': grpc.unary_unary_rpc_method_handler(
                     servicer.ResumeWorker,
                     request_deserializer=manager__pb2.ModelName.FromString,
-                    response_serializer=manager__pb2.StatusResponse.SerializeToString,
+                    response_serializer=manager__pb2.Empty.SerializeToString,
             ),
             'DeleteWorker': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteWorker,
                     request_deserializer=manager__pb2.ModelName.FromString,
-                    response_serializer=manager__pb2.StatusResponse.SerializeToString,
+                    response_serializer=manager__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -130,6 +147,23 @@ def add_HavenServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class Haven(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def Setup(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/haven.Haven/Setup',
+            manager__pb2.SetupRequest.SerializeToString,
+            manager__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def Generate(request,
@@ -178,7 +212,7 @@ class Haven(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/haven.Haven/CreateWorker',
             manager__pb2.ModelName.SerializeToString,
-            manager__pb2.StatusResponse.FromString,
+            manager__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -195,7 +229,7 @@ class Haven(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/haven.Haven/PauseWorker',
             manager__pb2.ModelName.SerializeToString,
-            manager__pb2.StatusResponse.FromString,
+            manager__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -212,7 +246,7 @@ class Haven(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/haven.Haven/ResumeWorker',
             manager__pb2.ModelName.SerializeToString,
-            manager__pb2.StatusResponse.FromString,
+            manager__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -229,6 +263,6 @@ class Haven(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/haven.Haven/DeleteWorker',
             manager__pb2.ModelName.SerializeToString,
-            manager__pb2.StatusResponse.FromString,
+            manager__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -1,17 +1,9 @@
 import * as fs from "fs";
 
-import {ConnectRouter, HandlerContext} from "@bufbuild/connect";
+import {ConnectError, Code, ConnectRouter, HandlerContext} from "@bufbuild/connect";
 
 import {Haven} from "./pb/manager_connect";
-import {
-	Empty,
-	GenerateRequest,
-	GenerateResponse,
-	ListModelsResponse,
-	ModelName,
-	RequestStatus,
-	StatusResponse,
-} from "./pb/manager_pb";
+import {Empty, GenerateRequest, GenerateResponse, ListModelsResponse, ModelName} from "./pb/manager_pb";
 
 import {config} from "../lib/config";
 import {createComputeAPI, createFromTemplate, list, pause, remove, start} from "../gcloud/resources";
@@ -107,8 +99,6 @@ async function createWorker(req: ModelName) {
 	const startupScript = await createStartupScript(WORKER_STARTUP_SCRIPT, workerImageUrl, configFileUrl);
 	const configFile = await fs.promises.readFile(WORKER_CONFIGURATION, {encoding: "utf-8"});
 	await createFromTemplate(api, ZONE, configFile, startupScript, encodeName(model));
-
-	return new StatusResponse({status: RequestStatus.OK});
 }
 
 async function pauseWorker(req: ModelName) {
@@ -120,10 +110,7 @@ async function pauseWorker(req: ModelName) {
 	const worker = workers.find((worker) => worker.name === encodeName(model));
 
 	if (!worker || !worker.name) {
-		return new StatusResponse({
-			status: RequestStatus.BAD_REQUEST,
-			message: `Worker ${model} does not exist`,
-		});
+		throw new ConnectError(`Worker ${model} does not exist`, Code.NotFound);
 	}
 
 	if (getWorkerIP(worker)) {
@@ -131,7 +118,6 @@ async function pauseWorker(req: ModelName) {
 	}
 
 	await pause(api, ZONE, worker.name);
-	return new StatusResponse({status: RequestStatus.OK});
 }
 
 async function resumeWorker(req: ModelName, context: HandlerContext) {
@@ -143,21 +129,14 @@ async function resumeWorker(req: ModelName, context: HandlerContext) {
 	const worker = workers.find((worker) => worker.name === encodeName(model));
 
 	if (!worker || !worker.name) {
-		return new StatusResponse({
-			status: RequestStatus.BAD_REQUEST,
-			message: `Worker ${model} does not exist`,
-		});
+		throw new ConnectError(`Worker ${model} does not exist`, Code.NotFound);
 	}
 
 	if (worker.status !== "TERMINATED") {
-		return new StatusResponse({
-			status: RequestStatus.BAD_REQUEST,
-			message: `Worker ${model} is not paused`,
-		});
+		throw new ConnectError(`Worker ${model} is not paused`, Code.FailedPrecondition);
 	}
 
 	await start(api, ZONE, worker.name);
-	return new StatusResponse({status: RequestStatus.OK});
 }
 
 async function deleteWorker(req: ModelName) {
@@ -169,10 +148,7 @@ async function deleteWorker(req: ModelName) {
 	const worker = workers.find((worker) => worker.name === encodeName(model));
 
 	if (!worker || !worker.name) {
-		return new StatusResponse({
-			status: RequestStatus.BAD_REQUEST,
-			message: `Worker ${model} does not exist`,
-		});
+		throw new ConnectError(`Worker ${model} does not exist`, Code.NotFound);
 	}
 
 	if (getWorkerIP(worker)) {
@@ -180,7 +156,6 @@ async function deleteWorker(req: ModelName) {
 	}
 
 	await remove(api, ZONE, worker.name);
-	return new StatusResponse({status: RequestStatus.OK});
 }
 
 export const haven = (router: ConnectRouter) =>

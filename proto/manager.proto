@@ -4,18 +4,10 @@ package haven;
 
 message Empty {}
 
-enum RequestStatus {
-	OK = 0;
-	BAD_REQUEST = 1;
-	INTERNAL_ERROR = 2;
-}
-
-message StatusResponse {
-	RequestStatus status = 1;
-	string message = 2;
-}
-
 service Haven {
+	// Setup (first time starting the manager)
+	rpc Setup(SetupRequest) returns (Empty) {}
+
 	// Generate text from a prompt.
 	rpc Generate(GenerateRequest) returns (stream GenerateResponse) {}
 
@@ -23,10 +15,14 @@ service Haven {
 	rpc ListModels(Empty) returns (ListModelsResponse) {}
 
 	// Worker management.
-	rpc CreateWorker(ModelName) returns (StatusResponse) {}
-	rpc PauseWorker(ModelName) returns (StatusResponse) {}
-	rpc ResumeWorker(ModelName) returns (StatusResponse) {}
-	rpc DeleteWorker(ModelName) returns (StatusResponse) {}
+	rpc CreateWorker(ModelName) returns (Empty) {}
+	rpc PauseWorker(ModelName) returns (Empty) {}
+	rpc ResumeWorker(ModelName) returns (Empty) {}
+	rpc DeleteWorker(ModelName) returns (Empty) {}
+}
+
+message SetupRequest {
+	string key_file = 1;
 }
 
 message GenerateRequest {
