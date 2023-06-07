@@ -1,17 +1,19 @@
 import grpc
 
+from .interceptor import add_header
 from .pb import manager_pb2_grpc, manager_pb2
 
 class Haven:
-
 	client: manager_pb2_grpc.HavenStub
 
-	def __init__(self, url: str):
+	def __init__(self, url: str, token: str):
 		channel = grpc.insecure_channel(url)
+		interceptor = add_header('authorization', f'Bearer {token}')
+		channel = grpc.intercept_channel(channel, interceptor)
 		self.client = manager_pb2_grpc.HavenStub(channel)
 
-	def generate(self, model_name: str, prompt: str) -> manager_pb2.GenerateResponse:
-		request = manager_pb2.GenerateRequest(model_name=model_name, prompt=prompt)
+	def generate(self, model: str, prompt: str) -> manager_pb2.GenerateResponse:
+		request = manager_pb2.GenerateRequest(model=model, prompt=prompt)
 		return self.client.Generate(request)
 	
 	def list_models(self) -> manager_pb2.ListModelsResponse:
