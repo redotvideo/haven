@@ -36,7 +36,10 @@ async function createApiServer(server: any, port: number) {
 /**
  * Creates and starts the fastify server hosting the GRCP API.
  *
- * One server is created for HTTP/2 and one for HTTP/1.1 (web grpc)
+ * Servers are created for:
+ * - HTTP/2: grpc
+ * - HTTP/1.1: grpc-web
+ * - HTTP/1.1: static files (optional, for serving the UI)
  */
 export async function runServer() {
 	const http1 = await createApiServer(fastify(), 50052);

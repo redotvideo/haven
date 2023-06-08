@@ -16,8 +16,8 @@ export async function setup() {
 		.catch(() => false);
 
 	if (!doesKeyExist) {
-		// TODO(konsti): upload through API endpoint
-		throw new Error("Please provide your google cloud key inside the key.json file.");
+		console.log("Google cloud key file not found. Pausing setup and waiting for file to get uploaded.");
+		return;
 	} else {
 		console.log("Google cloud key file found.");
 	}
@@ -37,4 +37,5 @@ export async function setup() {
 	}
 
 	console.log("Setup done.");
+	config.setupDone = true;
 }
