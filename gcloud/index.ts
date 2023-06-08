@@ -1,7 +1,9 @@
 import { all } from "axios";
 import * as fs from "fs";
 
-import {createComputeAPI, createFromTemplate, remove, getAllZones, getAcceleratorsByZone, getAllRegions, checkIfQuotaPermitsGPUs, findRegionsWithPermissiveGPUQuotas, getZonesToCreateVM} from "./resources";
+import { config } from "../lib/config";
+
+import {createComputeAPI, createFromTemplate, remove, getAllZones, getAcceleratorsByZone, getAllRegions, checkIfQuotaPermitsGPUs, findRegionsWithPermissiveGPUQuotas, getZonesToCreateVM, createInstanceTemplate} from "./resources";
 import {generateSignedUrl, readFilesInBucket, uploadFileToBucket} from "./storage";
 
 process.env.GOOGLE_APPLICATION_CREDENTIALS = "./key.json";
@@ -21,14 +23,21 @@ async function createStartupScript(path: string, dockerImageUrl: string) {
 
 async function run() {
 	const api = await createComputeAPI();
-	const zonesToDeploy = await getZonesToCreateVM(api, "nvidia-tesla-a100", 1)
+	const zonesToDeploy = await getZonesToCreateVM(api, "nvidia-tesla-t4", 1);
+	const zone = zonesToDeploy[0];
+
+	if(zone){
+		const template = await createInstanceTemplate(config.worker.configFile, "test-instance-from-template", "nvidia-tesla-t4", 4, zone, 300, "n1-standard-4");
+		console.log(template);
+		// createFromTemplate();
+
+	}
+	else{
+		throw Error("you do not have the gcloud rights to create this instance");
+	};
 	
-	return zonesToDeploy;
 }
-
-const usableZones = run();
-console.log(usableZones);
-
+run();
 /*async function run() {
 	await uploadFileToBucket(bucketName, "./worker/docker_image.tar");
 	console.log("uploaded");

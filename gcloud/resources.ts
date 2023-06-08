@@ -4,7 +4,8 @@ import { compute_v1, google } from "googleapis";
 import { config } from "../lib/config";
 
 const projectId = config.gcloud.projectId;
-const zone = config.gcloud.zone;
+const serviceAccount = config.gcloud.serviceAccount;
+
 
 export function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -127,11 +128,9 @@ export async function createFromTemplate(
 	zone: string,
 	configFile: string,
 	startupScript: string,
-	name: string,
+	name: string
 ) {
 	const config = JSON.parse(configFile);
-
-	config["name"] = name;
 
 	config["metadata"] = {
 		items: [
@@ -269,7 +268,13 @@ export async function findRegionsWithPermissiveGPUQuotas(api: compute_v1.Compute
 }
 
 
-
+/**
+ * Find all zones in which we can create a VM
+ * @param api
+ * @param gpuName
+ * @param gpuNum
+ * @returns
+ */
 export async function getZonesToCreateVM(api: compute_v1.Compute, gpuName: string, gpuNum: number){
 	const permissibleRegions = await findRegionsWithPermissiveGPUQuotas(api, gpuName, gpuNum);
 	const permissibleZones = permissibleRegions.flatMap(region => region?.zones);
@@ -295,4 +300,39 @@ export async function getZonesToCreateVM(api: compute_v1.Compute, gpuName: strin
 	const usableZoneNames = usableZones.map(zoneUrl => zoneUrl.split("/").at(-1));
 
 	return usableZoneNames;
+}
+
+
+/**
+ * Find all zones in which we can create a VM
+ * @param skeletonFile
+ * @param instanceName
+ * @param gpuName
+ * @param gpuNum
+ * @param zone
+ * @param diskSizeGb
+ * @param cpuMachineType
+ * @returns
+ */
+export async function createInstanceTemplate(
+	skeletonFilePath: string,
+	instanceName: string,
+	gpuName: string,
+	gpuNum: number,
+	zone: string,
+	diskSizeGb: number,
+	cpuMachineType: string
+){
+	const file = await fs.promises.readFile(skeletonFilePath);
+	let templateString = file.toString();
+	templateString = templateString.replace("{instanceName}", instanceName);
+	templateString = templateString.replace("{gpuName}", gpuName);
+	templateString = templateString.replace("{gpuNum}", String(gpuNum));
+	templateString = templateString.replace("{zone}", zone);
+	templateString = templateString.replace("{diskSizeGb}", String(diskSizeGb));
+	templateString = templateString.replace("{cpuMachineType}", cpuMachineType)
+	templateString = templateString.replace("{projectId}", projectId);
+
+	return templateString;
+
 }
