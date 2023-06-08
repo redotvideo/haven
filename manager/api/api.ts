@@ -3,7 +3,7 @@ import * as fs from "fs";
 import {ConnectError, Code, ConnectRouter, HandlerContext} from "@bufbuild/connect";
 
 import {Haven} from "./pb/manager_connect";
-import {Empty, GenerateRequest, GenerateResponse, ListModelsResponse, ModelName} from "./pb/manager_pb";
+import {Empty, GenerateRequest, GenerateResponse, ListModelsResponse, ModelName, SetupRequest} from "./pb/manager_pb";
 
 import {config} from "../lib/config";
 import {createComputeAPI, createFromTemplate, list, pause, remove, start} from "../gcloud/resources";
@@ -11,7 +11,8 @@ import {createStartupScript, encodeName, getWorkerIP, mapStatus} from "../lib/mi
 import {getStatus, getTransport} from "../lib/client";
 import {generateSignedUrl, readFilesInBucket} from "../gcloud/storage";
 import {Status} from "../lib/client/pb/worker_pb";
-import {secure} from "./middleware";
+import {enforceSetup, secure} from "./middleware";
+import {setup} from "../lib/setup";
 
 const DOCKER_IMAGE = config.worker.dockerImage;
 const ZONE = config.gcloud.zone;
@@ -19,6 +20,37 @@ const BUCKET = config.gcloud.bucket;
 
 const WORKER_CONFIGURATION = config.worker.configFile;
 const WORKER_STARTUP_SCRIPT = config.worker.startupScript;
+
+/**
+ * Set up the manager by providing the Google Cloud key.
+ */
+async function setupHandler(req: SetupRequest) {
+	if (config.setupDone) {
+		return;
+	}
+
+	const file = req.keyFile;
+
+	// If file is empty and setup is not done, throw connecterror
+	if (file === undefined) {
+		throw new ConnectError("Setup not complete.", Code.FailedPrecondition);
+	}
+
+	const isValidJson = await Promise.resolve()
+		.then(() => JSON.parse(file))
+		.then(() => true)
+		.catch(() => false);
+
+	if (!isValidJson) {
+		throw new ConnectError("Invalid key file", Code.InvalidArgument);
+	}
+
+	await fs.promises.writeFile("./key.json", file);
+
+	await setup().catch((err) => {
+		throw new ConnectError(err.message, Code.Internal);
+	});
+}
 
 /**
  * Generate text from a prompt.
@@ -160,11 +192,13 @@ async function deleteWorker(req: ModelName) {
 
 export const haven = (router: ConnectRouter) =>
 	router.service(Haven, {
-		generate: secure(generate),
-		listModels: secure(listModels),
+		setup: secure(setupHandler),
 
-		createWorker: secure(createWorker),
-		pauseWorker: secure(pauseWorker),
-		resumeWorker: secure(resumeWorker),
-		deleteWorker: secure(deleteWorker),
+		generate: secure(enforceSetup(generate)),
+		listModels: secure(enforceSetup(listModels)),
+
+		createWorker: secure(enforceSetup(createWorker)),
+		pauseWorker: secure(enforceSetup(pauseWorker)),
+		resumeWorker: secure(enforceSetup(resumeWorker)),
+		deleteWorker: secure(enforceSetup(deleteWorker)),
 	});

@@ -1,8 +1,8 @@
 // Route http://localhost:3000/v1/models
 
-import { Client } from "../../lib/client";
-import { Status } from "../../lib/client/pb/manager_pb";
-import { navigate } from "../../navigation";
+import {Client} from "../../lib/client";
+import {Status} from "../../lib/client/pb/manager_pb";
+import {navigate} from "../../lib/navigation";
 
 const BASE = "http://localhost:3000";
 
@@ -37,6 +37,6 @@ export const newStatus = {
 	[Action.RETRY]: Status.STARTING,
 };
 
-function chat({ name }: { name: string }) {
+function chat({name}: {name: string}) {
 	navigate(`/models/${name}/chat`);
 }

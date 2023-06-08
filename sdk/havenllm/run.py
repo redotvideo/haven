@@ -12,6 +12,10 @@ class Haven:
 		channel = grpc.intercept_channel(channel, interceptor)
 		self.client = manager_pb2_grpc.HavenStub(channel)
 
+	def setup(self, key_file: str) -> manager_pb2.Empty:
+		request = manager_pb2.SetupRequest(key_file=key_file)
+		return self.client.Setup(request)
+
 	def generate(self, model: str, prompt: str) -> manager_pb2.GenerateResponse:
 		request = manager_pb2.GenerateRequest(model=model, prompt=prompt)
 		return self.client.Generate(request)
@@ -20,18 +24,18 @@ class Haven:
 		request = manager_pb2.Empty()
 		return self.client.ListModels(request)
 	
-	def create_worker(self, model_name: str) -> manager_pb2.StatusResponse:
+	def create_worker(self, model_name: str) -> manager_pb2.Empty:
 		request = manager_pb2.ModelName(model_name=model_name)
 		return self.client.CreateWorker(request)
 	
-	def pause_worker(self, model_name: str) -> manager_pb2.StatusResponse:
+	def pause_worker(self, model_name: str) -> manager_pb2.Empty:
 		request = manager_pb2.ModelName(model_name=model_name)
 		return self.client.PauseWorker(request)
 	
-	def resume_worker(self, model_name: str) -> manager_pb2.StatusResponse:
+	def resume_worker(self, model_name: str) -> manager_pb2.Empty:
 		request = manager_pb2.ModelName(model_name=model_name)
 		return self.client.ResumeWorker(request)
 	
-	def delete_worker(self, model_name: str) -> manager_pb2.StatusResponse:
+	def delete_worker(self, model_name: str) -> manager_pb2.Empty:
 		request = manager_pb2.ModelName(model_name=model_name)
 		return self.client.DeleteWorker(request)

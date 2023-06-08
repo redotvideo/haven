@@ -1,4 +1,5 @@
 const config = {
+	setupDone: false, // Tells us if the manager is in a working state
 	server: {
 		port: 3000,
 		runFileServer: true,

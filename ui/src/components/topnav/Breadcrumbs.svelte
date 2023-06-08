@@ -3,7 +3,7 @@
 -->
 
 <script lang="ts">
-	import { navigate } from "../../navigation";
+	import {navigate} from "../../lib/navigation";
 
 	export let url: string;
 
@@ -18,7 +18,7 @@
 				link: (currentPath += "/" + x),
 			}));
 
-		path.map((x) => breadcrumb.push({ name: x.name, link: x.link }));
+		path.map((x) => breadcrumb.push({name: x.name, link: x.link}));
 		return breadcrumb;
 	}
 
@@ -31,9 +31,7 @@
 	<ol class="inline-flex items-center space-x-1">
 		{#each transform(url) as { name, link }, i}
 			<li class="inline-flex items-center">
-				<button
-					on:click={() => navigate(link)}
-					class="inline-flex items-center text-sm font-medium">
+				<button on:click={() => navigate(link)} class="inline-flex items-center text-sm font-medium">
 					{#if i === 0}
 						<!-- "Home" -->
 						<svg
@@ -43,7 +41,9 @@
 							viewBox="0 0 20 20"
 							xmlns="http://www.w3.org/2000/svg"
 							><path
-								d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
+								d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+							/></svg
+						>
 					{/if}
 					{#if i > 0 && i < countLevels(url)}
 						<!-- ">" -->
@@ -56,7 +56,9 @@
 							><path
 								fill-rule="evenodd"
 								d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-								clip-rule="evenodd" /></svg>
+								clip-rule="evenodd"
+							/></svg
+						>
 					{/if}
 					{name}
 				</button>

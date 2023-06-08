@@ -90,9 +90,9 @@ export class Empty extends Message<Empty> {
  */
 export class SetupRequest extends Message<SetupRequest> {
   /**
-   * @generated from field: string key_file = 1;
+   * @generated from field: optional string key_file = 1;
    */
-  keyFile = "";
+  keyFile?: string;
 
   constructor(data?: PartialMessage<SetupRequest>) {
     super();
@@ -102,7 +102,7 @@ export class SetupRequest extends Message<SetupRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "haven.SetupRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "key_file", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "key_file", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SetupRequest {
