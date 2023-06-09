@@ -60,15 +60,21 @@ class SetupRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     KEY_FILE_FIELD_NUMBER: builtins.int
+    SERVER_ADDRESS_FIELD_NUMBER: builtins.int
     key_file: builtins.str
+    server_address: builtins.str
     def __init__(
         self,
         *,
         key_file: builtins.str | None = ...,
+        server_address: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_key_file", b"_key_file", "key_file", b"key_file"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_key_file", b"_key_file", "key_file", b"key_file"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_key_file", b"_key_file", "_server_address", b"_server_address", "key_file", b"key_file", "server_address", b"server_address"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_key_file", b"_key_file", "_server_address", b"_server_address", "key_file", b"key_file", "server_address", b"server_address"]) -> None: ...
+    @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_key_file", b"_key_file"]) -> typing_extensions.Literal["key_file"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_server_address", b"_server_address"]) -> typing_extensions.Literal["server_address"] | None: ...
 
 global___SetupRequest = SetupRequest
 
