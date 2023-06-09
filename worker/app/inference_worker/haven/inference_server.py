@@ -3,6 +3,8 @@ from transformers import StoppingCriteria, StoppingCriteriaList, TextIteratorStr
 import torch
 import json
 from threading import Thread
+from typing import List
+
 
 class StopOnTokens(StoppingCriteria):
     def __init__(self, tokenizer, stop_token_list):
@@ -14,6 +16,8 @@ class StopOnTokens(StoppingCriteria):
             if input_ids[0][-1] == stop_id:
                 return True
         return False
+
+
 
 class InferenceClient:
     def __init__(self, config, setup_type="T4_8bit"):
@@ -35,13 +39,13 @@ class InferenceClient:
             torch_dtype=getattr(torch, self.model_config["dtype"]),
             config=self.generative_llm_config,
             **self.inference_config["initialization_args"]
-            #**self.inference_config["initialization_args"]
         )
 
-        #self.generative_llm.config.update({"max_seq_len": self.model_config["context_size"]})
-        
+
         if "device_map" not in self.inference_config["initialization_args"].keys():
             self.generative_llm = self.generative_llm.to('cuda')
+
+
 
     def generate(self, text_input, sample=True, top_p=0.8, top_k=100, temperature=0.8, max_length=300):
         adapted_text_input = self.model_config["instruction_prefix"] + text_input + self.model_config["output_prefix"]
@@ -52,6 +56,7 @@ class InferenceClient:
 
         return output_text
     
+
     def generate_stream(self, text_input, sample=True, top_p=0.8, top_k=100, temperature=0.8, max_length=300):
         adapted_text_input = self.model_config["instruction_prefix"] + text_input + self.model_config["output_prefix"]
         input_tokenized = self.generative_llm_tokenizer([adapted_text_input], return_tensors='pt').input_ids.to('cuda')
@@ -74,3 +79,11 @@ class InferenceClient:
         thread.start()
 
         return streamer
+    
+
+if __name__ == '__main__':
+    # TESTING
+    client = InferenceClient('config/mpt_chat_7b.json')
+    stream = client.generate_stream("Hey, how are you doing?")
+    for s in stream:
+        print(s)
