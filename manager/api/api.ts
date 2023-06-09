@@ -12,7 +12,7 @@ import {getStatus, getTransport} from "../lib/client";
 import {generateSignedUrl, readFilesInBucket} from "../gcloud/storage";
 import {Status} from "../lib/client/pb/worker_pb";
 import {enforceSetup, secure} from "./middleware";
-import {setup} from "../lib/setup";
+import {setup, setupUI} from "../lib/setup";
 
 const DOCKER_IMAGE = config.worker.dockerImage;
 const ZONE = config.gcloud.zone;
@@ -25,6 +25,13 @@ const WORKER_STARTUP_SCRIPT = config.worker.startupScript;
  * Set up the manager by providing the Google Cloud key.
  */
 async function setupHandler(req: SetupRequest) {
+	const address = req.serverAddress;
+	if (address) {
+		await setupUI(address).catch((err) => {
+			throw new ConnectError(err.message, Code.Internal);
+		});
+	}
+
 	if (config.setupDone) {
 		return;
 	}
@@ -41,6 +48,7 @@ async function setupHandler(req: SetupRequest) {
 		.then(() => true)
 		.catch(() => false);
 
+	// TODO(konsti): Check that the key actually works by making some test request
 	if (!isValidJson) {
 		throw new ConnectError("Invalid key file", Code.InvalidArgument);
 	}
