@@ -12,7 +12,7 @@ import {getStatus, getTransport} from "../lib/client";
 import {generateSignedUrl, readFilesInBucket} from "../gcloud/storage";
 import {Status} from "../lib/client/pb/worker_pb";
 import {enforceSetup, secure} from "./middleware";
-import {setup} from "../lib/setup";
+import {setup, setupUI} from "../lib/setup";
 
 const DOCKER_IMAGE = config.worker.dockerImage;
 const ZONE = config.gcloud.zone;
@@ -25,22 +25,38 @@ const WORKER_STARTUP_SCRIPT = config.worker.startupScript;
  * Set up the manager by providing the Google Cloud key.
  */
 async function setupHandler(req: SetupRequest) {
+	const address = req.serverAddress;
+	if (address) {
+		await setupUI(address).catch((err) => {
+			throw new ConnectError(err.message, Code.Internal);
+		});
+	}
+
 	if (config.setupDone) {
+		// Nothing left to do.
 		return;
 	}
 
 	const file = req.keyFile;
 
-	// If file is empty and setup is not done, throw connecterror
-	if (file === undefined) {
+	if (file === undefined && !address) {
+		// Endpoint is being called as "ping" to check if the setup is done
 		throw new ConnectError("Setup not complete.", Code.FailedPrecondition);
 	}
+
+	if (file === undefined) {
+		// This is fine, because we're just setting up the UI
+		return;
+	}
+
+	// Now we can assume that the key file is being uploaded
 
 	const isValidJson = await Promise.resolve()
 		.then(() => JSON.parse(file))
 		.then(() => true)
 		.catch(() => false);
 
+	// TODO(konsti): Check that the key actually works by making some test request
 	if (!isValidJson) {
 		throw new ConnectError("Invalid key file", Code.InvalidArgument);
 	}

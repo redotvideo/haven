@@ -10,10 +10,16 @@
 	import Redirect from "./components/redirect/Redirect.svelte";
 	import Setup from "./views/setup/Setup.svelte";
 	import {onMount} from "svelte";
+	import {isInitialized} from "./lib/client";
+	import {navigate} from "./lib/navigation";
 
 	export let url = "";
 
 	onMount(async () => {
+		if (!isInitialized) {
+			navigate("/setup");
+		}
+
 		// Checks if the manager is set up.
 		await checkSetup();
 	});
