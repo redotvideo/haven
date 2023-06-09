@@ -31,7 +31,10 @@ FROM node:16-alpine as final
 
 WORKDIR /app
 
-COPY --from=manager-builder /app .
+COPY --from=manager-builder /app/dist /app/dist
+COPY --from=manager-builder /app/package.json /app/package.json
+COPY --from=manager-builder /app/node_modules /app/node_modules
+
 COPY --from=ui-builder /app/dist ./ui
 
 CMD ["node", "dist/cmd/index.js"]
