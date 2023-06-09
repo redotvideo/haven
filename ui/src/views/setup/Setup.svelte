@@ -5,23 +5,19 @@
 	import Input from "../../components/form/Input.svelte";
 	import Header from "../../components/page/Header.svelte";
 	import Page from "../../components/page/Page.svelte";
-	import {authenticationInterceptor, getAddress, isInitialized} from "../../lib/client";
+	import {Client, authenticationInterceptor, getAddress, isInitialized} from "../../lib/client";
 	import {Haven} from "../../lib/client/pb/manager_connect";
 	import {createGrpcWebTransport} from "@bufbuild/connect-web";
+	import {onMount} from "svelte";
 
 	let currentPage = isInitialized ? 1 : 0;
 
 	let hostname: string = "";
 	let file: File | undefined = undefined;
 
-	async function onSetup() {
+	async function onHostnameSubmit() {
 		if (!hostname) {
-			alert("Please enter a backend address first.");
-			return;
-		}
-
-		if (!file) {
-			alert("Please upload a file first.");
+			alert("Please enter a hostname first.");
 			return;
 		}
 
@@ -32,9 +28,22 @@
 		});
 		const Client = createPromiseClient(Haven, transport);
 
+		await Client.setup({serverAddress: hostname})
+			.then(() => {
+				document.location.href = "/";
+			})
+			.catch((err) => alert("Something went wrong. " + err.message));
+	}
+
+	async function onFileUpload() {
+		if (!file) {
+			alert("Please upload a file first.");
+			return;
+		}
+
 		const text = await file.text();
 
-		await Client.setup({keyFile: text, serverAddress: hostname})
+		await Client.setup({keyFile: text})
 			.then(() => {
 				document.location.href = "/";
 			})
@@ -53,16 +62,11 @@
 		</div>
 		<Input bind:value={hostname} label="Server hostname" placeholder={`Likely: "${window.location.hostname}"`} />
 		<div class="w-full flex justify-end">
-			<Button
-				label="Next >"
-				action={() => {
-					currentPage = 1;
-				}}
-			/>
+			<Button label="Update Hostname >" action={onHostnameSubmit} />
 		</div>
 	{:else}
 		<div class="mb-8">
-			Now, please upload a <b>Google Cloud credentials file</b> with permissions to <b>create VMs</b>
+			Please upload a <b>Google Cloud credentials file</b> with permissions to <b>create VMs</b>
 			and to
 			<b>create and write to storage buckets</b>. You can read more about the setup process in our documentation.<br
 			/><br />
@@ -71,9 +75,8 @@
 
 		<FileUpload bind:file />
 		<div class="mb-8" />
-		<div class="w-full flex justify-between">
-			<Button label="< Back" action={() => (currentPage = 0)} />
-			<Button label="Finish setup >" action={onSetup} />
+		<div class="w-full flex justify-end">
+			<Button label="Finish setup >" action={onFileUpload} />
 		</div>
 	{/if}
 </Page>

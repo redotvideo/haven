@@ -33,15 +33,23 @@ async function setupHandler(req: SetupRequest) {
 	}
 
 	if (config.setupDone) {
+		// Nothing left to do.
 		return;
 	}
 
 	const file = req.keyFile;
 
-	// If file is empty and setup is not done, throw connecterror
-	if (file === undefined) {
+	if (file === undefined && !address) {
+		// Endpoint is being called as "ping" to check if the setup is done
 		throw new ConnectError("Setup not complete.", Code.FailedPrecondition);
 	}
+
+	if (file === undefined) {
+		// This is fine, because we're just setting up the UI
+		return;
+	}
+
+	// Now we can assume that the key file is being uploaded
 
 	const isValidJson = await Promise.resolve()
 		.then(() => JSON.parse(file))
