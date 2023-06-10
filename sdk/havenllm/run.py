@@ -16,9 +16,18 @@ class Haven:
 		request = manager_pb2.SetupRequest(key_file=key_file)
 		return self.client.Setup(request)
 
-	def generate(self, model: str, prompt: str) -> manager_pb2.GenerateResponse:
+	def generate(self, model: str, prompt: str, stream: bool = False) -> manager_pb2.GenerateResponse or str:
 		request = manager_pb2.GenerateRequest(model=model, prompt=prompt)
-		return self.client.Generate(request)
+		responseStream: manager_pb2.GenerateResponse = self.client.Generate(request)
+
+		if stream:
+			return responseStream
+		
+		res: str = ""
+		for response in responseStream:
+			res += response.text
+
+		return res
 	
 	def list_models(self) -> manager_pb2.ListModelsResponse:
 		request = manager_pb2.Empty()
