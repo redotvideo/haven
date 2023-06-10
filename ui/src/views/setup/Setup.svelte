@@ -18,8 +18,11 @@
 	let hostname: string = "";
 	let file: File | undefined = undefined;
 
-	onMount(() => {
-		if (isInitialized) {
+	onMount(async () => {
+		const keyUploaded = await Client.setup({})
+			.then(() => true)
+			.catch(() => false);
+		if (isInitialized && keyUploaded) {
 			navigate("/");
 		}
 	});

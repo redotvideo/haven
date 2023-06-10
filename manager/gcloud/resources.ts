@@ -3,7 +3,6 @@ import {compute_v1, google} from "googleapis";
 
 import {config} from "../lib/config";
 
-const projectId = config.gcloud.projectId;
 const zone = config.gcloud.zone;
 
 export function sleep(ms: number) {
@@ -30,7 +29,7 @@ export async function createComputeAPI() {
  */
 export async function list(api: compute_v1.Compute, zone: string) {
 	const res = await api.instances.list({
-		project: projectId,
+		project: config.gcloud.projectId,
 		zone: zone,
 	});
 
@@ -48,7 +47,7 @@ export async function list(api: compute_v1.Compute, zone: string) {
 export async function get(api: compute_v1.Compute, zone: string, vmName: string) {
 	return (
 		await api.instances.get({
-			project: projectId,
+			project: config.gcloud.projectId,
 			zone: zone,
 			instance: vmName,
 		})
@@ -63,7 +62,7 @@ export async function get(api: compute_v1.Compute, zone: string, vmName: string)
  */
 export async function pause(api: compute_v1.Compute, zone: string, vmName: string) {
 	const request = {
-		project: projectId,
+		project: config.gcloud.projectId,
 		zone: zone,
 		instance: vmName,
 	};
@@ -80,7 +79,7 @@ export async function pause(api: compute_v1.Compute, zone: string, vmName: strin
  */
 export async function start(api: compute_v1.Compute, zone: string, vmName: string) {
 	const request = {
-		project: projectId,
+		project: config.gcloud.projectId,
 		zone: zone,
 		instance: vmName,
 	};
@@ -107,7 +106,7 @@ export async function start(api: compute_v1.Compute, zone: string, vmName: strin
  */
 export async function remove(api: compute_v1.Compute, zone: string, vmName: string) {
 	const request = {
-		project: projectId,
+		project: config.gcloud.projectId,
 		zone: zone,
 		instance: vmName,
 	};
@@ -143,7 +142,7 @@ export async function createFromTemplate(
 	};
 
 	const request = {
-		project: projectId,
+		project: config.gcloud.projectId,
 		zone: zone,
 		resource: config,
 	};

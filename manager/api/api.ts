@@ -88,8 +88,7 @@ async function* generate(req: GenerateRequest) {
 	const stream = getTransport(ip).generateStream({prompt});
 
 	for await (const chunk of stream) {
-		// TODO(konsti): the end token should not be sent to the manager in the first place
-		yield new GenerateResponse({text: chunk.text.replace("<|im_end|>", "")});
+		yield new GenerateResponse({text: chunk.text});
 	}
 }
 

@@ -18,6 +18,7 @@
 	onMount(async () => {
 		if (!isInitialized) {
 			navigate("/setup");
+			return;
 		}
 
 		// Checks if the manager is set up.
