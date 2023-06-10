@@ -49,9 +49,12 @@ export async function setup() {
 	}
 
 	process.env.GOOGLE_APPLICATION_CREDENTIALS = "./key.json";
+	config.gcloud.projectId = JSON.parse(await fs.readFile("./key.json", "utf-8")).project_id;
+
+	console.log(`Project ID: ${config.gcloud.projectId}`);
 
 	// Check for worker docker image
-	const files = await readFilesInBucket("konsti-test-bucket", "worker/");
+	const files = await readFilesInBucket(config.gcloud.bucket, "worker/");
 	const dockerImage = files.find((file) => file.name === `worker/${WORKER_IMAGE}.tar`);
 	const exists = dockerImage !== undefined;
 

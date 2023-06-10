@@ -5,9 +5,9 @@ const config = {
 		runFileServer: true,
 	},
 	gcloud: {
-		projectId: "boreal-charter-379616",
+		projectId: "", // is set during setup
 		zone: "me-west1-b",
-		bucket: "konsti-test-bucket",
+		bucket: "konstis-test-bucket",
 	},
 	worker: {
 		dockerImage: "worker-massive",

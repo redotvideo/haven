@@ -4,12 +4,6 @@ import {Client} from "../../lib/client";
 import {Status} from "../../lib/client/pb/manager_pb";
 import {navigate} from "../../lib/navigation";
 
-const BASE = "http://localhost:3000";
-
-export async function getModels() {
-	return (await fetch(`${BASE}/v1/models`).then((res) => res.json())).models;
-}
-
 export enum Action {
 	CHAT,
 	DELETE,
