@@ -1,6 +1,9 @@
 import {Code, ConnectError, HandlerContext} from "@bufbuild/connect";
 import {config} from "../lib/config";
 
+/**
+ * This middleware is used for both authentication and catch-all error handling.
+ */
 export function secure<T, U>(func: (req: T, context: HandlerContext) => U) {
 	return (req: T, context: HandlerContext): U => {
 		// TODO(konsti): we're just hardcoding the token here for now
@@ -8,7 +11,12 @@ export function secure<T, U>(func: (req: T, context: HandlerContext) => U) {
 			throw new ConnectError("Unauthorized", Code.Unauthenticated);
 		}
 
-		return func(req, context);
+		try {
+			return func(req, context);
+		} catch (err) {
+			console.error(err);
+			throw new ConnectError(err.message, Code.Internal);
+		}
 	};
 }
 
