@@ -5,15 +5,24 @@
 	import Input from "../../components/form/Input.svelte";
 	import Header from "../../components/page/Header.svelte";
 	import Page from "../../components/page/Page.svelte";
+
 	import {Client, authenticationInterceptor, getAddress, isInitialized} from "../../lib/client";
 	import {Haven} from "../../lib/client/pb/manager_connect";
 	import {createGrpcWebTransport} from "@bufbuild/connect-web";
 	import {onMount} from "svelte";
 
+	import {navigate} from "../../lib/navigation";
+
 	let currentPage = isInitialized ? 1 : 0;
 
 	let hostname: string = "";
 	let file: File | undefined = undefined;
+
+	onMount(() => {
+		if (isInitialized) {
+			navigate("/");
+		}
+	});
 
 	async function onHostnameSubmit() {
 		if (!hostname) {
