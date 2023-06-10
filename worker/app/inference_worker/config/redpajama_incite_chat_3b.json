@@ -1,0 +1,30 @@
+{
+    "model_config":{
+        "model_name": "togethercomputer/RedPajama-INCITE-Chat-3B-v1",
+        "tokenizer_name": "togethercomputer/RedPajama-INCITE-Chat-3B-v1",
+        "instruction_prefix": "<human>: ",
+        "output_prefix": "\n<bot>: ",
+        "stop_tokens": ["<human>"],
+        "context_size": 2048,
+        "dtype": "float16"
+    },
+
+
+    "lora_training_config":{
+     
+    },
+
+    "full_training_config":{
+
+    },
+
+
+    "inference_config":{
+        "16bit":{
+            "initialization_args":{
+            },
+            "instances": ["T4", "A10"]
+        }
+    }
+
+}
