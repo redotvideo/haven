@@ -2,6 +2,8 @@ import {createPromiseClient, type StreamRequest, type UnaryRequest} from "@bufbu
 import {Haven} from "./pb/manager_connect";
 import {createGrpcWebTransport} from "@bufbuild/connect-web";
 
+const development = process.env.NODE_ENV === "development";
+
 export const authenticationInterceptor = (next) => async (req: UnaryRequest | StreamRequest) => {
 	// TODO(konsti): Implement authentication
 	const bearerToken = "Bearer awmzbmspqoadbvkse";
@@ -10,7 +12,7 @@ export const authenticationInterceptor = (next) => async (req: UnaryRequest | St
 };
 
 export function getAddress(hostname: string) {
-	return `http://${hostname}:50052`;
+	return development ? "http://localhost:50052" : `http://${hostname}:50052`;
 }
 
 const address = getAddress("{{MANAGER_IP}}");

@@ -6,4 +6,4 @@ generate-proto:
 	cd sdk && ./proto.sh
 
 build-docker:
-	docker buildx build --platform=linux/amd64 -t konsti1/peacefulplace:2023.06.08 . 
+	docker buildx build --platform=linux/amd64 -t konsti1/peacefulplace:2023.06.09 . 
