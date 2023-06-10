@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package haven;
+
+message Empty {}
+
+service Haven {
+	// Setup (first time starting the manager)
+	rpc Setup(SetupRequest) returns (Empty) {}
+
+	// Generate text from a prompt.
+	rpc Generate(GenerateRequest) returns (stream GenerateResponse) {}
+
+	// Get the list of models and their descriptions.
+	rpc ListModels(Empty) returns (ListModelsResponse) {}
+
+	// Model management.
+	rpc AddModel(AddModelRequest) returns (Empty) {}
+	rpc DeleteModel(ModelName) returns (Empty) {}
+
+	// Inference worker management.
+	rpc AddInferenceWorker(AddInferenceWorkerRequest) returns (InferenceWorker) {}
+	rpc PauseInferenceWorker(InferenceWorker) returns (InferenceWorker) {}
+	rpc ResumeInferenceWorker(InferenceWorker) returns (InferenceWorker) {}
+	rpc DeleteInferenceWorker(InferenceWorker) returns (InferenceWorker) {}
+
+	// Fine-tuning
+	rpc Finetune(FinetuneRequest) returns (FinetuneResponse) {}
+}
+
+message SetupRequest {
+	optional string key_file = 1;
+	optional string server_address = 2;
+	optional string bucket_name = 3;
+}
+
+message GenerateRequest {
+	string worker_name = 1;
+	string prompt = 2;
+
+	optional int32 max_tokens = 3;
+	optional float temperature = 4;
+	optional int32 top_p = 5;
+	optional int32 top_k = 6;
+	optional bool sample = 7;
+}
+
+message GenerateResponse {
+	string text = 1;
+}
+
+enum Status {
+	RUNNING = 0;
+	STOPPED = 1; // Worker doesn't exist.
+	STARTING = 2;
+	STOPPING = 3; // When going to STOPPED or PAUSED.
+	PAUSED = 4;
+	ERROR = 5;
+}
+
+message Model {
+	string name = 1;
+	Status status = 2;	
+}
+
+message ListModelsResponse {
+	repeated Model models = 1;
+}
+
+message AddModelRequest {
+	string model_name = 1;
+	string tokenizer_name = 2;
+	string base_model_name = 3;
+	string instruction_prefix = 4;
+	string output_prefix = 5;
+	repeated string stop_tokens = 6;
+}
+
+message ModelName {
+	string model_name = 1;
+}
+
+message AddInferenceWorkerRequest {
+	string model_name = 1;
+	string quantization = 2;
+	optional string worker_name = 3;
+	optional string gpu_type = 4;
+	optional string gpu_count = 6;
+}
+
+message InferenceWorker {
+	string worker_id = 1;
+}
+
+message FinetuneRequest {
+	string model_name = 1;
+	string trained_model_name = 2;
+
+	string dataset = 3; // TODO(konsti): Check how we want to upload this file.
+	optional string eval_dataset = 4;
+
+	optional int32 epochs = 5;
+	optional int32 batch_size = 6;
+	optional float learning_rate = 7;
+
+	optional string instruction_prefix = 8;
+	optional string output_prefix = 9;
+	repeated string stop_tokens = 10;
+}
+
+message FinetuneResponse {
+	string weights_and_biases_url = 1;
+}
