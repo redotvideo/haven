@@ -1,3 +1,8 @@
+import os
+import sys
+sys.path = sys.path + [os.path.join(os.path.dirname(__file__), "..", "..")]
+
+
 class ModelRegistry(type):
 
     REGISTRY = {}
@@ -21,6 +26,6 @@ class RegisteredModel(metaclass=ModelRegistry):
 
 # REGISTER ALL MODELS
 
-from worker.models.base_causal import AutoCausalModel
+from worker_code.models.base_causal import AutoCausalModel
 from worker.models.mpt import MPTModel
 from worker.models.falcon_7b import Falcon7BModel
