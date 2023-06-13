@@ -22,7 +22,7 @@ class AutoCausalModel(RegisteredModel):
 
 
     def generate_stream(self, text_input: str, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
-        adapted_text_input = self.model["instruction_prefix"] + text_input + self.model_config["output_prefix"]
+        adapted_text_input = self.model_config["instruction_prefix"] + text_input + self.model_config["output_prefix"]
         input_tokenized = self.tokenizer([adapted_text_input], return_tensors='pt').input_ids.to('cuda')
 
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True)
