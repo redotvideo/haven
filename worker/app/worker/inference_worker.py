@@ -20,7 +20,7 @@ class InferenceClient:
         
 
     def generate(self, text_input, **kwargs):
-        return self.model_engine.generate(text_input, **kwargs)
+        return self.model_engine.generate_stream(text_input, **kwargs)
 
         
 
