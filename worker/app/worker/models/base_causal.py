@@ -38,7 +38,7 @@ class AutoCausalModel(RegisteredModel):
             stopping_criteria=self.stopping_criteria
         )
 
-        thread = Thread(target=self.generative_llm.generate, kwargs=generation_kwargs)
+        thread = Thread(target=self.model.generate, kwargs=generation_kwargs)
         thread.start()
 
         return streamer
