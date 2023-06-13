@@ -6,5 +6,6 @@
         "stop_tokens": ["<|im_end|>"],
         "context_size": 28000,
         "base_class": "MPTModel",
-        "int8": true
+        "int8": false
+
 }

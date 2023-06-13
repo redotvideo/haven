@@ -3,8 +3,8 @@ from transformers import TextIteratorStreamer, StoppingCriteriaList
 from threading import Thread
 import torch
 
-from worker.models.base_causal import AutoCausalModel
-from worker.inference_utils.stopping_criteria import StopOnTokens
+from models.base_causal import AutoCausalModel
+from .inference_utils.stopping_criteria import StopOnTokens
 
 class MPTModel(AutoCausalModel):
         
@@ -19,7 +19,7 @@ class MPTModel(AutoCausalModel):
         if int8_quantization:
             raise NotImplementedError("MPT Models do not yet support 8bit-quantization. We're working on it!")
         
-        hf_model_config = transformers.AutoConfig.from_pretrained(self.model_config["model_name"], **self.inference_config["initialization_args"])
+        hf_model_config = transformers.AutoConfig.from_pretrained(self.model_config["model_name"], trust_remote_code=True, low_cpu_mem_usage=True, torch_dtype=torch.bfloat16)
         hf_model_config.update({"max_seq_len": 28000})
         self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], trust_remote_code=True, low_cpu_mem_usage=True, torch_dtype=torch.bfloat16, config=hf_model_config).to('cuda')
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["model_name"])

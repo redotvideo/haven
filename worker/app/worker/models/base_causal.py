@@ -1,11 +1,11 @@
 import transformers
 from transformers import TextIteratorStreamer, StoppingCriteriaList
 from threading import Thread
+from .model_registry import RegisteredModel
+from .inference_utils.stopping_criteria import StopOnTokens
 
-from worker.inference_utils.stopping_criteria import StopOnTokens
 
-
-class AutoCausalModel:
+class AutoCausalModel(RegisteredModel):
         
     def __init__(self, config):
 

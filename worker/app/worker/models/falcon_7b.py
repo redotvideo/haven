@@ -3,7 +3,7 @@ from transformers import TextIteratorStreamer
 from threading import Thread
 import torch
 
-from worker.models.base_causal import AutoCausalModel
+from models.base_causal import AutoCausalModel
 
 
 class Falcon7BModel(AutoCausalModel):
