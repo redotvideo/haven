@@ -13,29 +13,29 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rmanager.proto\x12\x05haven\"\x07\n\x05\x45mpty\"b\n\x0cSetupRequest\x12\x15\n\x08key_file\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x1b\n\x0eserver_address\x18\x02 \x01(\tH\x01\x88\x01\x01\x42\x0b\n\t_key_fileB\x11\n\x0f_server_address\"0\n\x0fGenerateRequest\x12\r\n\x05model\x18\x01 \x01(\t\x12\x0e\n\x06prompt\x18\x02 \x01(\t\" \n\x10GenerateResponse\x12\x0c\n\x04text\x18\x01 \x01(\t\"4\n\x05Model\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x1d\n\x06status\x18\x02 \x01(\x0e\x32\r.haven.Status\"2\n\x12ListModelsResponse\x12\x1c\n\x06models\x18\x01 \x03(\x0b\x32\x0c.haven.Model\"\x19\n\tModelName\x12\x0c\n\x04name\x18\x01 \x01(\t*U\n\x06Status\x12\x0b\n\x07RUNNING\x10\x00\x12\x0b\n\x07STOPPED\x10\x01\x12\x0c\n\x08STARTING\x10\x02\x12\x0c\n\x08STOPPING\x10\x03\x12\n\n\x06PAUSED\x10\x04\x12\t\n\x05\x45RROR\x10\x05\x32\xf6\x02\n\x05Haven\x12,\n\x05Setup\x12\x13.haven.SetupRequest\x1a\x0c.haven.Empty\"\x00\x12?\n\x08Generate\x12\x16.haven.GenerateRequest\x1a\x17.haven.GenerateResponse\"\x00\x30\x01\x12\x37\n\nListModels\x12\x0c.haven.Empty\x1a\x19.haven.ListModelsResponse\"\x00\x12\x30\n\x0c\x43reateWorker\x12\x10.haven.ModelName\x1a\x0c.haven.Empty\"\x00\x12/\n\x0bPauseWorker\x12\x10.haven.ModelName\x1a\x0c.haven.Empty\"\x00\x12\x30\n\x0cResumeWorker\x12\x10.haven.ModelName\x1a\x0c.haven.Empty\"\x00\x12\x30\n\x0c\x44\x65leteWorker\x12\x10.haven.ModelName\x1a\x0c.haven.Empty\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rmanager.proto\x12\x05haven\"\x07\n\x05\x45mpty\"2\n\x0cSetupRequest\x12\x15\n\x08key_file\x18\x01 \x01(\tH\x00\x88\x01\x01\x42\x0b\n\t_key_file\"0\n\x0fGenerateRequest\x12\r\n\x05model\x18\x01 \x01(\t\x12\x0e\n\x06prompt\x18\x02 \x01(\t\" \n\x10GenerateResponse\x12\x0c\n\x04text\x18\x01 \x01(\t\"4\n\x05Model\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x1d\n\x06status\x18\x02 \x01(\x0e\x32\r.haven.Status\"2\n\x12ListModelsResponse\x12\x1c\n\x06models\x18\x01 \x03(\x0b\x32\x0c.haven.Model\"\x19\n\tModelName\x12\x0c\n\x04name\x18\x01 \x01(\t*U\n\x06Status\x12\x0b\n\x07RUNNING\x10\x00\x12\x0b\n\x07STOPPED\x10\x01\x12\x0c\n\x08STARTING\x10\x02\x12\x0c\n\x08STOPPING\x10\x03\x12\n\n\x06PAUSED\x10\x04\x12\t\n\x05\x45RROR\x10\x05\x32\xf6\x02\n\x05Haven\x12,\n\x05Setup\x12\x13.haven.SetupRequest\x1a\x0c.haven.Empty\"\x00\x12?\n\x08Generate\x12\x16.haven.GenerateRequest\x1a\x17.haven.GenerateResponse\"\x00\x30\x01\x12\x37\n\nListModels\x12\x0c.haven.Empty\x1a\x19.haven.ListModelsResponse\"\x00\x12\x30\n\x0c\x43reateWorker\x12\x10.haven.ModelName\x1a\x0c.haven.Empty\"\x00\x12/\n\x0bPauseWorker\x12\x10.haven.ModelName\x1a\x0c.haven.Empty\"\x00\x12\x30\n\x0cResumeWorker\x12\x10.haven.ModelName\x1a\x0c.haven.Empty\"\x00\x12\x30\n\x0c\x44\x65leteWorker\x12\x10.haven.ModelName\x1a\x0c.haven.Empty\"\x00\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'manager_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _STATUS._serialized_start=350
-  _STATUS._serialized_end=435
+  _STATUS._serialized_start=302
+  _STATUS._serialized_end=387
   _EMPTY._serialized_start=24
   _EMPTY._serialized_end=31
   _SETUPREQUEST._serialized_start=33
-  _SETUPREQUEST._serialized_end=131
-  _GENERATEREQUEST._serialized_start=133
-  _GENERATEREQUEST._serialized_end=181
-  _GENERATERESPONSE._serialized_start=183
-  _GENERATERESPONSE._serialized_end=215
-  _MODEL._serialized_start=217
-  _MODEL._serialized_end=269
-  _LISTMODELSRESPONSE._serialized_start=271
-  _LISTMODELSRESPONSE._serialized_end=321
-  _MODELNAME._serialized_start=323
-  _MODELNAME._serialized_end=348
-  _HAVEN._serialized_start=438
-  _HAVEN._serialized_end=812
+  _SETUPREQUEST._serialized_end=83
+  _GENERATEREQUEST._serialized_start=85
+  _GENERATEREQUEST._serialized_end=133
+  _GENERATERESPONSE._serialized_start=135
+  _GENERATERESPONSE._serialized_end=167
+  _MODEL._serialized_start=169
+  _MODEL._serialized_end=221
+  _LISTMODELSRESPONSE._serialized_start=223
+  _LISTMODELSRESPONSE._serialized_end=273
+  _MODELNAME._serialized_start=275
+  _MODELNAME._serialized_end=300
+  _HAVEN._serialized_start=390
+  _HAVEN._serialized_end=764
 # @@protoc_insertion_point(module_scope)
