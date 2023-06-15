@@ -11,11 +11,16 @@ export function secure<T, U>(func: (req: T, context: HandlerContext) => U) {
 			throw new ConnectError("Unauthorized", Code.Unauthenticated);
 		}
 
+		// TODO(konsti): we should await the function here to catch errors correctly
 		try {
 			return func(req, context);
 		} catch (err) {
 			console.error(err);
-			throw new ConnectError(err.message, Code.Internal);
+			if (err instanceof ConnectError) {
+				throw err;
+			} else {
+				throw new ConnectError(err.message, Code.Unknown);
+			}
 		}
 	};
 }
