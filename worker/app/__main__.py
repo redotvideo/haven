@@ -12,8 +12,9 @@ def get_path():
 		return json.load(f)["path"]
 
 ABSOLUTE_PATH = os.path.dirname(__file__)
-inference_client = InferenceClient(config=os.path.join(ABSOLUTE_PATH, get_path()), setup_type="16bit")
+inference_client = InferenceClient(config=os.path.join(ABSOLUTE_PATH, get_path()))
 running = True
+
 
 class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 
