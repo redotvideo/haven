@@ -9,8 +9,8 @@ service WorkerService {
 	// Shutdown the worker.
 	rpc Shutdown(ShutdownRequest) returns (ShutdownResponse) {}
 
-	// Generate text from a prompt.
-	rpc GenerateStream(GenerateRequest) returns (stream GenerateResponse) {}
+	// Generate text from a prompt. Only valid if worker is in inference mode.
+	rpc Generate(GenerateRequest) returns (stream GenerateResponse) {}
 }
 
 // TODO(konsti): Rename to WorkerStatus for more clarity.
@@ -32,6 +32,12 @@ message ShutdownResponse {}
 
 message GenerateRequest {
 	string prompt = 1;
+
+	optional int32 max_tokens = 3;
+	optional float temperature = 4;
+	optional int32 top_p = 5;
+	optional int32 top_k = 6;
+	optional bool sample = 7;
 }
 
 message GenerateResponse {
