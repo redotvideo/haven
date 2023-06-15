@@ -23,7 +23,6 @@ service Haven {
 
 message SetupRequest {
 	optional string key_file = 1;
-	optional string server_address = 2;
 }
 
 message GenerateRequest {

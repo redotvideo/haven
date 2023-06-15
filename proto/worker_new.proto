@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package worker;
+
+service WorkerService {
+	// Check health of the worker.
+	rpc Health(HealthRequest) returns (HealthResponse) {}
+
+	// Shutdown the worker.
+	rpc Shutdown(ShutdownRequest) returns (ShutdownResponse) {}
+
+	// Generate text from a prompt. Only valid if worker is in inference mode.
+	rpc Generate(GenerateRequest) returns (stream GenerateResponse) {}
+}
+
+// TODO(konsti): Rename to WorkerStatus for more clarity.
+enum Status {
+	OK = 0;
+	STOPPING = 1;
+	OFFLINE = 99;
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+	Status status = 1;
+}
+
+message ShutdownRequest {}
+
+message ShutdownResponse {}
+
+message GenerateRequest {
+	string prompt = 1;
+
+	optional int32 max_tokens = 3;
+	optional float temperature = 4;
+	optional int32 top_p = 5;
+	optional int32 top_k = 6;
+	optional bool sample = 7;
+}
+
+message GenerateResponse {
+	string text = 1;
+}

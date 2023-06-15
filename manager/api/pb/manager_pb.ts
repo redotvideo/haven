@@ -94,11 +94,6 @@ export class SetupRequest extends Message<SetupRequest> {
    */
   keyFile?: string;
 
-  /**
-   * @generated from field: optional string server_address = 2;
-   */
-  serverAddress?: string;
-
   constructor(data?: PartialMessage<SetupRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -108,7 +103,6 @@ export class SetupRequest extends Message<SetupRequest> {
   static readonly typeName = "haven.SetupRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "key_file", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 2, name: "server_address", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SetupRequest {
