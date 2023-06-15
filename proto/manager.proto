@@ -14,11 +14,15 @@ service Haven {
 	// Get the list of models and their descriptions.
 	rpc ListModels(Empty) returns (ListModelsResponse) {}
 
-	// Worker management.
-	rpc CreateWorker(ModelName) returns (Empty) {}
-	rpc PauseWorker(ModelName) returns (Empty) {}
-	rpc ResumeWorker(ModelName) returns (Empty) {}
-	rpc DeleteWorker(ModelName) returns (Empty) {}
+	// Model management.
+	rpc AddModel(AddModelRequest) returns (Empty) {}
+	rpc DeleteModel(ModelName) returns (Empty) {}
+
+	// Inference worker management.
+	rpc CreateInferenceWorker(CreateInferenceWorkerRequest) returns (InferenceWorker) {}
+	rpc PauseInferenceWorker(InferenceWorker) returns (InferenceWorker) {}
+	rpc ResumeInferenceWorker(InferenceWorker) returns (InferenceWorker) {}
+	rpc DeleteInferenceWorker(InferenceWorker) returns (InferenceWorker) {}
 }
 
 message SetupRequest {
@@ -26,8 +30,14 @@ message SetupRequest {
 }
 
 message GenerateRequest {
-	string model = 1;
+	string worker_name = 1;
 	string prompt = 2;
+
+	optional int32 max_tokens = 3;
+	optional float temperature = 4;
+	optional int32 top_p = 5;
+	optional int32 top_k = 6;
+	optional bool sample = 7;
 }
 
 message GenerateResponse {
@@ -45,13 +55,33 @@ enum Status {
 
 message Model {
 	string name = 1;
-	Status status = 2;	
 }
 
 message ListModelsResponse {
 	repeated Model models = 1;
 }
 
+message AddModelRequest {
+	string model_name = 1;
+	string tokenizer_name = 2;
+	string base_model_name = 3;
+	string instruction_prefix = 4;
+	string output_prefix = 5;
+	repeated string stop_tokens = 6;
+}
+
 message ModelName {
-	string name = 1;
+	string model_name = 1;
+}
+
+message CreateInferenceWorkerRequest {
+	string model_name = 1;
+	string quantization = 2;
+	optional string worker_name = 3;
+	optional string gpu_type = 4;
+	optional int32 gpu_count = 6;
+}
+
+message InferenceWorker {
+	string worker_id = 1;
 }
