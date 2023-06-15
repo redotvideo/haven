@@ -6,6 +6,8 @@ const WORKER_IMAGE = config.worker.dockerImage;
 const BUCKET = config.gcloud.bucket;
 
 /**
+ * Currently unused as we're not developing the UI anymore.
+ *
  * This function sets up the UI by hardcoding the public address of the manager
  * into the compiled UI files.
  *
