@@ -76,17 +76,43 @@ global___SetupRequest = SetupRequest
 class GenerateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    MODEL_FIELD_NUMBER: builtins.int
+    WORKER_NAME_FIELD_NUMBER: builtins.int
     PROMPT_FIELD_NUMBER: builtins.int
-    model: builtins.str
+    MAX_TOKENS_FIELD_NUMBER: builtins.int
+    TEMPERATURE_FIELD_NUMBER: builtins.int
+    TOP_P_FIELD_NUMBER: builtins.int
+    TOP_K_FIELD_NUMBER: builtins.int
+    SAMPLE_FIELD_NUMBER: builtins.int
+    worker_name: builtins.str
     prompt: builtins.str
+    max_tokens: builtins.int
+    temperature: builtins.float
+    top_p: builtins.int
+    top_k: builtins.int
+    sample: builtins.bool
     def __init__(
         self,
         *,
-        model: builtins.str = ...,
+        worker_name: builtins.str = ...,
         prompt: builtins.str = ...,
+        max_tokens: builtins.int | None = ...,
+        temperature: builtins.float | None = ...,
+        top_p: builtins.int | None = ...,
+        top_k: builtins.int | None = ...,
+        sample: builtins.bool | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["model", b"model", "prompt", b"prompt"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_max_tokens", b"_max_tokens", "_sample", b"_sample", "_temperature", b"_temperature", "_top_k", b"_top_k", "_top_p", b"_top_p", "max_tokens", b"max_tokens", "sample", b"sample", "temperature", b"temperature", "top_k", b"top_k", "top_p", b"top_p"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_max_tokens", b"_max_tokens", "_sample", b"_sample", "_temperature", b"_temperature", "_top_k", b"_top_k", "_top_p", b"_top_p", "max_tokens", b"max_tokens", "prompt", b"prompt", "sample", b"sample", "temperature", b"temperature", "top_k", b"top_k", "top_p", b"top_p", "worker_name", b"worker_name"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_max_tokens", b"_max_tokens"]) -> typing_extensions.Literal["max_tokens"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_sample", b"_sample"]) -> typing_extensions.Literal["sample"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_temperature", b"_temperature"]) -> typing_extensions.Literal["temperature"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_top_k", b"_top_k"]) -> typing_extensions.Literal["top_k"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_top_p", b"_top_p"]) -> typing_extensions.Literal["top_p"] | None: ...
 
 global___GenerateRequest = GenerateRequest
 
@@ -110,16 +136,13 @@ class Model(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     NAME_FIELD_NUMBER: builtins.int
-    STATUS_FIELD_NUMBER: builtins.int
     name: builtins.str
-    status: global___Status.ValueType
     def __init__(
         self,
         *,
         name: builtins.str = ...,
-        status: global___Status.ValueType = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["name", b"name", "status", b"status"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["name", b"name"]) -> None: ...
 
 global___Model = Model
 
@@ -140,16 +163,168 @@ class ListModelsResponse(google.protobuf.message.Message):
 global___ListModelsResponse = ListModelsResponse
 
 @typing_extensions.final
-class ModelName(google.protobuf.message.Message):
+class AddModelRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    NAME_FIELD_NUMBER: builtins.int
-    name: builtins.str
+    MODEL_NAME_FIELD_NUMBER: builtins.int
+    TOKENIZER_NAME_FIELD_NUMBER: builtins.int
+    BASE_MODEL_NAME_FIELD_NUMBER: builtins.int
+    INSTRUCTION_PREFIX_FIELD_NUMBER: builtins.int
+    OUTPUT_PREFIX_FIELD_NUMBER: builtins.int
+    STOP_TOKENS_FIELD_NUMBER: builtins.int
+    model_name: builtins.str
+    tokenizer_name: builtins.str
+    base_model_name: builtins.str
+    instruction_prefix: builtins.str
+    output_prefix: builtins.str
+    @property
+    def stop_tokens(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
     def __init__(
         self,
         *,
-        name: builtins.str = ...,
+        model_name: builtins.str = ...,
+        tokenizer_name: builtins.str = ...,
+        base_model_name: builtins.str = ...,
+        instruction_prefix: builtins.str = ...,
+        output_prefix: builtins.str = ...,
+        stop_tokens: collections.abc.Iterable[builtins.str] | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["name", b"name"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["base_model_name", b"base_model_name", "instruction_prefix", b"instruction_prefix", "model_name", b"model_name", "output_prefix", b"output_prefix", "stop_tokens", b"stop_tokens", "tokenizer_name", b"tokenizer_name"]) -> None: ...
+
+global___AddModelRequest = AddModelRequest
+
+@typing_extensions.final
+class ModelName(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MODEL_NAME_FIELD_NUMBER: builtins.int
+    model_name: builtins.str
+    def __init__(
+        self,
+        *,
+        model_name: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["model_name", b"model_name"]) -> None: ...
 
 global___ModelName = ModelName
+
+@typing_extensions.final
+class CreateInferenceWorkerRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MODEL_NAME_FIELD_NUMBER: builtins.int
+    QUANTIZATION_FIELD_NUMBER: builtins.int
+    WORKER_NAME_FIELD_NUMBER: builtins.int
+    GPU_TYPE_FIELD_NUMBER: builtins.int
+    GPU_COUNT_FIELD_NUMBER: builtins.int
+    model_name: builtins.str
+    quantization: builtins.str
+    worker_name: builtins.str
+    gpu_type: builtins.str
+    gpu_count: builtins.int
+    def __init__(
+        self,
+        *,
+        model_name: builtins.str = ...,
+        quantization: builtins.str = ...,
+        worker_name: builtins.str | None = ...,
+        gpu_type: builtins.str | None = ...,
+        gpu_count: builtins.int | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "worker_name", b"worker_name"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "model_name", b"model_name", "quantization", b"quantization", "worker_name", b"worker_name"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_gpu_count", b"_gpu_count"]) -> typing_extensions.Literal["gpu_count"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_gpu_type", b"_gpu_type"]) -> typing_extensions.Literal["gpu_type"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_worker_name", b"_worker_name"]) -> typing_extensions.Literal["worker_name"] | None: ...
+
+global___CreateInferenceWorkerRequest = CreateInferenceWorkerRequest
+
+@typing_extensions.final
+class InferenceWorker(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    WORKER_ID_FIELD_NUMBER: builtins.int
+    worker_id: builtins.str
+    def __init__(
+        self,
+        *,
+        worker_id: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["worker_id", b"worker_id"]) -> None: ...
+
+global___InferenceWorker = InferenceWorker
+
+@typing_extensions.final
+class FinetuneRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MODEL_NAME_FIELD_NUMBER: builtins.int
+    TRAINED_MODEL_NAME_FIELD_NUMBER: builtins.int
+    DATASET_FIELD_NUMBER: builtins.int
+    EVAL_DATASET_FIELD_NUMBER: builtins.int
+    EPOCHS_FIELD_NUMBER: builtins.int
+    BATCH_SIZE_FIELD_NUMBER: builtins.int
+    LEARNING_RATE_FIELD_NUMBER: builtins.int
+    INSTRUCTION_PREFIX_FIELD_NUMBER: builtins.int
+    OUTPUT_PREFIX_FIELD_NUMBER: builtins.int
+    STOP_TOKENS_FIELD_NUMBER: builtins.int
+    model_name: builtins.str
+    trained_model_name: builtins.str
+    dataset: builtins.str
+    """TODO(konsti): Check how we want to upload this file."""
+    eval_dataset: builtins.str
+    epochs: builtins.int
+    batch_size: builtins.int
+    learning_rate: builtins.float
+    instruction_prefix: builtins.str
+    output_prefix: builtins.str
+    @property
+    def stop_tokens(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
+    def __init__(
+        self,
+        *,
+        model_name: builtins.str = ...,
+        trained_model_name: builtins.str = ...,
+        dataset: builtins.str = ...,
+        eval_dataset: builtins.str | None = ...,
+        epochs: builtins.int | None = ...,
+        batch_size: builtins.int | None = ...,
+        learning_rate: builtins.float | None = ...,
+        instruction_prefix: builtins.str | None = ...,
+        output_prefix: builtins.str | None = ...,
+        stop_tokens: collections.abc.Iterable[builtins.str] | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_batch_size", b"_batch_size", "_epochs", b"_epochs", "_eval_dataset", b"_eval_dataset", "_instruction_prefix", b"_instruction_prefix", "_learning_rate", b"_learning_rate", "_output_prefix", b"_output_prefix", "batch_size", b"batch_size", "epochs", b"epochs", "eval_dataset", b"eval_dataset", "instruction_prefix", b"instruction_prefix", "learning_rate", b"learning_rate", "output_prefix", b"output_prefix"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_batch_size", b"_batch_size", "_epochs", b"_epochs", "_eval_dataset", b"_eval_dataset", "_instruction_prefix", b"_instruction_prefix", "_learning_rate", b"_learning_rate", "_output_prefix", b"_output_prefix", "batch_size", b"batch_size", "dataset", b"dataset", "epochs", b"epochs", "eval_dataset", b"eval_dataset", "instruction_prefix", b"instruction_prefix", "learning_rate", b"learning_rate", "model_name", b"model_name", "output_prefix", b"output_prefix", "stop_tokens", b"stop_tokens", "trained_model_name", b"trained_model_name"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_batch_size", b"_batch_size"]) -> typing_extensions.Literal["batch_size"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_epochs", b"_epochs"]) -> typing_extensions.Literal["epochs"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_eval_dataset", b"_eval_dataset"]) -> typing_extensions.Literal["eval_dataset"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_instruction_prefix", b"_instruction_prefix"]) -> typing_extensions.Literal["instruction_prefix"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_learning_rate", b"_learning_rate"]) -> typing_extensions.Literal["learning_rate"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_output_prefix", b"_output_prefix"]) -> typing_extensions.Literal["output_prefix"] | None: ...
+
+global___FinetuneRequest = FinetuneRequest
+
+@typing_extensions.final
+class FinetuneResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    WEIGHTS_AND_BIASES_URL_FIELD_NUMBER: builtins.int
+    weights_and_biases_url: builtins.str
+    def __init__(
+        self,
+        *,
+        weights_and_biases_url: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["weights_and_biases_url", b"weights_and_biases_url"]) -> None: ...
+
+global___FinetuneResponse = FinetuneResponse

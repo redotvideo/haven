@@ -173,6 +173,31 @@ export class GenerateRequest extends Message<GenerateRequest> {
    */
   prompt = "";
 
+  /**
+   * @generated from field: optional int32 max_tokens = 3;
+   */
+  maxTokens?: number;
+
+  /**
+   * @generated from field: optional float temperature = 4;
+   */
+  temperature?: number;
+
+  /**
+   * @generated from field: optional int32 top_p = 5;
+   */
+  topP?: number;
+
+  /**
+   * @generated from field: optional int32 top_k = 6;
+   */
+  topK?: number;
+
+  /**
+   * @generated from field: optional bool sample = 7;
+   */
+  sample?: boolean;
+
   constructor(data?: PartialMessage<GenerateRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -182,6 +207,11 @@ export class GenerateRequest extends Message<GenerateRequest> {
   static readonly typeName = "worker.GenerateRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "prompt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "max_tokens", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 4, name: "temperature", kind: "scalar", T: 2 /* ScalarType.FLOAT */, opt: true },
+    { no: 5, name: "top_p", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 6, name: "top_k", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 7, name: "sample", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GenerateRequest {
