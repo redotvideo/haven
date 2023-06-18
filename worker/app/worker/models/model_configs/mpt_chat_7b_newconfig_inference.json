@@ -6,5 +6,7 @@
         "stop_tokens": ["<|im_end|>"],
         "context_size": 28000,
         "base_class": "MPTModel",
-        "int8": false
+        "int8": false,
+        "gpu_type": "A100",
+        "gpu_count": 1
 }
