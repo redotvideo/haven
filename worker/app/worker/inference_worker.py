@@ -29,14 +29,7 @@ if __name__ == '__main__':
 
     PROMPT = "Hey! What is a large language model?"
     
-    import time
-    import torch
-    start = time.time()
-
-    #with torch.autocast('cuda'):
     stream = client.generate(PROMPT)
     for s in stream:
         print(s)
-    end = time.time()
 
-    print("total", end-start)
