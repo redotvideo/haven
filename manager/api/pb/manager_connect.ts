@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Empty, GenerateRequest, GenerateResponse, ListModelsResponse, ModelName, SetupRequest } from "./manager_pb.js";
+import { AddModelRequest, CreateInferenceWorkerRequest, Empty, FinetuneRequest, FinetuneResponse, GenerateRequest, GenerateResponse, InferenceWorker, ListModelsResponse, ModelName, SetupRequest } from "./manager_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -46,41 +46,72 @@ export const Haven = {
       kind: MethodKind.Unary,
     },
     /**
-     * Worker management.
+     * Model management.
      *
-     * @generated from rpc haven.Haven.CreateWorker
+     * @generated from rpc haven.Haven.AddModel
      */
-    createWorker: {
-      name: "CreateWorker",
+    addModel: {
+      name: "AddModel",
+      I: AddModelRequest,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc haven.Haven.DeleteModel
+     */
+    deleteModel: {
+      name: "DeleteModel",
       I: ModelName,
       O: Empty,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc haven.Haven.PauseWorker
+     * Inference worker management.
+     *
+     * @generated from rpc haven.Haven.CreateInferenceWorker
      */
-    pauseWorker: {
-      name: "PauseWorker",
-      I: ModelName,
-      O: Empty,
+    createInferenceWorker: {
+      name: "CreateInferenceWorker",
+      I: CreateInferenceWorkerRequest,
+      O: InferenceWorker,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc haven.Haven.ResumeWorker
+     * @generated from rpc haven.Haven.PauseInferenceWorker
      */
-    resumeWorker: {
-      name: "ResumeWorker",
-      I: ModelName,
-      O: Empty,
+    pauseInferenceWorker: {
+      name: "PauseInferenceWorker",
+      I: InferenceWorker,
+      O: InferenceWorker,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc haven.Haven.DeleteWorker
+     * @generated from rpc haven.Haven.ResumeInferenceWorker
      */
-    deleteWorker: {
-      name: "DeleteWorker",
-      I: ModelName,
-      O: Empty,
+    resumeInferenceWorker: {
+      name: "ResumeInferenceWorker",
+      I: InferenceWorker,
+      O: InferenceWorker,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc haven.Haven.DeleteInferenceWorker
+     */
+    deleteInferenceWorker: {
+      name: "DeleteInferenceWorker",
+      I: InferenceWorker,
+      O: InferenceWorker,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * Fine-tuning
+     *
+     * @generated from rpc haven.Haven.Finetune
+     */
+    finetune: {
+      name: "Finetune",
+      I: FinetuneRequest,
+      O: FinetuneResponse,
       kind: MethodKind.Unary,
     },
   }
