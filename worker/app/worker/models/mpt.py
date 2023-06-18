@@ -7,7 +7,7 @@ import deepspeed
 from models.base_causal import AutoCausalModel
 from .inference_utils.stopping_criteria import StopOnTokens
 
-class MPTModel(AutoCausalModel):
+class MPT7BModel(AutoCausalModel):
         
     def __init__(self, config):
         super().__init__(config)
@@ -16,8 +16,8 @@ class MPTModel(AutoCausalModel):
     ##############################
     ### INFERENCE    #############
     ##############################
-    def prepare_for_inference(self, int8_quantization: bool):
-        if int8_quantization:
+    def prepare_for_inference(self):
+        if self.model_config["int8"]:
             raise NotImplementedError("MPT Models do not yet support 8bit-quantization. We're working on it!")
         
         hf_model_config = transformers.AutoConfig.from_pretrained(self.model_config["model_name"], trust_remote_code=True, low_cpu_mem_usage=True, torch_dtype=torch.bfloat16)
