@@ -84,13 +84,39 @@ class GenerateRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     PROMPT_FIELD_NUMBER: builtins.int
+    MAX_TOKENS_FIELD_NUMBER: builtins.int
+    TEMPERATURE_FIELD_NUMBER: builtins.int
+    TOP_P_FIELD_NUMBER: builtins.int
+    TOP_K_FIELD_NUMBER: builtins.int
+    SAMPLE_FIELD_NUMBER: builtins.int
     prompt: builtins.str
+    max_tokens: builtins.int
+    temperature: builtins.float
+    top_p: builtins.int
+    top_k: builtins.int
+    sample: builtins.bool
     def __init__(
         self,
         *,
         prompt: builtins.str = ...,
+        max_tokens: builtins.int | None = ...,
+        temperature: builtins.float | None = ...,
+        top_p: builtins.int | None = ...,
+        top_k: builtins.int | None = ...,
+        sample: builtins.bool | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["prompt", b"prompt"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_max_tokens", b"_max_tokens", "_sample", b"_sample", "_temperature", b"_temperature", "_top_k", b"_top_k", "_top_p", b"_top_p", "max_tokens", b"max_tokens", "sample", b"sample", "temperature", b"temperature", "top_k", b"top_k", "top_p", b"top_p"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_max_tokens", b"_max_tokens", "_sample", b"_sample", "_temperature", b"_temperature", "_top_k", b"_top_k", "_top_p", b"_top_p", "max_tokens", b"max_tokens", "prompt", b"prompt", "sample", b"sample", "temperature", b"temperature", "top_k", b"top_k", "top_p", b"top_p"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_max_tokens", b"_max_tokens"]) -> typing_extensions.Literal["max_tokens"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_sample", b"_sample"]) -> typing_extensions.Literal["sample"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_temperature", b"_temperature"]) -> typing_extensions.Literal["temperature"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_top_k", b"_top_k"]) -> typing_extensions.Literal["top_k"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_top_p", b"_top_p"]) -> typing_extensions.Literal["top_p"] | None: ...
 
 global___GenerateRequest = GenerateRequest
 

@@ -127,14 +127,39 @@ export class SetupRequest extends Message<SetupRequest> {
  */
 export class GenerateRequest extends Message<GenerateRequest> {
   /**
-   * @generated from field: string model = 1;
+   * @generated from field: string worker_name = 1;
    */
-  model = "";
+  workerName = "";
 
   /**
    * @generated from field: string prompt = 2;
    */
   prompt = "";
+
+  /**
+   * @generated from field: optional int32 max_tokens = 3;
+   */
+  maxTokens?: number;
+
+  /**
+   * @generated from field: optional float temperature = 4;
+   */
+  temperature?: number;
+
+  /**
+   * @generated from field: optional int32 top_p = 5;
+   */
+  topP?: number;
+
+  /**
+   * @generated from field: optional int32 top_k = 6;
+   */
+  topK?: number;
+
+  /**
+   * @generated from field: optional bool sample = 7;
+   */
+  sample?: boolean;
 
   constructor(data?: PartialMessage<GenerateRequest>) {
     super();
@@ -144,8 +169,13 @@ export class GenerateRequest extends Message<GenerateRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "haven.GenerateRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "model", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "worker_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "prompt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "max_tokens", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 4, name: "temperature", kind: "scalar", T: 2 /* ScalarType.FLOAT */, opt: true },
+    { no: 5, name: "top_p", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 6, name: "top_k", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 7, name: "sample", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GenerateRequest {
@@ -211,11 +241,6 @@ export class Model extends Message<Model> {
    */
   name = "";
 
-  /**
-   * @generated from field: haven.Status status = 2;
-   */
-  status = Status.RUNNING;
-
   constructor(data?: PartialMessage<Model>) {
     super();
     proto3.util.initPartial(data, this);
@@ -225,7 +250,6 @@ export class Model extends Message<Model> {
   static readonly typeName = "haven.Model";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "status", kind: "enum", T: proto3.getEnumType(Status) },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Model {
@@ -283,13 +307,80 @@ export class ListModelsResponse extends Message<ListModelsResponse> {
 }
 
 /**
+ * @generated from message haven.AddModelRequest
+ */
+export class AddModelRequest extends Message<AddModelRequest> {
+  /**
+   * @generated from field: string model_name = 1;
+   */
+  modelName = "";
+
+  /**
+   * @generated from field: string tokenizer_name = 2;
+   */
+  tokenizerName = "";
+
+  /**
+   * @generated from field: string base_model_name = 3;
+   */
+  baseModelName = "";
+
+  /**
+   * @generated from field: string instruction_prefix = 4;
+   */
+  instructionPrefix = "";
+
+  /**
+   * @generated from field: string output_prefix = 5;
+   */
+  outputPrefix = "";
+
+  /**
+   * @generated from field: repeated string stop_tokens = 6;
+   */
+  stopTokens: string[] = [];
+
+  constructor(data?: PartialMessage<AddModelRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "haven.AddModelRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "model_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "tokenizer_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "base_model_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "instruction_prefix", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "output_prefix", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "stop_tokens", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AddModelRequest {
+    return new AddModelRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AddModelRequest {
+    return new AddModelRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AddModelRequest {
+    return new AddModelRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AddModelRequest | PlainMessage<AddModelRequest> | undefined, b: AddModelRequest | PlainMessage<AddModelRequest> | undefined): boolean {
+    return proto3.util.equals(AddModelRequest, a, b);
+  }
+}
+
+/**
  * @generated from message haven.ModelName
  */
 export class ModelName extends Message<ModelName> {
   /**
-   * @generated from field: string name = 1;
+   * @generated from field: string model_name = 1;
    */
-  name = "";
+  modelName = "";
 
   constructor(data?: PartialMessage<ModelName>) {
     super();
@@ -299,7 +390,7 @@ export class ModelName extends Message<ModelName> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "haven.ModelName";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "model_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ModelName {
@@ -316,6 +407,234 @@ export class ModelName extends Message<ModelName> {
 
   static equals(a: ModelName | PlainMessage<ModelName> | undefined, b: ModelName | PlainMessage<ModelName> | undefined): boolean {
     return proto3.util.equals(ModelName, a, b);
+  }
+}
+
+/**
+ * @generated from message haven.CreateInferenceWorkerRequest
+ */
+export class CreateInferenceWorkerRequest extends Message<CreateInferenceWorkerRequest> {
+  /**
+   * @generated from field: string model_name = 1;
+   */
+  modelName = "";
+
+  /**
+   * @generated from field: string quantization = 2;
+   */
+  quantization = "";
+
+  /**
+   * @generated from field: optional string worker_name = 3;
+   */
+  workerName?: string;
+
+  /**
+   * @generated from field: optional string gpu_type = 4;
+   */
+  gpuType?: string;
+
+  /**
+   * @generated from field: optional int32 gpu_count = 6;
+   */
+  gpuCount?: number;
+
+  constructor(data?: PartialMessage<CreateInferenceWorkerRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "haven.CreateInferenceWorkerRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "model_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "quantization", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "worker_name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 4, name: "gpu_type", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 6, name: "gpu_count", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateInferenceWorkerRequest {
+    return new CreateInferenceWorkerRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateInferenceWorkerRequest {
+    return new CreateInferenceWorkerRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateInferenceWorkerRequest {
+    return new CreateInferenceWorkerRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateInferenceWorkerRequest | PlainMessage<CreateInferenceWorkerRequest> | undefined, b: CreateInferenceWorkerRequest | PlainMessage<CreateInferenceWorkerRequest> | undefined): boolean {
+    return proto3.util.equals(CreateInferenceWorkerRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message haven.InferenceWorker
+ */
+export class InferenceWorker extends Message<InferenceWorker> {
+  /**
+   * @generated from field: string worker_id = 1;
+   */
+  workerId = "";
+
+  constructor(data?: PartialMessage<InferenceWorker>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "haven.InferenceWorker";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "worker_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InferenceWorker {
+    return new InferenceWorker().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): InferenceWorker {
+    return new InferenceWorker().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): InferenceWorker {
+    return new InferenceWorker().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: InferenceWorker | PlainMessage<InferenceWorker> | undefined, b: InferenceWorker | PlainMessage<InferenceWorker> | undefined): boolean {
+    return proto3.util.equals(InferenceWorker, a, b);
+  }
+}
+
+/**
+ * @generated from message haven.FinetuneRequest
+ */
+export class FinetuneRequest extends Message<FinetuneRequest> {
+  /**
+   * @generated from field: string model_name = 1;
+   */
+  modelName = "";
+
+  /**
+   * @generated from field: string trained_model_name = 2;
+   */
+  trainedModelName = "";
+
+  /**
+   * TODO(konsti): Check how we want to upload this file.
+   *
+   * @generated from field: string dataset = 3;
+   */
+  dataset = "";
+
+  /**
+   * @generated from field: optional string eval_dataset = 4;
+   */
+  evalDataset?: string;
+
+  /**
+   * @generated from field: optional int32 epochs = 5;
+   */
+  epochs?: number;
+
+  /**
+   * @generated from field: optional int32 batch_size = 6;
+   */
+  batchSize?: number;
+
+  /**
+   * @generated from field: optional float learning_rate = 7;
+   */
+  learningRate?: number;
+
+  /**
+   * @generated from field: optional string instruction_prefix = 8;
+   */
+  instructionPrefix?: string;
+
+  /**
+   * @generated from field: optional string output_prefix = 9;
+   */
+  outputPrefix?: string;
+
+  /**
+   * @generated from field: repeated string stop_tokens = 10;
+   */
+  stopTokens: string[] = [];
+
+  constructor(data?: PartialMessage<FinetuneRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "haven.FinetuneRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "model_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "trained_model_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "dataset", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "eval_dataset", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 5, name: "epochs", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 6, name: "batch_size", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 7, name: "learning_rate", kind: "scalar", T: 2 /* ScalarType.FLOAT */, opt: true },
+    { no: 8, name: "instruction_prefix", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 9, name: "output_prefix", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 10, name: "stop_tokens", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FinetuneRequest {
+    return new FinetuneRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): FinetuneRequest {
+    return new FinetuneRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): FinetuneRequest {
+    return new FinetuneRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: FinetuneRequest | PlainMessage<FinetuneRequest> | undefined, b: FinetuneRequest | PlainMessage<FinetuneRequest> | undefined): boolean {
+    return proto3.util.equals(FinetuneRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message haven.FinetuneResponse
+ */
+export class FinetuneResponse extends Message<FinetuneResponse> {
+  /**
+   * @generated from field: string weights_and_biases_url = 1;
+   */
+  weightsAndBiasesUrl = "";
+
+  constructor(data?: PartialMessage<FinetuneResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "haven.FinetuneResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "weights_and_biases_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FinetuneResponse {
+    return new FinetuneResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): FinetuneResponse {
+    return new FinetuneResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): FinetuneResponse {
+    return new FinetuneResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: FinetuneResponse | PlainMessage<FinetuneResponse> | undefined, b: FinetuneResponse | PlainMessage<FinetuneResponse> | undefined): boolean {
+    return proto3.util.equals(FinetuneResponse, a, b);
   }
 }
 
