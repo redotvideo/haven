@@ -102,6 +102,17 @@ client.create_worker(model="huggingface@mosaicml/mpt-chat-7b", gpu_type="A100", 
 
 <br>
 
+
+## Roadmap 🚀
+
+We're constantly building new features and would love your feedback! Here's what we are currently looking to integrate into our platform:
+
+- [x] Inference Workers
+- [x] Google Cloud Support
+- [ ] Fine-Tuning Workers
+- [ ] AWS Support
+
+
 ## Learn More 🔍
 
 To learn more about our platform, you should refer to our [documentation](https://docs-havenhq.vercel.app/), where we provide [tutorials](), a general [explanation]() of Haven's infrastructure as well as a detailed [API reference]().
