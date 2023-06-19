@@ -24,8 +24,6 @@
 
 </div>
 
-Haven lets you use self-hosted LLMs without any machine learning knowledge
-
 
 
 # Haven
