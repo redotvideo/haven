@@ -11,7 +11,6 @@
 [Docs]()
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 [Slack]()
-<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 
 </div>
 
