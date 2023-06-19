@@ -8,7 +8,6 @@
     "base_class": "Falcon7BModel",
     "lora": true,
     "lora_params": ["query_key_value"],
-    "multi_gpu": true,
     "train_data_path": "train_data.json",
     "eval_data_path": "eval_data.json",
     "gpu_type": "A100",
