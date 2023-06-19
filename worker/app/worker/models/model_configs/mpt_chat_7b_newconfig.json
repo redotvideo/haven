@@ -7,5 +7,4 @@
         "context_size": 28000,
         "base_class": "MPTModel",
         "int8": false
-
 }
