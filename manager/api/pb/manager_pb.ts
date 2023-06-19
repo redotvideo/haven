@@ -55,6 +55,32 @@ proto3.util.setEnumType(Status, "haven.Status", [
 ]);
 
 /**
+ * @generated from enum haven.GpuType
+ */
+export enum GpuType {
+  /**
+   * @generated from enum value: A100 = 0;
+   */
+  A100 = 0,
+
+  /**
+   * @generated from enum value: A100_80GB = 1;
+   */
+  A100_80GB = 1,
+
+  /**
+   * @generated from enum value: T4 = 2;
+   */
+  T4 = 2,
+}
+// Retrieve enum metadata with: proto3.getEnumType(GpuType)
+proto3.util.setEnumType(GpuType, "haven.GpuType", [
+  { no: 0, name: "A100" },
+  { no: 1, name: "A100_80GB" },
+  { no: 2, name: "T4" },
+]);
+
+/**
  * @generated from message haven.Empty
  */
 export class Empty extends Message<Empty> {
@@ -430,9 +456,9 @@ export class CreateInferenceWorkerRequest extends Message<CreateInferenceWorkerR
   workerName?: string;
 
   /**
-   * @generated from field: optional string gpu_type = 4;
+   * @generated from field: optional haven.GpuType gpu_type = 4;
    */
-  gpuType?: string;
+  gpuType?: GpuType;
 
   /**
    * @generated from field: optional int32 gpu_count = 6;
@@ -450,7 +476,7 @@ export class CreateInferenceWorkerRequest extends Message<CreateInferenceWorkerR
     { no: 1, name: "model_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "quantization", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "worker_name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 4, name: "gpu_type", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 4, name: "gpu_type", kind: "enum", T: proto3.getEnumType(GpuType), opt: true },
     { no: 6, name: "gpu_count", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
   ]);
 
@@ -505,136 +531,6 @@ export class InferenceWorker extends Message<InferenceWorker> {
 
   static equals(a: InferenceWorker | PlainMessage<InferenceWorker> | undefined, b: InferenceWorker | PlainMessage<InferenceWorker> | undefined): boolean {
     return proto3.util.equals(InferenceWorker, a, b);
-  }
-}
-
-/**
- * @generated from message haven.FinetuneRequest
- */
-export class FinetuneRequest extends Message<FinetuneRequest> {
-  /**
-   * @generated from field: string model_name = 1;
-   */
-  modelName = "";
-
-  /**
-   * @generated from field: string trained_model_name = 2;
-   */
-  trainedModelName = "";
-
-  /**
-   * TODO(konsti): Check how we want to upload this file.
-   *
-   * @generated from field: string dataset = 3;
-   */
-  dataset = "";
-
-  /**
-   * @generated from field: optional string eval_dataset = 4;
-   */
-  evalDataset?: string;
-
-  /**
-   * @generated from field: optional int32 epochs = 5;
-   */
-  epochs?: number;
-
-  /**
-   * @generated from field: optional int32 batch_size = 6;
-   */
-  batchSize?: number;
-
-  /**
-   * @generated from field: optional float learning_rate = 7;
-   */
-  learningRate?: number;
-
-  /**
-   * @generated from field: optional string instruction_prefix = 8;
-   */
-  instructionPrefix?: string;
-
-  /**
-   * @generated from field: optional string output_prefix = 9;
-   */
-  outputPrefix?: string;
-
-  /**
-   * @generated from field: repeated string stop_tokens = 10;
-   */
-  stopTokens: string[] = [];
-
-  constructor(data?: PartialMessage<FinetuneRequest>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "haven.FinetuneRequest";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "model_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "trained_model_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "dataset", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "eval_dataset", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 5, name: "epochs", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
-    { no: 6, name: "batch_size", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
-    { no: 7, name: "learning_rate", kind: "scalar", T: 2 /* ScalarType.FLOAT */, opt: true },
-    { no: 8, name: "instruction_prefix", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 9, name: "output_prefix", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 10, name: "stop_tokens", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FinetuneRequest {
-    return new FinetuneRequest().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): FinetuneRequest {
-    return new FinetuneRequest().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): FinetuneRequest {
-    return new FinetuneRequest().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: FinetuneRequest | PlainMessage<FinetuneRequest> | undefined, b: FinetuneRequest | PlainMessage<FinetuneRequest> | undefined): boolean {
-    return proto3.util.equals(FinetuneRequest, a, b);
-  }
-}
-
-/**
- * @generated from message haven.FinetuneResponse
- */
-export class FinetuneResponse extends Message<FinetuneResponse> {
-  /**
-   * @generated from field: string weights_and_biases_url = 1;
-   */
-  weightsAndBiasesUrl = "";
-
-  constructor(data?: PartialMessage<FinetuneResponse>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "haven.FinetuneResponse";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "weights_and_biases_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FinetuneResponse {
-    return new FinetuneResponse().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): FinetuneResponse {
-    return new FinetuneResponse().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): FinetuneResponse {
-    return new FinetuneResponse().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: FinetuneResponse | PlainMessage<FinetuneResponse> | undefined, b: FinetuneResponse | PlainMessage<FinetuneResponse> | undefined): boolean {
-    return proto3.util.equals(FinetuneResponse, a, b);
   }
 }
 

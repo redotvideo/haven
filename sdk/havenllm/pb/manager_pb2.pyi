@@ -45,6 +45,23 @@ PAUSED: Status.ValueType  # 4
 ERROR: Status.ValueType  # 5
 global___Status = Status
 
+class _GpuType:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _GpuTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_GpuType.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    A100: _GpuType.ValueType  # 0
+    A100_80GB: _GpuType.ValueType  # 1
+    T4: _GpuType.ValueType  # 2
+
+class GpuType(_GpuType, metaclass=_GpuTypeEnumTypeWrapper): ...
+
+A100: GpuType.ValueType  # 0
+A100_80GB: GpuType.ValueType  # 1
+T4: GpuType.ValueType  # 2
+global___GpuType = GpuType
+
 @typing_extensions.final
 class Empty(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -220,7 +237,7 @@ class CreateInferenceWorkerRequest(google.protobuf.message.Message):
     model_name: builtins.str
     quantization: builtins.str
     worker_name: builtins.str
-    gpu_type: builtins.str
+    gpu_type: global___GpuType.ValueType
     gpu_count: builtins.int
     def __init__(
         self,
@@ -228,7 +245,7 @@ class CreateInferenceWorkerRequest(google.protobuf.message.Message):
         model_name: builtins.str = ...,
         quantization: builtins.str = ...,
         worker_name: builtins.str | None = ...,
-        gpu_type: builtins.str | None = ...,
+        gpu_type: global___GpuType.ValueType | None = ...,
         gpu_count: builtins.int | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "worker_name", b"worker_name"]) -> builtins.bool: ...
@@ -256,75 +273,3 @@ class InferenceWorker(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["worker_id", b"worker_id"]) -> None: ...
 
 global___InferenceWorker = InferenceWorker
-
-@typing_extensions.final
-class FinetuneRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    MODEL_NAME_FIELD_NUMBER: builtins.int
-    TRAINED_MODEL_NAME_FIELD_NUMBER: builtins.int
-    DATASET_FIELD_NUMBER: builtins.int
-    EVAL_DATASET_FIELD_NUMBER: builtins.int
-    EPOCHS_FIELD_NUMBER: builtins.int
-    BATCH_SIZE_FIELD_NUMBER: builtins.int
-    LEARNING_RATE_FIELD_NUMBER: builtins.int
-    INSTRUCTION_PREFIX_FIELD_NUMBER: builtins.int
-    OUTPUT_PREFIX_FIELD_NUMBER: builtins.int
-    STOP_TOKENS_FIELD_NUMBER: builtins.int
-    model_name: builtins.str
-    trained_model_name: builtins.str
-    dataset: builtins.str
-    """TODO(konsti): Check how we want to upload this file."""
-    eval_dataset: builtins.str
-    epochs: builtins.int
-    batch_size: builtins.int
-    learning_rate: builtins.float
-    instruction_prefix: builtins.str
-    output_prefix: builtins.str
-    @property
-    def stop_tokens(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
-    def __init__(
-        self,
-        *,
-        model_name: builtins.str = ...,
-        trained_model_name: builtins.str = ...,
-        dataset: builtins.str = ...,
-        eval_dataset: builtins.str | None = ...,
-        epochs: builtins.int | None = ...,
-        batch_size: builtins.int | None = ...,
-        learning_rate: builtins.float | None = ...,
-        instruction_prefix: builtins.str | None = ...,
-        output_prefix: builtins.str | None = ...,
-        stop_tokens: collections.abc.Iterable[builtins.str] | None = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_batch_size", b"_batch_size", "_epochs", b"_epochs", "_eval_dataset", b"_eval_dataset", "_instruction_prefix", b"_instruction_prefix", "_learning_rate", b"_learning_rate", "_output_prefix", b"_output_prefix", "batch_size", b"batch_size", "epochs", b"epochs", "eval_dataset", b"eval_dataset", "instruction_prefix", b"instruction_prefix", "learning_rate", b"learning_rate", "output_prefix", b"output_prefix"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_batch_size", b"_batch_size", "_epochs", b"_epochs", "_eval_dataset", b"_eval_dataset", "_instruction_prefix", b"_instruction_prefix", "_learning_rate", b"_learning_rate", "_output_prefix", b"_output_prefix", "batch_size", b"batch_size", "dataset", b"dataset", "epochs", b"epochs", "eval_dataset", b"eval_dataset", "instruction_prefix", b"instruction_prefix", "learning_rate", b"learning_rate", "model_name", b"model_name", "output_prefix", b"output_prefix", "stop_tokens", b"stop_tokens", "trained_model_name", b"trained_model_name"]) -> None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_batch_size", b"_batch_size"]) -> typing_extensions.Literal["batch_size"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_epochs", b"_epochs"]) -> typing_extensions.Literal["epochs"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_eval_dataset", b"_eval_dataset"]) -> typing_extensions.Literal["eval_dataset"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_instruction_prefix", b"_instruction_prefix"]) -> typing_extensions.Literal["instruction_prefix"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_learning_rate", b"_learning_rate"]) -> typing_extensions.Literal["learning_rate"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_output_prefix", b"_output_prefix"]) -> typing_extensions.Literal["output_prefix"] | None: ...
-
-global___FinetuneRequest = FinetuneRequest
-
-@typing_extensions.final
-class FinetuneResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    WEIGHTS_AND_BIASES_URL_FIELD_NUMBER: builtins.int
-    weights_and_biases_url: builtins.str
-    def __init__(
-        self,
-        *,
-        weights_and_biases_url: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["weights_and_biases_url", b"weights_and_biases_url"]) -> None: ...
-
-global___FinetuneResponse = FinetuneResponse

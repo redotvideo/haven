@@ -59,11 +59,6 @@ class HavenStub(object):
                 request_serializer=manager__pb2.InferenceWorker.SerializeToString,
                 response_deserializer=manager__pb2.InferenceWorker.FromString,
                 )
-        self.Finetune = channel.unary_unary(
-                '/haven.Haven/Finetune',
-                request_serializer=manager__pb2.FinetuneRequest.SerializeToString,
-                response_deserializer=manager__pb2.FinetuneResponse.FromString,
-                )
 
 
 class HavenServicer(object):
@@ -128,13 +123,6 @@ class HavenServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Finetune(self, request, context):
-        """Fine-tuning
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
 
 def add_HavenServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -182,11 +170,6 @@ def add_HavenServicer_to_server(servicer, server):
                     servicer.DeleteInferenceWorker,
                     request_deserializer=manager__pb2.InferenceWorker.FromString,
                     response_serializer=manager__pb2.InferenceWorker.SerializeToString,
-            ),
-            'Finetune': grpc.unary_unary_rpc_method_handler(
-                    servicer.Finetune,
-                    request_deserializer=manager__pb2.FinetuneRequest.FromString,
-                    response_serializer=manager__pb2.FinetuneResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -348,22 +331,5 @@ class Haven(object):
         return grpc.experimental.unary_unary(request, target, '/haven.Haven/DeleteInferenceWorker',
             manager__pb2.InferenceWorker.SerializeToString,
             manager__pb2.InferenceWorker.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def Finetune(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/haven.Haven/Finetune',
-            manager__pb2.FinetuneRequest.SerializeToString,
-            manager__pb2.FinetuneResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

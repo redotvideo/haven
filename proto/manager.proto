@@ -74,11 +74,17 @@ message ModelName {
 	string model_name = 1;
 }
 
+enum GpuType {
+	A100 = 0;
+	A100_80GB = 1;
+	T4 = 2;
+}
+
 message CreateInferenceWorkerRequest {
 	string model_name = 1;
 	string quantization = 2;
 	optional string worker_name = 3;
-	optional string gpu_type = 4;
+	optional GpuType gpu_type = 4;
 	optional int32 gpu_count = 6;
 }
 
