@@ -2,6 +2,7 @@ import transformers
 from transformers import TextIteratorStreamer
 from threading import Thread
 import torch
+from typing import List
 
 from models.base_causal import AutoCausalModel
 
