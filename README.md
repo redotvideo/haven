@@ -26,7 +26,7 @@
 
 
 
-# Haven
+## Getting Started 🔥
 
 Haven lets you use self-hosted LLMs without any machine learning knowledge
 
