@@ -39,6 +39,10 @@ Setting up your first LLM server requires just three steps:
 2. Deploy Haven's manager container on a Google Cloud instance
 3. Spin up a model worker using the Python SDK
 
+To follow these steps, you can either check out our three-minute [video tutorial] or follow the documentation below. 
+
+#### Gettin
+
 ### Features
 
 - One click install. Haven is a single docker image.
