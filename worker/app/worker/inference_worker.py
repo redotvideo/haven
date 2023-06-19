@@ -25,7 +25,7 @@ class InferenceClient:
         
 
 if __name__ == '__main__':
-    client = InferenceClient("models/model_configs/mpt_chat_7b_newconfig_inference.json")
+    client = InferenceClient("models/model_configs/falcon_openassistant_7b_newconfig_inference.json")
 
     PROMPT = "Hey! What is a large language model?"
     
