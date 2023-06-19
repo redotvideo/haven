@@ -15,7 +15,7 @@
 [📄 Docs]()
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 [💬 Slack]()
-
+<br>
 <p align="center">
     Haven lets you build LLM-powered applications <b>hosted entirely on your own infrastructure</b>.<br>
     Just select a model to run - Haven will set up a production-ready 
