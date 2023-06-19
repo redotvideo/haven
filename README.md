@@ -31,7 +31,7 @@
 
 
 
-# Getting Started 🔥
+## Getting Started 🔥
 
 Setting up an LLM server requires just three steps:
 
@@ -101,3 +101,6 @@ client.create_worker(model="huggingface@mosaicml/mpt-chat-7b", gpu_type="A100", 
 ```
 
 
+## Learn More 🔍
+
+To learn more about our platform, you should refer to our [documentation](https://docs-havenhq.vercel.app/), where we provide [tutorials](), a general [explanation]() of Haven's infrastructure as well as a detailed [API reference]().
