@@ -5,7 +5,8 @@ const config = {
 		runFileServer: true,
 	},
 	gcloud: {
-		projectId: "", // is set during setup
+		projectId: "", // Set during setup
+		serviceAccount: "", // Set during setup
 		zone: "me-west1-b",
 		bucket: "konstis-test-bucket",
 	},
