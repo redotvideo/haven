@@ -1,9 +1,14 @@
 import transformers
-from transformers import TextIteratorStreamer, StoppingCriteriaList
+from transformers import TextIteratorStreamer, StoppingCriteriaList, Trainer, TrainingArguments
 from threading import Thread
 from typing import List
+from peft import LoraConfig, prepare_model_for_int8_training, get_peft_model
+
+
 from .model_registry import RegisteredModel
 from .inference_utils.stopping_criteria import StopOnTokens
+from .training_utils.tokenizer_resize import resize_tokenizer_and_embeddings
+from .training_utils.data_processing import make_supervised_data_module
 
 
 class AutoCausalModel(RegisteredModel):
@@ -68,11 +73,52 @@ class AutoCausalModel(RegisteredModel):
     ##############################
     ### FINETUNING   #############
     ##############################
-    def prepare_for_finetuning(self, lora: bool):
-        raise NotImplementedError
+    def prepare_model_for_training(self):
+        
+        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", load_in_8bit=self.model_config["int8"])
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["model_name"])
+
+        if self.tokenizer.pad_token is None:
+            resize_tokenizer_and_embeddings(
+                tokenizer=self.tokenizer,
+                model=self.model,
+            )
+
+        if self.model_config["lora"]:
+            lora_config = LoraConfig(r=16, lora_alpha=32, target_modules=self.model_config["lora_params"], lora_dropout=0.05, bias="none", task_type="CAUSAL_LM")
+            self.model = prepare_model_for_int8_training(self.model)
+            self.model = get_peft_model(self.model, lora_config)
 
 
-    def train():
-        raise NotImplementedError
+
+
+    def prepare_data_for_training(self):
+        self.train_dataset, self.collator = make_supervised_data_module(tokenizer=self.tokenizer, data_path=self.model_config["train_data_path"], instruction_prefix=self.model_config["instruction_prefix"], output_prefix=self.model_config["output_prefix"])
+        self.eval_dataset, _ = make_supervised_data_module(tokenizer=self.tokenizer, data_path=self.model_config["eval_data_path"], instruction_prefix=self.model_config["instruction_prefix"], output_prefix=self.model_config["output_prefix"])
+
+
+
+
+    def train(self):
+
+
+        training_args = TrainingArguments(dict(learning_rate=self.model_config["learning_rate"], per_device_train_batch_size=self.model_config["batch_size"], per_device_eval_batch_size=self.model_config["batch_size"]))
+
+        trainer = Trainer(
+            model=self.model, 
+            tokenizer=self.tokenizer,
+            train_dataset=self.train_dataset, 
+            eval_dataset=self.eval_dataset,
+            data_collator=self.collator,
+            args=training_args
+        )
+        
+        trainer.train()
+
+        self.model.save_pretrained(self.model_config["trained_model_path"])
+        self.tokenizer.save_pretrained(self.model_config["trained_model_path"])
+
+
+        
 
     

@@ -34,3 +34,18 @@ class MPTModel(AutoCausalModel):
 
     def generate_stream(self, text_input: str, conversation_history: List, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
         return super().generate_stream(text_input, conversation_history, sample, top_p, top_k, temperature, max_length)
+    
+
+
+
+    ##############################
+    ### INFERENCE    #############
+    ##############################
+    def prepare_model_for_training(self):
+        super().prepare_model_for_training()
+
+    def prepare_data_for_training(self):
+        super().prepare_data_for_training()
+
+    def train(self):
+        super().train()
