@@ -39,9 +39,11 @@ Setting up your first LLM server requires just three steps:
 2. Deploy Haven's manager container on a Google Cloud instance
 3. Spin up a model worker using the Python SDK
 
-To follow these steps, you can either check out our three-minute [video tutorial] or take a look at the documentation below. 
+To follow these steps, you can either check out our three-minute [video tutorial]() or take a look at the documentation below. 
 
-#### Gettin
+#### Getting a Google Cloud API Key
+
+To get an API key, head to the [Google Cloud Compute Engine console]().
 
 ### Features
 
