@@ -42,8 +42,8 @@ Setting up your first LLM server requires just three steps:
 To follow these steps, you can either check out our three-minute [video tutorial]() or take a look at the documentation below. 
 
 #### Getting a Google Cloud API Key
-
-To get an API key, head to the [Google Cloud Compute Engine console]().
+The Google Cloud API Key is required to 
+- To get an API key, head to the [Google Cloud Compute Engine console]().
 
 ### Features
 
