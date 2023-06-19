@@ -16,7 +16,7 @@ class InferenceClient:
             self.config = json.load(f)
 
         self.model_engine = ModelRegistry.REGISTRY[self.config["base_class"]](self.config)
-        self.model_engine.prepare_for_inference(self.config["int8"])
+        self.model_engine.prepare_for_inference()
         
 
     def generate(self, text_input, **kwargs):
