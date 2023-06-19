@@ -59,6 +59,11 @@ Finally, download the service account key file
 gcloud iam service-accounts keys create path/to/haven-key.json --iam-account=<haven-service-account-name>@<your-project-id>.iam.gserviceaccount.com
 ```
 
+### Deploy Haven's Manager Container 🐳
+
+The manager is responsible for setting up model servers and handling the communication between them and the client sdk. A small VM is sufficient to run the manager.
+
+To deploy the manager container on a 
 
 ### Features
 
