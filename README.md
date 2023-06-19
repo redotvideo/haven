@@ -8,23 +8,23 @@
 
 <div align="center">
 
-[Quickstart]()
+[💻 Quickstart]()
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-[Website]()
+[🏠 Website]()
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-[Docs]()
+[📄 Docs]()
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-[Slack]()
+[💬 Slack]()
 
 </div>
 
-
+Haven lets you use self-hosted LLMs without any machine learning knowledge
 
 
 
 # Haven
 
-Haven is a simple LLM deployment tool. Think Kubernetes but for large-language-models. You can run Haven entirely on your own infrastructure. See [installation](#installation) for more details.
+Haven lets you use self-hosted LLMs without any machine learning knowledge
 
 ### Features
 
