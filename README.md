@@ -83,6 +83,24 @@ gcloud compute instances create-with-container <manager-instance-name> \
 
 <br>
 
+### Set up an LLM API Server Using Haven's Python SDK 🤖
+
+Awesome! To spin up LLM servers, you'll never have to manually interact with Google Cloud again:
+
+Download Haven's SDK
+```
+pip install haven-client
+```
+
+Spin up an instance using the client
+```
+import haven_client
+
+client = haven_client.Haven()
+client.create_worker(model="huggingface@mosaicml/mpt-chat-7b", gpu_type="A100", gpu_count=1)
+```
+
+
 ### Features
 
 - One click install. Haven is a single docker image.
