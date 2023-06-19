@@ -18,7 +18,7 @@
 
 <p align="center">
     Haven lets you build LLM-powered applications <b>hosted entirely on your own infrastructure</b>.<br>
-    You don't need to worry about managing GPUs or writing complex ML code.
+    Specify which model you want to run on what type of instance and Haven sets up a production-ready API server hosted in your private cloud.
 </p>
 
 
