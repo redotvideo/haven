@@ -16,8 +16,7 @@ class InferenceClient:
             self.config = json.load(f)
 
         self.model_engine = ModelRegistry.REGISTRY[self.config["base_class"]](self.config)
-        self.model_engine.prepare_for_inference(int8_quantization=self.config["int8"])
-        
+        self.model_engine.prepare_for_inference()
 
     def generate(self, text_input, conversation_history=None, **kwargs):
         return self.model_engine.generate_stream(text_input, conversation_history, **kwargs)
@@ -25,6 +24,7 @@ class InferenceClient:
         
 
 if __name__ == '__main__':
+
     client = InferenceClient("models/model_configs/mpt_chat_7b_newconfig.json")
 
     history = [
