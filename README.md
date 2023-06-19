@@ -31,7 +31,7 @@
 
 
 
-## Getting Started 🔥
+# Getting Started 🔥
 
 Setting up an LLM server requires just three steps:
 
