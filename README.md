@@ -33,7 +33,11 @@
 
 ## Getting Started 🔥
 
-Haven lets you use self-hosted LLMs without any machine learning knowledge
+Setting up your first LLM server requires just three steps:
+
+1. Get an API key for a Google Cloud service account
+2. Deploy Haven's manager container on a Google Cloud instance
+3. Spin up a model worker using the Python SDK
 
 ### Features
 
