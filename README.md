@@ -93,7 +93,7 @@ pip install haven-client
 ```
 
 Spin up an instance using the client
-```
+``` python
 import haven_client
 
 client = haven_client.Haven()
