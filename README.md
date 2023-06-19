@@ -17,7 +17,7 @@
 [💬 Slack]()
 
 <p align="center">
-    Haven lets you build LLM-powered applications <p>hosted entirely on your own infrastructure</p>.<br>
+    Haven lets you build LLM-powered applications <b>hosted entirely on your own infrastructure</b>.<br>
     You don't need to worry about managing GPUs or writing complex ML code.
 </p>
 
