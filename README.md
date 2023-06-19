@@ -43,6 +43,7 @@ To follow these steps, you can either check out our three-minute [video tutorial
 
 
 <br>
+
 ### Getting a Google Cloud API Key 🔑
 A Google Cloud API key is required to let Haven spin up VM instances for you. In the following, we assume that you have a project on your Google Cloud Account and have downloaded the gcloud cli ([instructions](https://cloud.google.com/sdk/docs/install?hl=de#deb):
 
