@@ -2,6 +2,20 @@
   <a href="https://havenllm.com"><img src="https://github.com/havenhq/haven/assets/122226645/3ce54c45-668d-42c9-84fb-c62d8d38b643" width="300"/></a>
 </p>
 
+<div align="center">
+
+[Quickstart]()
+<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+[Website]()
+<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+[Docs]()
+<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+[Slack]()
+<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+
+</div>
+
+
 # Haven
 
 Haven is a simple LLM deployment tool. Think Kubernetes but for large-language-models. You can run Haven entirely on your own infrastructure. See [installation](#installation) for more details.
