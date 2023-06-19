@@ -49,20 +49,20 @@ A Google Cloud API key is required to let Haven spin up VM instances for you. In
 
 First, create a new service account:
 ```
-gcloud iam service-accounts create <haven-service-account-name>
+gcloud iam service-accounts create <haven-service-account-name> \
   --project=<your-project-id>
 ```
 
 Now, assign the service account the role of an editor:
 ```
-gcloud projects add-iam-policy-binding <your-project-id>
-  --member="serviceAccount:<haven-service-account-name>@<your-project-id>.iam.gserviceaccount.com"
+gcloud projects add-iam-policy-binding <your-project-id> \
+  --member="serviceAccount:<haven-service-account-name>@<your-project-id>.iam.gserviceaccount.com" \
   --role="roles/editor"
 ```
 
 Finally, download the service account key file
 ```
-gcloud iam service-accounts keys create path/to/haven-key.json
+gcloud iam service-accounts keys create path/to/haven-key.json \
   --iam-account=<haven-service-account-name>@<your-project-id>.iam.gserviceaccount.com
 ```
 
