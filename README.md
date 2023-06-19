@@ -18,7 +18,7 @@
 
 <p align="center">
     Haven lets you build LLM-powered applications <b>hosted entirely on your own infrastructure</b>.<br>
-    Select a model of your choice and Haven instantiates a production-ready API server hosted in your GCP environment.
+    Select a desired model and Haven instantiates a production-ready API server hosted in your GCP environment.
 </p>
 
 
