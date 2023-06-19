@@ -75,7 +75,7 @@ class AutoCausalModel(RegisteredModel):
     ##############################
     def prepare_model_for_training(self):
         
-        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", load_in_8bit=self.model_config["int8"])
+        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", load_in_8bit=self.model_config["lora"])
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["model_name"])
 
         if self.tokenizer.pad_token is None:
