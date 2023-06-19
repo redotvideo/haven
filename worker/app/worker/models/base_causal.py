@@ -1,6 +1,7 @@
 import transformers
 from transformers import TextIteratorStreamer, StoppingCriteriaList
 from threading import Thread
+from typing import List
 from .model_registry import RegisteredModel
 from .inference_utils.stopping_criteria import StopOnTokens
 
@@ -21,8 +22,13 @@ class AutoCausalModel(RegisteredModel):
         self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, self.model_config["stop_tokens"]+[self.tokenizer.eos_token])])
 
 
-    def generate_stream(self, text_input: str, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
-        adapted_text_input = self.model_config["instruction_prefix"] + text_input + self.model_config["output_prefix"]
+    def generate_stream(self, text_input: str, conversation_history: List, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
+        if conversation_history is None:
+            history_prompt = ""
+        else:
+            history_prompt = self.create_history_prompt(conversation_history)
+
+        adapted_text_input = history_prompt + self.model_config["instruction_prefix"] + text_input + self.model_config["output_prefix"]
         input_tokenized = self.tokenizer([adapted_text_input], return_tensors='pt').input_ids.to('cuda')
 
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True)
@@ -44,7 +50,20 @@ class AutoCausalModel(RegisteredModel):
         return streamer
     
 
+    def create_history_prompt(self, conversation_history):
+        prompt = ""
+        for message_obj in conversation_history:
+            if message_obj["role"] == "user":
+                prompt += self.model_config["instruction_prefix"] + message_obj["content"] + self.model_config["output_prefix"]
 
+            elif message_obj["role"] == "assistant":
+                prompt += message_obj["content"] + self.model_config["stop_tokens"][0]
+
+
+        return prompt
+
+      
+      
 
     ##############################
     ### FINETUNING   #############
