@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <b>Train and deploy LLMs on your own infrastructure</b>
+    <b>Train and Deploy LLMs On Your Own Infrastructure</b>
 </p>
 
 <div align="center">
