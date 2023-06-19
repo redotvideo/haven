@@ -16,8 +16,8 @@ class AutoCausalModel(RegisteredModel):
     ##############################
     ### INFERENCE    #############
     ##############################
-    def prepare_for_inference(self, int8_quantization: bool):
-        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", load_in_8bit=int8_quantization)
+    def prepare_for_inference(self):
+        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", load_in_8bit=self.model_config["int8"])
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["model_name"])
         self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, self.model_config["stop_tokens"]+[self.tokenizer.eos_token])])
 
@@ -50,7 +50,6 @@ class AutoCausalModel(RegisteredModel):
         return streamer
     
 
-
     def create_history_prompt(self, conversation_history):
         prompt = ""
         for message_obj in conversation_history:
@@ -63,11 +62,8 @@ class AutoCausalModel(RegisteredModel):
 
         return prompt
 
-
-
-    
-
-
+      
+      
 
     ##############################
     ### FINETUNING   #############
