@@ -100,6 +100,7 @@ client = haven_client.Haven()
 client.create_worker(model="huggingface@mosaicml/mpt-chat-7b", gpu_type="A100", gpu_count=1)
 ```
 
+<br>
 
 ## Learn More 🔍
 
