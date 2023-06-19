@@ -7,7 +7,7 @@ import deepspeed
 from models.base_causal import AutoCausalModel
 from .inference_utils.stopping_criteria import StopOnTokens
 
-class MPT7BModel(AutoCausalModel):
+class MPTModel(AutoCausalModel):
         
     def __init__(self, config):
         super().__init__(config)
