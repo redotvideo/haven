@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <b>Haven enables you to train and deploy LLMs on your own infrastructure</b>
+    <b>Train and deploy LLMs on your own infrastructure</b>
 </p>
 
 <div align="center">
