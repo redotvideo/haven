@@ -44,7 +44,7 @@ To follow these steps, you can either check out our three-minute [video tutorial
 
 <br>
 
-### Getting a Google Cloud API Key 🔑
+#### Getting a Google Cloud API Key 🔑
 A Google Cloud API key is required to let Haven spin up VM instances for you. In the following, we assume that you have a project on your Google Cloud Account and have downloaded the gcloud cli ([instructions](https://cloud.google.com/sdk/docs/install?hl=de#deb):
 
 First, create a new service account:
@@ -69,7 +69,7 @@ gcloud iam service-accounts keys create path/to/haven-key.json \
 
 <br>
 
-### Deploy Haven's Manager Container 🐳
+#### Deploy Haven's Manager Container 🐳
 
 The manager is responsible for setting up model servers and handling the communication between them and the client sdk. A small VM is sufficient to run the manager.
 
@@ -83,7 +83,7 @@ gcloud compute instances create-with-container <manager-instance-name> \
 
 <br>
 
-### Set up an LLM API Server Using Haven's Python SDK 🤖
+#### Set up an LLM API Server Using Haven's Python SDK 🤖
 
 Awesome! To spin up LLM servers, you'll never have to manually interact with Google Cloud again:
 
@@ -101,23 +101,3 @@ client.create_worker(model="huggingface@mosaicml/mpt-chat-7b", gpu_type="A100", 
 ```
 
 
-### Features
-
-- One click install. Haven is a single docker image.
-- Deploy models fully automatically. Add your Google Cloud API key and Haven will automatically provision a VM, deploy your model, and give you a public endpoint.
-- SDKs in Python and Typescript
-
-Coming soon:
-
-- Fine-tune models
-- Horizontal scaling of model instances
-
-### Installation
-
-Pull the latest image from Docker Hub at `havenllm/haven:latest`. You can also build the image yourself by cloning this repo and running `docker build -t haven .`. Alternatively you can use the image from the Google Cloud App Store.
-
-Navigate to the url of your deployment and upload your google cloud api key. That's it! You're ready to deploy models.
-
-### Usage
-
-You can install the python sdk with `pip install havenllm` or the typescript sdk with `npm install havenllm`.
