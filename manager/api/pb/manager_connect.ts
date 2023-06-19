@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddModelRequest, CreateInferenceWorkerRequest, Empty, FinetuneRequest, FinetuneResponse, GenerateRequest, GenerateResponse, InferenceWorker, ListModelsResponse, ModelName, SetupRequest } from "./manager_pb.js";
+import { AddModelRequest, CreateInferenceWorkerRequest, Empty, GenerateRequest, GenerateResponse, InferenceWorker, ListModelsResponse, ModelName, SetupRequest } from "./manager_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -101,17 +101,6 @@ export const Haven = {
       name: "DeleteInferenceWorker",
       I: InferenceWorker,
       O: InferenceWorker,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * Fine-tuning
-     *
-     * @generated from rpc haven.Haven.Finetune
-     */
-    finetune: {
-      name: "Finetune",
-      I: FinetuneRequest,
-      O: FinetuneResponse,
       kind: MethodKind.Unary,
     },
   }

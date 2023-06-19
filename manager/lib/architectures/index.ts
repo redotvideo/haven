@@ -1,9 +1,9 @@
 import * as fs from "fs/promises";
-import {CreateInferenceWorkerRequest} from "../../api/pb/manager_pb";
+import {CreateInferenceWorkerRequest, GpuType} from "../../api/pb/manager_pb";
 
 interface ArchitectureConfiguration {
 	quantization: string;
-	gpuType: string;
+	gpuType: GpuType;
 	gpuCount: number;
 }
 
@@ -30,7 +30,11 @@ export async function assertArchitectureSupportsConfiguration(architecture: stri
 				continue;
 			}
 
-			return;
+			return {
+				quantization: json.quantization,
+				gpuType: json.gpuType,
+				gpuCount: json.gpuCount,
+			};
 		}
 	}
 
