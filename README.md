@@ -2,6 +2,10 @@
   <a href="https://havenllm.com"><img src="https://github.com/havenhq/haven/assets/122226645/3ce54c45-668d-42c9-84fb-c62d8d38b643" width="300"/></a>
 </p>
 
+<p align="center">
+    <b>Haven enables you to train and deploy LLMs on your own infrastructure</b>
+</p>
+
 <div align="center">
 
 [Quickstart]()
@@ -13,6 +17,9 @@
 [Slack]()
 
 </div>
+
+
+
 
 
 # Haven
