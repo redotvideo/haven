@@ -33,7 +33,7 @@
 
 ## Getting Started 🔥
 
-Setting up your first LLM server requires just three steps:
+Setting up an LLM server requires just three steps:
 
 1. Get an API key for a Google Cloud service account
 2. Deploy Haven's manager container on a Google Cloud instance
@@ -41,9 +41,24 @@ Setting up your first LLM server requires just three steps:
 
 To follow these steps, you can either check out our three-minute [video tutorial]() or take a look at the documentation below. 
 
-#### Getting a Google Cloud API Key
-The Google Cloud API Key is required to 
-- To get an API key, head to the [Google Cloud Compute Engine console]().
+#### Getting a Google Cloud API Key 🔑
+A Google Cloud API key is required to let Haven spin up VM instances for you. In the following, we assume that you have a project on your Google Cloud Account and have downloaded the gcloud cli ([instructions](https://cloud.google.com/sdk/docs/install?hl=de#deb):
+
+First, create a new service account:
+```
+gcloud iam service-accounts create <haven-service-account-name> --project=<your-project-id>
+```
+
+Now, assign the service account the role of an editor:
+```
+gcloud projects add-iam-policy-binding <your-project-id> --member="serviceAccount:<haven-service-account-name>@<your-project-id>.iam.gserviceaccount.com" --role="roles/editor"
+```
+
+Finally, download the service account key file
+```
+gcloud iam service-accounts keys create path/to/haven-key.json --iam-account=<haven-service-account-name>@<your-project-id>.iam.gserviceaccount.com
+```
+
 
 ### Features
 
