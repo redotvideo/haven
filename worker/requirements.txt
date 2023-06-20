@@ -1,5 +1,6 @@
 Flask==2.3.2
 scipy==1.10.1
+bitsandbytes==0.39.1
 numpy==1.24.3
 rouge_score==0.1.2
 fire==0.5.0
@@ -9,7 +10,6 @@ sentencepiece==0.1.99
 tokenizers==0.12.1
 wandb==0.15.3
 peft==0.3.0
-bitsandbytes==0.39.0
 einops==0.6.1
 accelerate==0.19.0
 optimum==1.8.6
