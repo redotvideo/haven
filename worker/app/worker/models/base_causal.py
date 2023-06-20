@@ -102,7 +102,7 @@ class AutoCausalModel(RegisteredModel):
     def train(self):
 
 
-        training_args = TrainingArguments(dict(learning_rate=self.model_config["learning_rate"], per_device_train_batch_size=self.model_config["batch_size"], per_device_eval_batch_size=self.model_config["batch_size"]))
+        training_args = TrainingArguments(learning_rate=self.model_config["learning_rate"], per_device_train_batch_size=self.model_config["batch_size"], per_device_eval_batch_size=self.model_config["batch_size"], output_dir="out")
 
         trainer = Trainer(
             model=self.model, 
