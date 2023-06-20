@@ -22,7 +22,7 @@ class TrainingClient:
 
 if __name__ == '__main__':
 
-    client = TrainingClient("models/model_configs/falcon_openassistant_7b_newconfig_lora_training.json")
+    client = TrainingClient("models/model_configs/mpt_7b_chat_newconfig_lora_training.json")
     client.train()
 
 
