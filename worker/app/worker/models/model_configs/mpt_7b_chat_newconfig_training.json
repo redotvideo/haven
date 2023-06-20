@@ -1,0 +1,17 @@
+{
+    "model_name": "mosaicml/mpt-7b-chat",
+    "tokenizer_name": "mosaicml/mpt-7b-chat",
+    "instruction_prefix": "<|im_start|>user\n",
+    "output_prefix": "<|im_end|><|im_start|>assistant\n",
+    "stop_tokens": ["<|im_end|>"],
+    "context_size": 28000,
+    "base_class": "MPTModel",
+    "lora": true,
+    "lora_params": ["query_key_value"],
+    "train_data_path": "train_data.json",
+    "eval_data_path": "eval_data.json",
+    "learning_rate": 3e-5,
+    "batch_size": 16,
+    "gpu_type": "A100",
+    "gpu_count": 1
+}

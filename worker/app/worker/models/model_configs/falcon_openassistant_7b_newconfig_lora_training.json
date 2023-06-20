@@ -10,6 +10,8 @@
     "lora_params": ["query_key_value"],
     "train_data_path": "train_data.json",
     "eval_data_path": "eval_data.json",
+    "learning_rate": 3e-5,
+    "batch_size": 16,
     "gpu_type": "A100",
     "gpu_count": 1
 }

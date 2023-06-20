@@ -4,9 +4,13 @@ from threading import Thread
 import torch
 import deepspeed
 from typing import List
+from peft import LoraConfig, prepare_model_for_int8_training, get_peft_model
 
 from models.base_causal import AutoCausalModel
+from .training_utils.tokenizer_resize import resize_tokenizer_and_embeddings
+from .training_utils.data_processing import make_supervised_data_module
 from .inference_utils.stopping_criteria import StopOnTokens
+
 
 class MPTModel(AutoCausalModel):
         
@@ -42,7 +46,19 @@ class MPTModel(AutoCausalModel):
     ### INFERENCE    #############
     ##############################
     def prepare_model_for_training(self):
-        super().prepare_model_for_training()
+        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", low_cpu_memory_usage=True, trust_remote_code=True, torch_dtype=torch.bfloat16)
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["model_name"])
+
+        if self.tokenizer.pad_token is None:
+            resize_tokenizer_and_embeddings(
+                tokenizer=self.tokenizer,
+                model=self.model,
+            )
+
+        if self.model_config["lora"]:
+            lora_config = LoraConfig(r=16, lora_alpha=32, target_modules=self.model_config["lora_params"], lora_dropout=0.05, bias="none", task_type="CAUSAL_LM")
+            self.model = get_peft_model(self.model, lora_config)
+
 
     def prepare_data_for_training(self):
         super().prepare_data_for_training()
