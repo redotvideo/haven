@@ -46,7 +46,7 @@ class MPTModel(AutoCausalModel):
     ### INFERENCE    #############
     ##############################
     def prepare_model_for_training(self):
-        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", low_cpu_memory_usage=True, trust_remote_code=True, torch_dtype=torch.bfloat16)
+        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", low_cpu_mem_usage=True, trust_remote_code=True, torch_dtype=torch.bfloat16)
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["model_name"])
 
         if self.tokenizer.pad_token is None:

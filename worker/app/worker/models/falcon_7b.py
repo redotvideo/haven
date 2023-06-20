@@ -40,7 +40,7 @@ class Falcon7BModel(AutoCausalModel):
     ### INFERENCE    #############
     ##############################
     def prepare_model_for_training(self):
-        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", load_in_8bit=self.model_config["lora"], low_cpu_memory_usage=True, trust_remote_code=True, torch_dtype=torch.bfloat16)
+        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", load_in_8bit=self.model_config["lora"], trust_remote_code=True, torch_dtype=torch.bfloat16)
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["model_name"])
 
         if self.tokenizer.pad_token is None:
