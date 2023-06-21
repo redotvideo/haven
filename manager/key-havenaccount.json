@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "haven-experiments",
+  "private_key_id": "08834547de20f855b7c80d22dc6632892d36064e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC0kiKKsKt7i1zS\nBgZDyxOTG2E3LDQZtJWbahFcpUK3SakaGUAmit8Gf7JWEs1FEJBQw12/JdsDul4M\nt3I5KU0SnHzwyrsyY0WWISUNnuHd27l0SYoKitiu+4BA92keQPwjElhu/XNdgCXX\nJxHoaNujGagtly7IPJ7Rd7zZzfgoyJmicYRX207+a3AcUdU7vFkPmCw6JkIeRZrD\n5FI4COGpF6SmzShV/lnP0DwrbirWsEG61PrF1sXnQnuU/xkxJusqaEZwXwE+1RVg\nlO5XYheTAFHY2zlcTEh8G4szNaRaBRJk09X/BVYw0cWQslb75HRtnlqUW/zZBJfk\neEzEqmBpAgMBAAECggEAGpMpRJUUtRrWac3bgoMIL03HxHQbz4QCwqaHxe/yfiwi\nmDCK1EFQP9IaVSLw6o8HVkOHxVfVFbA0zZVQA7ae3QmCinj5DO+MRbiSDfZJ/ToB\ntL9qnVDq6/HKty+nslKpE6D3D+VQOGdhlPpvNG+o53uhWI2tTmiRjSLHUfIcvs+V\n3ukDGY2KHJDIsak2n1XPw/HAC6BWB34uY10srqlaTVaeIpkDE37VCrdiH7HqkP5C\nDjvSucHei9pfugCTrd2tK8HChm/tuPfof1+bHExU3lyP9nwqjFpvEoeh8J6mZ0gN\nUnxO/YzUTHyaRw8o+/uLBi+ZSVc/sH3nZAcH8R0gkwKBgQD2oi5CZPpq5sam80nA\nWpX12NdtW75l9x9G2D0bPM6DJOL84mXNl5aFFn4SD4B/pXZIkvgIK2VGEEkdZ4Bl\nAnDgGms4bsfGAtRWXyA+tpWE5jvGJW9hrsxjqS1htzOkAnTS78OoTxu54ZvkDGzw\nzxkvHkcrh6JkOuawhUkgAuZ0dwKBgQC7ba4Q4U3anBcKkvCw0xI/nnSozXP8ReWw\nPZKgPvvdP5fFndfsJNiXv02+vtdBjvD7ZzQv6+pQYIrVHWFkeFrqWNfXDhfZQhK2\nHZU7K3I0/ZE1rp0gEwpEW4/gp+fSWNEInLIKL9TAs/4FaQBFFjuXS72qs18A+Tya\nPR/X5P9qHwKBgEIkrJNR0Xbp/Uy44oabxKvyQ5Qojp957wFo7LppTFkPg3Cepv7E\nMLHwnk7pqWSSU26TO8G1Iavwoisont54ER2I+EhiLWGFULz5NgSbou3JcS5qy7w+\nzMHNlUYng8nwfrQzaR2yWZU4VD6Mtoq+f9qLHDsoXPzUbxnYJQxYusVxAoGBAI2c\n8FDmurk7CJm/rkYcJISXB9Pm8ASjF0mTLC8Rh6GCg/0XJubQbCozq908Ok3ZX7DE\nKIUwveifGSauvUB5Q1Afcm2Vw2Uu7A5XycJcMD1jfQzPcv6iBDbj65C1rI2c98uH\nAWp6+0fid0LFNCP/CWVmH9dTEawdpLFxD5dC+czHAoGBAIqzmv1on1RqFXtvWKRg\nzU16ndL3Km1IEZkn8FnzougAcBIagTt86FPSdKgCDjeGOtFDLXBhhgvMUYtb6hmb\nnXkH5JaGAanj2uVgfda9B93SNA+ZrXndqUldDBTeF0ojM7VkFzCbjxu9e39gApWC\nKt/MA6fgIr3dhA2BrD3Vbnoi\n-----END PRIVATE KEY-----\n",
+  "client_email": "haven-service-account@haven-experiments.iam.gserviceaccount.com",
+  "client_id": "110742084778399971846",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/haven-service-account%40haven-experiments.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

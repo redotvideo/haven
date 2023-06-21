@@ -22,6 +22,7 @@ import {getAllModels} from "../lib/models";
 import {setupController} from "../controller/setup";
 import {generateController} from "../controller/generate";
 import {createInferenceWorkerController} from "../controller/createInferenceWorker";
+import { sendEvent } from "../lib/telemetry";
 
 const ZONE = config.gcloud.zone;
 
@@ -87,6 +88,8 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 
 	const workerId = await createInferenceWorkerController(modelName, requestedResources, workerName);
 
+	sendEvent("createInferenceWorker", {workerName: workerName, modelName:modelName, ...requestedResources});
+
 	return new InferenceWorker({
 		workerId,
 	});
@@ -138,6 +141,8 @@ async function resumeWorker(req: InferenceWorker) {
 		console.error(e);
 		throw new ConnectError(`Failed to resume worker ${workerId}: ${e.message}`, Code.Internal);
 	});
+
+	sendEvent("resumeWorker", {workerName: worker.name});
 
 	return new InferenceWorker({
 		workerId: worker.name,

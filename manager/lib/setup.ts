@@ -1,6 +1,7 @@
 import * as fs from "fs/promises";
 import {readFilesInBucket, uploadFileToBucket} from "../gcloud/storage";
 import {config} from "./config";
+import { sendEvent } from "./telemetry";
 
 const WORKER_IMAGE = config.worker.dockerImage;
 const BUCKET = config.gcloud.bucket;
@@ -27,9 +28,12 @@ export async function setup() {
 	const key = JSON.parse(await fs.readFile("./key.json", "utf-8"));
 	config.gcloud.projectId = key.project_id;
 	config.gcloud.serviceAccount = key.client_email;
+	config.gcloud.clientId = key.client_id;
 
 	console.log(`Project ID: ${config.gcloud.projectId}`);
 
 	console.log("Setup done.");
 	config.setupDone = true;
+	
+	sendEvent("managerSetup", {});
 }
