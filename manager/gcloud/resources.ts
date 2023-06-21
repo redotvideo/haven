@@ -124,13 +124,13 @@ export async function remove(api: compute_v1.Compute, zone: string, vmName: stri
 export async function createFromTemplate(
 	api: compute_v1.Compute,
 	zone: string,
-	configFile: string,
+	template: string,
 	startupScript: string,
 	name: string,
 ) {
-	const config = JSON.parse(configFile);
+	const templateParsed = JSON.parse(template);
 
-	config["metadata"] = {
+	templateParsed["metadata"] = {
 		items: [
 			{
 				key: "startup-script",
@@ -142,7 +142,7 @@ export async function createFromTemplate(
 	const request = {
 		project: projectId,
 		zone: zone,
-		resource: config,
+		resource: templateParsed,
 	};
 
 	await api.instances.insert(request);

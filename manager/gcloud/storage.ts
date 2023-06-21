@@ -1,4 +1,3 @@
-import {storage_v1, google} from "googleapis";
 import {Storage} from "@google-cloud/storage";
 
 const storage = new Storage();

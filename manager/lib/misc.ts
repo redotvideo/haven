@@ -31,7 +31,6 @@ export async function createStartupScript(path: string, dockerImageUrl: string, 
 	let startupScript = file.toString();
 	startupScript = startupScript.replace("{config_url}", configFileUrl);
 	startupScript = startupScript.replace("{image_url}", dockerImageUrl);
-	console.log(startupScript);
 	return startupScript;
 }
 

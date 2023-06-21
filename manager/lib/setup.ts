@@ -30,18 +30,6 @@ export async function setup() {
 
 	console.log(`Project ID: ${config.gcloud.projectId}`);
 
-	// Check for worker docker image
-	const files = await readFilesInBucket(config.gcloud.bucket, "worker/");
-	const dockerImage = files.find((file) => file.name === `worker/${WORKER_IMAGE}.tar`);
-	const exists = dockerImage !== undefined;
-
-	if (!exists) {
-		console.log(`Docker image ${WORKER_IMAGE} does not exist. Uploading...`);
-		await uploadFileToBucket(BUCKET, `./worker/${WORKER_IMAGE}.tar`, `worker/${WORKER_IMAGE}.tar`);
-	} else {
-		console.log(`Docker image ${WORKER_IMAGE} already exists.`);
-	}
-
 	console.log("Setup done.");
 	config.setupDone = true;
 }

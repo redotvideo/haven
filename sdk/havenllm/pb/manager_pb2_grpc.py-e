@@ -29,16 +29,6 @@ class HavenStub(object):
                 request_serializer=manager__pb2.Empty.SerializeToString,
                 response_deserializer=manager__pb2.ListModelsResponse.FromString,
                 )
-        self.AddModel = channel.unary_unary(
-                '/haven.Haven/AddModel',
-                request_serializer=manager__pb2.AddModelRequest.SerializeToString,
-                response_deserializer=manager__pb2.Empty.FromString,
-                )
-        self.DeleteModel = channel.unary_unary(
-                '/haven.Haven/DeleteModel',
-                request_serializer=manager__pb2.ModelName.SerializeToString,
-                response_deserializer=manager__pb2.Empty.FromString,
-                )
         self.CreateInferenceWorker = channel.unary_unary(
                 '/haven.Haven/CreateInferenceWorker',
                 request_serializer=manager__pb2.CreateInferenceWorkerRequest.SerializeToString,
@@ -85,19 +75,6 @@ class HavenServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def AddModel(self, request, context):
-        """Model management.
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def DeleteModel(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def CreateInferenceWorker(self, request, context):
         """Inference worker management.
         """
@@ -140,16 +117,6 @@ def add_HavenServicer_to_server(servicer, server):
                     servicer.ListModels,
                     request_deserializer=manager__pb2.Empty.FromString,
                     response_serializer=manager__pb2.ListModelsResponse.SerializeToString,
-            ),
-            'AddModel': grpc.unary_unary_rpc_method_handler(
-                    servicer.AddModel,
-                    request_deserializer=manager__pb2.AddModelRequest.FromString,
-                    response_serializer=manager__pb2.Empty.SerializeToString,
-            ),
-            'DeleteModel': grpc.unary_unary_rpc_method_handler(
-                    servicer.DeleteModel,
-                    request_deserializer=manager__pb2.ModelName.FromString,
-                    response_serializer=manager__pb2.Empty.SerializeToString,
             ),
             'CreateInferenceWorker': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateInferenceWorker,
@@ -229,40 +196,6 @@ class Haven(object):
         return grpc.experimental.unary_unary(request, target, '/haven.Haven/ListModels',
             manager__pb2.Empty.SerializeToString,
             manager__pb2.ListModelsResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def AddModel(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/haven.Haven/AddModel',
-            manager__pb2.AddModelRequest.SerializeToString,
-            manager__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def DeleteModel(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/haven.Haven/DeleteModel',
-            manager__pb2.ModelName.SerializeToString,
-            manager__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

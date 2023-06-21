@@ -180,52 +180,6 @@ class ListModelsResponse(google.protobuf.message.Message):
 global___ListModelsResponse = ListModelsResponse
 
 @typing_extensions.final
-class AddModelRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    MODEL_NAME_FIELD_NUMBER: builtins.int
-    TOKENIZER_NAME_FIELD_NUMBER: builtins.int
-    BASE_MODEL_NAME_FIELD_NUMBER: builtins.int
-    INSTRUCTION_PREFIX_FIELD_NUMBER: builtins.int
-    OUTPUT_PREFIX_FIELD_NUMBER: builtins.int
-    STOP_TOKENS_FIELD_NUMBER: builtins.int
-    model_name: builtins.str
-    tokenizer_name: builtins.str
-    base_model_name: builtins.str
-    instruction_prefix: builtins.str
-    output_prefix: builtins.str
-    @property
-    def stop_tokens(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
-    def __init__(
-        self,
-        *,
-        model_name: builtins.str = ...,
-        tokenizer_name: builtins.str = ...,
-        base_model_name: builtins.str = ...,
-        instruction_prefix: builtins.str = ...,
-        output_prefix: builtins.str = ...,
-        stop_tokens: collections.abc.Iterable[builtins.str] | None = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["base_model_name", b"base_model_name", "instruction_prefix", b"instruction_prefix", "model_name", b"model_name", "output_prefix", b"output_prefix", "stop_tokens", b"stop_tokens", "tokenizer_name", b"tokenizer_name"]) -> None: ...
-
-global___AddModelRequest = AddModelRequest
-
-@typing_extensions.final
-class ModelName(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    MODEL_NAME_FIELD_NUMBER: builtins.int
-    model_name: builtins.str
-    def __init__(
-        self,
-        *,
-        model_name: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["model_name", b"model_name"]) -> None: ...
-
-global___ModelName = ModelName
-
-@typing_extensions.final
 class CreateInferenceWorkerRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
