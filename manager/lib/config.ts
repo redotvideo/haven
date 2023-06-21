@@ -6,6 +6,7 @@ const config = {
 	gcloud: {
 		projectId: "", // Set during setup
 		serviceAccount: "", // Set during setup
+		clientId: "", // Set during setup
 		zone: "me-west1-b",
 		bucket: "konstis-test-bucket",
 	},
