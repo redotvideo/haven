@@ -1,17 +1,17 @@
 import * as fs from "fs/promises";
-import {CreateInferenceWorkerRequest, GpuType} from "../../api/pb/manager_pb";
+import {GpuType} from "../api/pb/manager_pb";
 
-interface ArchitectureConfiguration {
+export interface ArchitectureConfiguration {
 	quantization: string;
-	gpuType: GpuType;
-	gpuCount: number;
+	gpuType?: GpuType;
+	gpuCount?: number;
 }
 
 /**
  * Checks if the requested configuration (quantization + gpu + gpu quantity)
  * is supported by the model architecture.
  */
-export async function assertArchitectureSupportsConfiguration(architecture: string, req: CreateInferenceWorkerRequest) {
+export async function matchArchitectureAndConfiguration(architecture: string, config: ArchitectureConfiguration) {
 	const files = await fs.readdir(`./config/architectures/${architecture}`);
 
 	// TODO(konsti): Speed up by loading these into memory when the process starts
@@ -19,22 +19,18 @@ export async function assertArchitectureSupportsConfiguration(architecture: stri
 		const text = await fs.readFile(`./config/architectures/${architecture}/${file}`, "utf-8");
 
 		// TODO(konsti): Validation
-		const json = JSON.parse(text) as ArchitectureConfiguration;
+		const json = JSON.parse(text) as Required<ArchitectureConfiguration>;
 
-		if (json.quantization === req.quantization) {
-			if (json.gpuType && json.gpuType !== req.gpuType) {
+		if (json.quantization === config.quantization) {
+			if (json.gpuType && json.gpuType !== config.gpuType) {
 				continue;
 			}
 
-			if (json.gpuCount && json.gpuCount !== req.gpuCount) {
+			if (json.gpuCount && json.gpuCount !== config.gpuCount) {
 				continue;
 			}
 
-			return {
-				quantization: json.quantization,
-				gpuType: json.gpuType,
-				gpuCount: json.gpuCount,
-			};
+			return json;
 		}
 	}
 

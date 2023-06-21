@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddModelRequest, CreateInferenceWorkerRequest, Empty, GenerateRequest, GenerateResponse, InferenceWorker, ListModelsResponse, ModelName, SetupRequest } from "./manager_pb.js";
+import { CreateInferenceWorkerRequest, Empty, GenerateRequest, GenerateResponse, InferenceWorker, ListModelsResponse, SetupRequest } from "./manager_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -43,26 +43,6 @@ export const Haven = {
       name: "ListModels",
       I: Empty,
       O: ListModelsResponse,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * Model management.
-     *
-     * @generated from rpc haven.Haven.AddModel
-     */
-    addModel: {
-      name: "AddModel",
-      I: AddModelRequest,
-      O: Empty,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc haven.Haven.DeleteModel
-     */
-    deleteModel: {
-      name: "DeleteModel",
-      I: ModelName,
-      O: Empty,
       kind: MethodKind.Unary,
     },
     /**

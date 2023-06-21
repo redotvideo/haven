@@ -4,16 +4,22 @@ import {config} from "../lib/config";
 /**
  * This middleware is used for both authentication and catch-all error handling.
  */
-export function secure<T, U>(func: (req: T, context: HandlerContext) => U) {
+export function auth<T, U>(func: (req: T, context: HandlerContext) => U) {
 	return (req: T, context: HandlerContext): U => {
 		// TODO(konsti): we're just hardcoding the token here for now
 		if (context.requestHeader.get("authorization") !== "Bearer awmzbmspqoadbvkse") {
 			throw new ConnectError("Unauthorized", Code.Unauthenticated);
 		}
 
-		// TODO(konsti): we should await the function here to catch errors correctly
+		return func(req, context);
+	};
+}
+
+export function catchErrors<T, U>(func: (req: T, context: HandlerContext) => Promise<U>) {
+	return async (req: T, context: HandlerContext): Promise<U> => {
 		try {
-			return func(req, context);
+			const res = await func(req, context);
+			return res;
 		} catch (err) {
 			console.error(err);
 			if (err instanceof ConnectError) {
