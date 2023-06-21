@@ -29,25 +29,25 @@ class HavenStub(object):
                 request_serializer=manager__pb2.Empty.SerializeToString,
                 response_deserializer=manager__pb2.ListModelsResponse.FromString,
                 )
-        self.CreateWorker = channel.unary_unary(
-                '/haven.Haven/CreateWorker',
-                request_serializer=manager__pb2.ModelName.SerializeToString,
-                response_deserializer=manager__pb2.Empty.FromString,
+        self.CreateInferenceWorker = channel.unary_unary(
+                '/haven.Haven/CreateInferenceWorker',
+                request_serializer=manager__pb2.CreateInferenceWorkerRequest.SerializeToString,
+                response_deserializer=manager__pb2.InferenceWorker.FromString,
                 )
-        self.PauseWorker = channel.unary_unary(
-                '/haven.Haven/PauseWorker',
-                request_serializer=manager__pb2.ModelName.SerializeToString,
-                response_deserializer=manager__pb2.Empty.FromString,
+        self.PauseInferenceWorker = channel.unary_unary(
+                '/haven.Haven/PauseInferenceWorker',
+                request_serializer=manager__pb2.InferenceWorker.SerializeToString,
+                response_deserializer=manager__pb2.InferenceWorker.FromString,
                 )
-        self.ResumeWorker = channel.unary_unary(
-                '/haven.Haven/ResumeWorker',
-                request_serializer=manager__pb2.ModelName.SerializeToString,
-                response_deserializer=manager__pb2.Empty.FromString,
+        self.ResumeInferenceWorker = channel.unary_unary(
+                '/haven.Haven/ResumeInferenceWorker',
+                request_serializer=manager__pb2.InferenceWorker.SerializeToString,
+                response_deserializer=manager__pb2.InferenceWorker.FromString,
                 )
-        self.DeleteWorker = channel.unary_unary(
-                '/haven.Haven/DeleteWorker',
-                request_serializer=manager__pb2.ModelName.SerializeToString,
-                response_deserializer=manager__pb2.Empty.FromString,
+        self.DeleteInferenceWorker = channel.unary_unary(
+                '/haven.Haven/DeleteInferenceWorker',
+                request_serializer=manager__pb2.InferenceWorker.SerializeToString,
+                response_deserializer=manager__pb2.InferenceWorker.FromString,
                 )
 
 
@@ -75,26 +75,26 @@ class HavenServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def CreateWorker(self, request, context):
-        """Worker management.
+    def CreateInferenceWorker(self, request, context):
+        """Inference worker management.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def PauseWorker(self, request, context):
+    def PauseInferenceWorker(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ResumeWorker(self, request, context):
+    def ResumeInferenceWorker(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def DeleteWorker(self, request, context):
+    def DeleteInferenceWorker(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -118,25 +118,25 @@ def add_HavenServicer_to_server(servicer, server):
                     request_deserializer=manager__pb2.Empty.FromString,
                     response_serializer=manager__pb2.ListModelsResponse.SerializeToString,
             ),
-            'CreateWorker': grpc.unary_unary_rpc_method_handler(
-                    servicer.CreateWorker,
-                    request_deserializer=manager__pb2.ModelName.FromString,
-                    response_serializer=manager__pb2.Empty.SerializeToString,
+            'CreateInferenceWorker': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateInferenceWorker,
+                    request_deserializer=manager__pb2.CreateInferenceWorkerRequest.FromString,
+                    response_serializer=manager__pb2.InferenceWorker.SerializeToString,
             ),
-            'PauseWorker': grpc.unary_unary_rpc_method_handler(
-                    servicer.PauseWorker,
-                    request_deserializer=manager__pb2.ModelName.FromString,
-                    response_serializer=manager__pb2.Empty.SerializeToString,
+            'PauseInferenceWorker': grpc.unary_unary_rpc_method_handler(
+                    servicer.PauseInferenceWorker,
+                    request_deserializer=manager__pb2.InferenceWorker.FromString,
+                    response_serializer=manager__pb2.InferenceWorker.SerializeToString,
             ),
-            'ResumeWorker': grpc.unary_unary_rpc_method_handler(
-                    servicer.ResumeWorker,
-                    request_deserializer=manager__pb2.ModelName.FromString,
-                    response_serializer=manager__pb2.Empty.SerializeToString,
+            'ResumeInferenceWorker': grpc.unary_unary_rpc_method_handler(
+                    servicer.ResumeInferenceWorker,
+                    request_deserializer=manager__pb2.InferenceWorker.FromString,
+                    response_serializer=manager__pb2.InferenceWorker.SerializeToString,
             ),
-            'DeleteWorker': grpc.unary_unary_rpc_method_handler(
-                    servicer.DeleteWorker,
-                    request_deserializer=manager__pb2.ModelName.FromString,
-                    response_serializer=manager__pb2.Empty.SerializeToString,
+            'DeleteInferenceWorker': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteInferenceWorker,
+                    request_deserializer=manager__pb2.InferenceWorker.FromString,
+                    response_serializer=manager__pb2.InferenceWorker.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -200,7 +200,7 @@ class Haven(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def CreateWorker(request,
+    def CreateInferenceWorker(request,
             target,
             options=(),
             channel_credentials=None,
@@ -210,14 +210,14 @@ class Haven(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/haven.Haven/CreateWorker',
-            manager__pb2.ModelName.SerializeToString,
-            manager__pb2.Empty.FromString,
+        return grpc.experimental.unary_unary(request, target, '/haven.Haven/CreateInferenceWorker',
+            manager__pb2.CreateInferenceWorkerRequest.SerializeToString,
+            manager__pb2.InferenceWorker.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def PauseWorker(request,
+    def PauseInferenceWorker(request,
             target,
             options=(),
             channel_credentials=None,
@@ -227,14 +227,14 @@ class Haven(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/haven.Haven/PauseWorker',
-            manager__pb2.ModelName.SerializeToString,
-            manager__pb2.Empty.FromString,
+        return grpc.experimental.unary_unary(request, target, '/haven.Haven/PauseInferenceWorker',
+            manager__pb2.InferenceWorker.SerializeToString,
+            manager__pb2.InferenceWorker.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def ResumeWorker(request,
+    def ResumeInferenceWorker(request,
             target,
             options=(),
             channel_credentials=None,
@@ -244,14 +244,14 @@ class Haven(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/haven.Haven/ResumeWorker',
-            manager__pb2.ModelName.SerializeToString,
-            manager__pb2.Empty.FromString,
+        return grpc.experimental.unary_unary(request, target, '/haven.Haven/ResumeInferenceWorker',
+            manager__pb2.InferenceWorker.SerializeToString,
+            manager__pb2.InferenceWorker.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def DeleteWorker(request,
+    def DeleteInferenceWorker(request,
             target,
             options=(),
             channel_credentials=None,
@@ -261,8 +261,8 @@ class Haven(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/haven.Haven/DeleteWorker',
-            manager__pb2.ModelName.SerializeToString,
-            manager__pb2.Empty.FromString,
+        return grpc.experimental.unary_unary(request, target, '/haven.Haven/DeleteInferenceWorker',
+            manager__pb2.InferenceWorker.SerializeToString,
+            manager__pb2.InferenceWorker.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

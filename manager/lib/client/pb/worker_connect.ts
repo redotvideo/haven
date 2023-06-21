@@ -35,12 +35,12 @@ export const WorkerService = {
       kind: MethodKind.Unary,
     },
     /**
-     * Generate text from a prompt.
+     * Generate text from a prompt. Only valid if worker is in inference mode.
      *
-     * @generated from rpc worker.WorkerService.GenerateStream
+     * @generated from rpc worker.WorkerService.Generate
      */
-    generateStream: {
-      name: "GenerateStream",
+    generate: {
+      name: "Generate",
       I: GenerateRequest,
       O: GenerateResponse,
       kind: MethodKind.ServerStreaming,

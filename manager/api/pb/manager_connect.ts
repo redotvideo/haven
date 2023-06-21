@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Empty, GenerateRequest, GenerateResponse, ListModelsResponse, ModelName, SetupRequest } from "./manager_pb.js";
+import { CreateInferenceWorkerRequest, Empty, GenerateRequest, GenerateResponse, InferenceWorker, ListModelsResponse, SetupRequest } from "./manager_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -46,41 +46,41 @@ export const Haven = {
       kind: MethodKind.Unary,
     },
     /**
-     * Worker management.
+     * Inference worker management.
      *
-     * @generated from rpc haven.Haven.CreateWorker
+     * @generated from rpc haven.Haven.CreateInferenceWorker
      */
-    createWorker: {
-      name: "CreateWorker",
-      I: ModelName,
-      O: Empty,
+    createInferenceWorker: {
+      name: "CreateInferenceWorker",
+      I: CreateInferenceWorkerRequest,
+      O: InferenceWorker,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc haven.Haven.PauseWorker
+     * @generated from rpc haven.Haven.PauseInferenceWorker
      */
-    pauseWorker: {
-      name: "PauseWorker",
-      I: ModelName,
-      O: Empty,
+    pauseInferenceWorker: {
+      name: "PauseInferenceWorker",
+      I: InferenceWorker,
+      O: InferenceWorker,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc haven.Haven.ResumeWorker
+     * @generated from rpc haven.Haven.ResumeInferenceWorker
      */
-    resumeWorker: {
-      name: "ResumeWorker",
-      I: ModelName,
-      O: Empty,
+    resumeInferenceWorker: {
+      name: "ResumeInferenceWorker",
+      I: InferenceWorker,
+      O: InferenceWorker,
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc haven.Haven.DeleteWorker
+     * @generated from rpc haven.Haven.DeleteInferenceWorker
      */
-    deleteWorker: {
-      name: "DeleteWorker",
-      I: ModelName,
-      O: Empty,
+    deleteInferenceWorker: {
+      name: "DeleteInferenceWorker",
+      I: InferenceWorker,
+      O: InferenceWorker,
       kind: MethodKind.Unary,
     },
   }

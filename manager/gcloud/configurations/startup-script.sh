@@ -11,11 +11,8 @@ if [ ! -f ~/startup_complete ]; then
 	# Download config file from url
 	wget "{config_url}" -O ~/config.json
 
-	# Download docker image from url
-	wget "{image_url}" -O ~/docker_image.tar
-
-	# Load docker image
-	docker load -i ~/docker_image.tar
+	# Pull docker image
+	docker pull -t my-image "{image_url}"
 
 	# Run docker image and mount the config.json
 	docker run -d \

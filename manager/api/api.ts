@@ -1,205 +1,185 @@
 import * as fs from "fs";
 
-import {ConnectError, Code, ConnectRouter, HandlerContext} from "@bufbuild/connect";
+import {ConnectError, Code, ConnectRouter} from "@bufbuild/connect";
 
 import {Haven} from "./pb/manager_connect";
-import {Empty, GenerateRequest, GenerateResponse, ListModelsResponse, ModelName, SetupRequest} from "./pb/manager_pb";
+import {
+	CreateInferenceWorkerRequest,
+	Empty,
+	GenerateRequest,
+	GenerateResponse,
+	InferenceWorker,
+	ListModelsResponse,
+	SetupRequest,
+} from "./pb/manager_pb";
 
 import {config} from "../lib/config";
-import {createComputeAPI, createFromTemplate, list, pause, remove, start} from "../gcloud/resources";
-import {createStartupScript, encodeName, getWorkerIP, mapStatus} from "../lib/misc";
-import {getStatus, getTransport} from "../lib/client";
-import {generateSignedUrl, readFilesInBucket} from "../gcloud/storage";
-import {Status} from "../lib/client/pb/worker_pb";
-import {enforceSetup, secure} from "./middleware";
-import {setup} from "../lib/setup";
+import {createComputeAPI, list, pause, remove, start} from "../gcloud/resources";
+import {encodeName, getWorkerIP} from "../lib/misc";
+import {getTransport} from "../lib/client";
+import {catchErrors, enforceSetup, auth} from "./middleware";
+import {getAllModels} from "../lib/models";
+import {setupController} from "../controller/setup";
+import {generateController} from "../controller/generate";
+import {createInferenceWorkerController} from "../controller/createInferenceWorker";
 
-const DOCKER_IMAGE = config.worker.dockerImage;
 const ZONE = config.gcloud.zone;
-const BUCKET = config.gcloud.bucket;
-
-const WORKER_CONFIGURATION = config.worker.configFile;
-const WORKER_STARTUP_SCRIPT = config.worker.startupScript;
 
 /**
  * Set up the manager by providing the Google Cloud key.
  */
 async function setupHandler(req: SetupRequest) {
 	if (config.setupDone) {
-		// Nothing left to do.
+		// Endpoint is being called as "ping" to check if the setup is done.
+		// It is, so we return.
 		return;
 	}
 
 	const file = req.keyFile;
 
 	if (file === undefined) {
-		// Endpoint is being called as "ping" to check if the setup is done
+		// Endpoint is being called as "ping" to check if the setup is done.
+		// It's not, so we throw an error.
 		throw new ConnectError("Setup not complete.", Code.FailedPrecondition);
 	}
 
-	const isValidJson = await Promise.resolve()
-		.then(() => JSON.parse(file))
-		.then(() => true)
-		.catch(() => false);
-
-	// TODO(konsti): Check that the key actually works by making some test request
-	if (!isValidJson) {
-		throw new ConnectError("Invalid key file", Code.InvalidArgument);
-	}
-
-	await fs.promises.writeFile("./key.json", file);
-
-	await setup().catch((err) => {
-		throw new ConnectError(err.message, Code.Internal);
-	});
+	// Now we can assume that the setup is not done and the user wants to finish it.
+	return setupController(file);
 }
 
 /**
  * Generate text from a prompt.
  */
 async function* generate(req: GenerateRequest) {
-	const model = req.model;
+	const workerName = req.workerName;
 	const prompt = req.prompt;
 
-	// Check if model exists and is running
-	const api = await createComputeAPI();
-	const workers = await list(api, ZONE);
-	const worker = workers.find((worker) => worker.name === encodeName(model));
+	const {maxTokens, temperature, topP, topK, sample} = req;
 
-	const ip = getWorkerIP(worker);
-	if (!ip) {
-		return;
-	}
+	const stream = await generateController(workerName, prompt, {maxTokens, temperature, topP, topK, sample});
 
-	const stream = getTransport(ip).generateStream({prompt});
-
-	for await (const chunk of stream) {
-		yield new GenerateResponse({text: chunk.text});
+	for await (const data of stream) {
+		yield new GenerateResponse({text: data.text});
 	}
 }
 
 /**
- * Temporary UI endpoint.
- *
- * Eventually, I want to replace this endpoint with two separate ones:
- * - GET /models
- * - GET /workers
- *
- * Maps model folder names to VPS instances and their status.
+ * Get all models that are available for inference.
  */
 async function listModels(req: Empty) {
-	// Get objects in directory, filter out non-directories
-	const files = await readFilesInBucket(BUCKET, "models/");
-	const names = files
-		.map((file) => (file.name.split("/").length > 0 ? file.name.split("/")[1] : undefined))
-		.filter((name, index, self) => self.indexOf(name) === index)
-		.filter((name) => name !== "")
-		.filter((name) => name !== undefined) as string[];
+	return getAllModels()
+		.then((names) => names.map((name) => ({name})))
+		.then((models) => new ListModelsResponse({models}))
+		.catch((e) => {
+			throw new ConnectError(e.message, Code.Internal);
+		});
+}
 
-	// Encode names to base64
-	const namesBase64 = names.map((name) => ({name, encoded: encodeName(name)}));
+async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
+	const modelName = req.modelName;
+	let workerName = req.workerName;
 
-	// Get workers
-	const api = await createComputeAPI();
-	const workers = await list(api, ZONE);
+	const requestedResources = {
+		quantization: req.quantization,
+		gpuType: req.gpuType,
+		gpuCount: req.gpuCount,
+	};
 
-	// Map workers to models
-	const modelPromises = namesBase64.map(async (name) => {
-		const worker = workers.find((worker) => worker.name === name.encoded);
-		const ip = getWorkerIP(worker);
-		const health = ip ? await getStatus(ip) : Status.OFFLINE;
+	const workerId = await createInferenceWorkerController(modelName, requestedResources, workerName);
 
-		return {
-			name: name.name,
-			status: mapStatus(health, worker?.status),
-		};
+	return new InferenceWorker({
+		workerId,
 	});
-
-	const models = await Promise.all(modelPromises);
-	return new ListModelsResponse({models});
 }
 
-async function createWorker(req: ModelName) {
-	const model = req.name;
-
-	// TODO(konsti): Check if model exists
-
-	const api = await createComputeAPI();
-
-	const workerImageUrl = await generateSignedUrl(BUCKET, `worker/${DOCKER_IMAGE}.tar`);
-	const configFileUrl = await generateSignedUrl(BUCKET, `models/${model}/config.json`);
-
-	const startupScript = await createStartupScript(WORKER_STARTUP_SCRIPT, workerImageUrl, configFileUrl);
-	const configFile = await fs.promises.readFile(WORKER_CONFIGURATION, {encoding: "utf-8"});
-	await createFromTemplate(api, ZONE, configFile, startupScript, encodeName(model));
-}
-
-async function pauseWorker(req: ModelName) {
-	const model = req.name;
+async function pauseWorker(req: InferenceWorker) {
+	const workerId = req.workerId;
 
 	// Check if worker exists
 	const api = await createComputeAPI();
-	const workers = await list(api, ZONE);
-	const worker = workers.find((worker) => worker.name === encodeName(model));
+	const workers = await list(api);
+	const worker = workers.find((worker) => worker.name === workerId);
 
 	if (!worker || !worker.name) {
-		throw new ConnectError(`Worker ${model} does not exist`, Code.NotFound);
+		throw new ConnectError(`Worker ${workerId} does not exist`, Code.NotFound);
 	}
 
 	if (getWorkerIP(worker)) {
 		await getTransport(getWorkerIP(worker)!).shutdown({});
 	}
 
-	await pause(api, ZONE, worker.name);
+	await pause(api, ZONE, worker.name).catch((e) => {
+		console.error(e);
+		throw new ConnectError(`Failed to pause worker ${workerId}: ${e.message}`, Code.Internal);
+	});
+
+	return new InferenceWorker({
+		workerId: worker.name,
+	});
 }
 
-async function resumeWorker(req: ModelName, context: HandlerContext) {
-	const model = req.name;
+async function resumeWorker(req: InferenceWorker) {
+	const workerId = req.workerId;
 
 	// Check if worker exists
 	const api = await createComputeAPI();
-	const workers = await list(api, ZONE);
-	const worker = workers.find((worker) => worker.name === encodeName(model));
+	const workers = await list(api);
+	const worker = workers.find((worker) => worker.name === encodeName(workerId));
 
 	if (!worker || !worker.name) {
-		throw new ConnectError(`Worker ${model} does not exist`, Code.NotFound);
+		throw new ConnectError(`Worker ${workerId} does not exist`, Code.NotFound);
 	}
 
 	if (worker.status !== "TERMINATED") {
-		throw new ConnectError(`Worker ${model} is not paused`, Code.FailedPrecondition);
+		throw new ConnectError(`Worker ${workerId} is not paused`, Code.FailedPrecondition);
 	}
 
-	await start(api, ZONE, worker.name);
+	await start(api, ZONE, worker.name).catch((e) => {
+		console.error(e);
+		throw new ConnectError(`Failed to resume worker ${workerId}: ${e.message}`, Code.Internal);
+	});
+
+	return new InferenceWorker({
+		workerId: worker.name,
+	});
 }
 
-async function deleteWorker(req: ModelName) {
-	const model = req.name;
+async function deleteWorker(req: InferenceWorker) {
+	const workerId = req.workerId;
 
 	// Check if worker exists
 	const api = await createComputeAPI();
-	const workers = await list(api, ZONE);
-	const worker = workers.find((worker) => worker.name === encodeName(model));
+	const workers = await list(api);
+	const worker = workers.find((worker) => worker.name === workerId);
 
 	if (!worker || !worker.name) {
-		throw new ConnectError(`Worker ${model} does not exist`, Code.NotFound);
+		throw new ConnectError(`Worker ${workerId} does not exist`, Code.NotFound);
 	}
 
 	if (getWorkerIP(worker)) {
 		await getTransport(getWorkerIP(worker)!).shutdown({});
 	}
 
-	await remove(api, ZONE, worker.name);
+	await remove(api, ZONE, worker.name).catch((e) => {
+		console.error(e);
+		throw new ConnectError(`Failed to delete worker ${workerId}: ${e.message}`, Code.Internal);
+	});
+
+	return new InferenceWorker({
+		workerId: worker.name,
+	});
 }
 
 export const haven = (router: ConnectRouter) =>
 	router.service(Haven, {
-		setup: secure(setupHandler),
+		setup: catchErrors(auth(setupHandler)),
 
-		generate: secure(enforceSetup(generate)),
-		listModels: secure(enforceSetup(listModels)),
+		generate: auth(enforceSetup(generate)),
 
-		createWorker: secure(enforceSetup(createWorker)),
-		pauseWorker: secure(enforceSetup(pauseWorker)),
-		resumeWorker: secure(enforceSetup(resumeWorker)),
-		deleteWorker: secure(enforceSetup(deleteWorker)),
+		listModels: catchErrors(auth(enforceSetup(listModels))),
+
+		createInferenceWorker: catchErrors(auth(enforceSetup(createInferenceWorker))),
+		pauseInferenceWorker: catchErrors(auth(enforceSetup(pauseWorker))),
+		resumeInferenceWorker: catchErrors(auth(enforceSetup(resumeWorker))),
+		deleteInferenceWorker: catchErrors(auth(enforceSetup(deleteWorker))),
 	});
