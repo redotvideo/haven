@@ -5,7 +5,7 @@ import json
 from threading import Thread
 from typing import List
 
-from models.model_registry import ModelRegistry
+from .models.model_registry import ModelRegistry
 
 
 
