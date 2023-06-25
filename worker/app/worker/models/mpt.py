@@ -5,7 +5,7 @@ import torch
 import deepspeed
 from typing import List
 
-from models.base_causal import AutoCausalModel
+from .base_causal import AutoCausalModel
 from .inference_utils.stopping_criteria import StopOnTokens
 
 class MPTModel(AutoCausalModel):

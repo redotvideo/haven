@@ -22,8 +22,8 @@ class RegisteredModel(metaclass=ModelRegistry):
 
 # REGISTER ALL MODELS
 
-from models.base_causal import AutoCausalModel
-from models.mpt import MPTModel
-from models.falcon_7b import Falcon7BModel
+from .base_causal import AutoCausalModel
+from .mpt import MPTModel
+from .falcon_7b import Falcon7BModel
 
 print(ModelRegistry.REGISTRY)

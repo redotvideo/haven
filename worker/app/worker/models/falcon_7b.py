@@ -6,7 +6,7 @@ import deepspeed
 from .inference_utils.stopping_criteria import StopOnTokens
 from typing import List
 
-from models.base_causal import AutoCausalModel
+from .base_causal import AutoCausalModel
 
 
 class Falcon7BModel(AutoCausalModel):
