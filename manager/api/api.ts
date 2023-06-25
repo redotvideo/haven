@@ -1,5 +1,3 @@
-import * as fs from "fs";
-
 import {ConnectError, Code, ConnectRouter} from "@bufbuild/connect";
 
 import {Haven} from "./pb/manager_connect";
@@ -15,15 +13,13 @@ import {
 
 import {config} from "../lib/config";
 import {createComputeAPI, list, pause, remove, start} from "../gcloud/resources";
-import {encodeName, getWorkerIP} from "../lib/misc";
 import {getTransport} from "../lib/client";
 import {catchErrors, enforceSetup, auth} from "./middleware";
 import {getAllModels} from "../lib/models";
 import {setupController} from "../controller/setup";
 import {generateController} from "../controller/generate";
 import {createInferenceWorkerController} from "../controller/createInferenceWorker";
-
-const ZONE = config.gcloud.zone;
+import {getWorkerIP} from "../lib/workers";
 
 /**
  * Set up the manager by providing the Google Cloud key.
@@ -39,7 +35,7 @@ async function setupHandler(req: SetupRequest) {
 
 	if (file === undefined) {
 		// Endpoint is being called as "ping" to check if the setup is done.
-		// It's not, so we throw an error.
+		// It's not, but we also can't do the setup now, so we throw an error.
 		throw new ConnectError("Setup not complete.", Code.FailedPrecondition);
 	}
 
@@ -56,7 +52,12 @@ async function* generate(req: GenerateRequest) {
 
 	const {maxTokens, temperature, topP, topK, sample} = req;
 
-	const stream = await generateController(workerName, prompt, {maxTokens, temperature, topP, topK, sample});
+	const stream = await generateController(workerName, prompt, {maxTokens, temperature, topP, topK, sample}).catch(
+		(e) => {
+			console.error(e);
+			throw new ConnectError(e.message, Code.Internal);
+		},
+	);
 
 	for await (const data of stream) {
 		yield new GenerateResponse({text: data.text});
@@ -108,7 +109,7 @@ async function pauseWorker(req: InferenceWorker) {
 		await getTransport(getWorkerIP(worker)!).shutdown({});
 	}
 
-	await pause(api, ZONE, worker.name).catch((e) => {
+	await pause(api, worker.name).catch((e) => {
 		console.error(e);
 		throw new ConnectError(`Failed to pause worker ${workerId}: ${e.message}`, Code.Internal);
 	});
@@ -124,7 +125,7 @@ async function resumeWorker(req: InferenceWorker) {
 	// Check if worker exists
 	const api = await createComputeAPI();
 	const workers = await list(api);
-	const worker = workers.find((worker) => worker.name === encodeName(workerId));
+	const worker = workers.find((worker) => worker.name === workerId);
 
 	if (!worker || !worker.name) {
 		throw new ConnectError(`Worker ${workerId} does not exist`, Code.NotFound);
@@ -134,7 +135,7 @@ async function resumeWorker(req: InferenceWorker) {
 		throw new ConnectError(`Worker ${workerId} is not paused`, Code.FailedPrecondition);
 	}
 
-	await start(api, ZONE, worker.name).catch((e) => {
+	await start(api, worker.name).catch((e) => {
 		console.error(e);
 		throw new ConnectError(`Failed to resume worker ${workerId}: ${e.message}`, Code.Internal);
 	});
@@ -160,7 +161,7 @@ async function deleteWorker(req: InferenceWorker) {
 		await getTransport(getWorkerIP(worker)!).shutdown({});
 	}
 
-	await remove(api, ZONE, worker.name).catch((e) => {
+	await remove(api, worker.name).catch((e) => {
 		console.error(e);
 		throw new ConnectError(`Failed to delete worker ${workerId}: ${e.message}`, Code.Internal);
 	});

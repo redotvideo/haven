@@ -12,14 +12,14 @@ if [ ! -f ~/startup_complete ]; then
 	wget "{config_url}" -O ~/config.json
 
 	# Pull docker image
-	docker pull -t my-image "{image_url}"
+	docker pull "{image_url}"
 
 	# Run docker image and mount the config.json
 	docker run -d \
 		-v /usr/local/nvidia:/usr/local/nvidia \
 		-v ~/config.json:/app/config.json \
 		--restart always \
-		--gpus all -p 50051:50051 my-image
+		--gpus all -p 50051:50051 {image_url}
   
 	# Create the indicator file
 	touch ~/startup_complete

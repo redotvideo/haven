@@ -21,8 +21,8 @@ export function check<Base, Req extends {[K in keyof Req]: K extends keyof Base 
 	 * => Req extends { [K in keyof Req]: K extends keyof Base ? Req[K] : never }
 	 *
 	 * e.g.: Base = { greeting: string }
-	 *       Req  = { greeting: "hello" | "hi" }             // This is valid
-	 * 	     Req  = { greeting: "hello" | "hi", foo: "bar" } // This is invalid
+	 *       Req  = { greeting: "hello" | "hi" }             // This is a valid extension
+	 * 	     Req  = { greeting: "hello" | "hi", foo: "bar" } // This is an invalid extension
 	 */
 
 	input: Check<Req>, // typia.createAssertEquals<Req>,
@@ -31,7 +31,7 @@ export function check<Base, Req extends {[K in keyof Req]: K extends keyof Base 
 		| ((req: Req, ctx: HandlerContext) => Promise<Message<Res>>),
 ) {
 	return async (req: Base, ctx: HandlerContext) => {
-		// Validate input. No promise required but I think it's prettier this way.
+		// Validate input.
 		await Promise.resolve()
 			.then(() => input(req))
 			.catch((e) => {

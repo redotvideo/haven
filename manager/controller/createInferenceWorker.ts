@@ -9,10 +9,9 @@ import {
 	getZonesToCreateVM,
 	gpuTypeToGcloudName,
 } from "../gcloud/resources";
-import {generateName} from "../lib/workers";
+import {createStartupScript, generateName} from "../lib/workers";
 import {compute_v1} from "googleapis";
 import {config} from "../lib/config";
-import {createStartupScript} from "../lib/misc";
 
 async function checkForModelArchitecture(modelName: string) {
 	return await getModelArchitecture(modelName).catch((e) => {
@@ -24,7 +23,10 @@ async function checkForModelArchitecture(modelName: string) {
 	});
 }
 
-async function checkArchitectureSupportsRequestedResources(architecture: string, config: ArchitectureConfiguration) {
+async function checkArchitectureSupportsRequestedResources(
+	architecture: string,
+	config: Omit<ArchitectureConfiguration, "cpuMachineType">,
+) {
 	return matchArchitectureAndConfiguration(architecture, config).catch((e) => {
 		console.error(e);
 		throw new ConnectError(
@@ -74,7 +76,7 @@ async function checkViableZoneToDeploy(api: compute_v1.Compute, config: Required
 
 export async function createInferenceWorkerController(
 	modelName: string,
-	requestedResources: ArchitectureConfiguration,
+	requestedResources: Omit<ArchitectureConfiguration, "cpuMachineType">,
 	workerName?: string,
 ) {
 	// Get architecture
@@ -99,7 +101,7 @@ export async function createInferenceWorkerController(
 		validConfiguration.gpuCount,
 		zone,
 		500,
-		"n1-standard-4",
+		validConfiguration.cpuMachineType,
 	);
 
 	// Create instance from template

@@ -5,28 +5,40 @@ export interface ArchitectureConfiguration {
 	quantization: string;
 	gpuType?: GpuType;
 	gpuCount?: number;
+	cpuMachineType: string;
 }
 
 /**
  * Checks if the requested configuration (quantization + gpu + gpu quantity)
  * is supported by the model architecture.
  */
-export async function matchArchitectureAndConfiguration(architecture: string, config: ArchitectureConfiguration) {
+export async function matchArchitectureAndConfiguration(
+	architecture: string,
+	config: Omit<ArchitectureConfiguration, "cpuMachineType">,
+): Promise<Required<ArchitectureConfiguration>> {
 	const files = await fs.readdir(`./config/architectures/${architecture}`);
+
+	console.log(files);
 
 	// TODO(konsti): Speed up by loading these into memory when the process starts
 	for (const file of files) {
 		const text = await fs.readFile(`./config/architectures/${architecture}/${file}`, "utf-8");
+		const parsed = JSON.parse(text) as any;
+
+		// Convert string to enum numerical value
+		parsed.gpuType = GpuType[parsed.gpuType as keyof typeof GpuType];
 
 		// TODO(konsti): Validation
-		const json = JSON.parse(text) as Required<ArchitectureConfiguration>;
+		const json = parsed as Required<ArchitectureConfiguration>;
 
 		if (json.quantization === config.quantization) {
-			if (json.gpuType && json.gpuType !== config.gpuType) {
+			console.log(config.gpuType!.toString());
+
+			if (config.gpuType && json.gpuType !== config.gpuType) {
 				continue;
 			}
 
-			if (json.gpuCount && json.gpuCount !== config.gpuCount) {
+			if (config.gpuCount && json.gpuCount !== config.gpuCount) {
 				continue;
 			}
 
