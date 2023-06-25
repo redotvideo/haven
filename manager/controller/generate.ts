@@ -1,7 +1,7 @@
 import {Code, ConnectError} from "@bufbuild/connect";
 import {createComputeAPI, list} from "../gcloud/resources";
-import {getWorkerIP} from "../lib/misc";
 import {getTransport} from "../lib/client";
+import {getWorkerIP} from "../lib/workers";
 
 interface Settings {
 	maxTokens?: number;
@@ -24,6 +24,8 @@ export async function generateController(workerName: string, prompt: string, set
 	if (!ip) {
 		throw new ConnectError(`Worker ${workerName} has no public ip.`, Code.FailedPrecondition);
 	}
+
+	// TODO(konsti): check status and throw if the worker can't be reached.
 
 	return getTransport(ip).generate({prompt, ...settings});
 }

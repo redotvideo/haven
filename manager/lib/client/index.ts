@@ -14,6 +14,7 @@ const clients = new Map<string, PromiseClient<typeof WorkerService>>();
  * @returns
  */
 export function getTransport(ip: string): PromiseClient<typeof WorkerService> {
+	console.log("creating a new transport for", ip);
 	if (!clients.has(ip)) {
 		const transport = createGrpcTransport({
 			baseUrl: `http://${ip}:50051`,
@@ -29,7 +30,11 @@ export function getTransport(ip: string): PromiseClient<typeof WorkerService> {
 
 export async function getStatus(ip: string): Promise<Status> {
 	return getTransport(ip)
-		.health({}, {timeoutMs: 1000})
+		.health({}, {timeoutMs: 5000})
 		.then((res) => res.status)
-		.catch(() => Status.OFFLINE);
+		.catch((e) => {
+			console.log(e);
+
+			return Status.OFFLINE;
+		});
 }

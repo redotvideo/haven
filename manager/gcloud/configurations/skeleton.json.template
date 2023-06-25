@@ -48,7 +48,7 @@
 				}
 			],
 			"stackType": "IPV4_ONLY",
-			"subnetwork": "projects/{projectId}/regions/{zone}/subnetworks/default"
+			"subnetwork": "projects/{projectId}/regions/{region}/subnetworks/default"
 		}
 	],
 	"params": {
