@@ -1,5 +1,6 @@
 import * as fs from "fs/promises";
 import {GpuType} from "../api/pb/manager_pb";
+import typia from "typia";
 
 export interface ArchitectureConfiguration {
 	quantization: string;
@@ -29,8 +30,8 @@ export async function matchArchitectureAndConfiguration(
 		// Convert string to enum numerical value
 		parsed.gpuType = GpuType[parsed.gpuType as keyof typeof GpuType];
 
-		// TODO(konsti): Validation
-		const json = parsed as Required<ArchitectureConfiguration>;
+		const configValid = typia.createAssertEquals<Required<ArchitectureConfiguration>>();
+		const json = configValid(parsed);
 
 		if (json.quantization === config.quantization) {
 			console.log(config.gpuType!.toString());
