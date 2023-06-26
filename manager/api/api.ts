@@ -1,4 +1,5 @@
 import {ConnectError, Code, ConnectRouter} from "@bufbuild/connect";
+import typia from "typia";
 
 import {Haven} from "./pb/manager_connect";
 import {
@@ -20,6 +21,13 @@ import {setupController} from "../controller/setup";
 import {generateController} from "../controller/generate";
 import {createInferenceWorkerController} from "../controller/createInferenceWorker";
 import {getWorkerIP} from "../lib/workers";
+import {validate} from "./validate";
+
+/////////////////////
+// Setup
+/////////////////////
+
+const setupInputValid = typia.createAssertEquals<SetupRequest>();
 
 /**
  * Set up the manager by providing the Google Cloud key.
@@ -43,6 +51,10 @@ async function setupHandler(req: SetupRequest) {
 	return setupController(file);
 }
 
+/////////////////////
+// Generate text
+/////////////////////
+
 /**
  * Generate text from a prompt.
  */
@@ -52,17 +64,18 @@ async function* generate(req: GenerateRequest) {
 
 	const {maxTokens, temperature, topP, topK, sample} = req;
 
-	const stream = await generateController(workerName, prompt, {maxTokens, temperature, topP, topK, sample}).catch(
-		(e) => {
-			console.error(e);
-			throw new ConnectError(e.message, Code.Internal);
-		},
-	);
+	const stream = await generateController(workerName, prompt, {maxTokens, temperature, topP, topK, sample});
 
 	for await (const data of stream) {
 		yield new GenerateResponse({text: data.text});
 	}
 }
+
+/////////////////////
+// Generate text
+/////////////////////
+
+const listModelsInputValid = typia.createAssertEquals<Empty>();
 
 /**
  * Get all models that are available for inference.
@@ -75,6 +88,12 @@ async function listModels(req: Empty) {
 			throw new ConnectError(e.message, Code.Internal);
 		});
 }
+
+/////////////////////
+// Create inference worker
+/////////////////////
+
+const createInferenceWorkerInputValid = typia.createAssertEquals<CreateInferenceWorkerRequest>();
 
 async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	const modelName = req.modelName;
@@ -92,6 +111,12 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 		workerId,
 	});
 }
+
+/////////////////////
+// Pause worker
+/////////////////////
+
+const inferenceWorkerValid = typia.createAssertEquals<InferenceWorker>();
 
 async function pauseWorker(req: InferenceWorker) {
 	const workerId = req.workerId;
@@ -119,6 +144,10 @@ async function pauseWorker(req: InferenceWorker) {
 	});
 }
 
+/////////////////////
+// Resume worker
+/////////////////////
+
 async function resumeWorker(req: InferenceWorker) {
 	const workerId = req.workerId;
 
@@ -144,6 +173,10 @@ async function resumeWorker(req: InferenceWorker) {
 		workerId: worker.name,
 	});
 }
+
+/////////////////////
+// Delete worker
+/////////////////////
 
 async function deleteWorker(req: InferenceWorker) {
 	const workerId = req.workerId;
@@ -173,14 +206,16 @@ async function deleteWorker(req: InferenceWorker) {
 
 export const haven = (router: ConnectRouter) =>
 	router.service(Haven, {
-		setup: catchErrors(auth(setupHandler)),
+		setup: catchErrors(validate(setupInputValid, auth(setupHandler))),
 
 		generate: auth(enforceSetup(generate)),
 
-		listModels: catchErrors(auth(enforceSetup(listModels))),
+		listModels: catchErrors(validate(listModelsInputValid, auth(enforceSetup(listModels)))),
 
-		createInferenceWorker: catchErrors(auth(enforceSetup(createInferenceWorker))),
-		pauseInferenceWorker: catchErrors(auth(enforceSetup(pauseWorker))),
-		resumeInferenceWorker: catchErrors(auth(enforceSetup(resumeWorker))),
-		deleteInferenceWorker: catchErrors(auth(enforceSetup(deleteWorker))),
+		createInferenceWorker: catchErrors(
+			validate(createInferenceWorkerInputValid, auth(enforceSetup(createInferenceWorker))),
+		),
+		pauseInferenceWorker: catchErrors(validate(inferenceWorkerValid, auth(enforceSetup(pauseWorker)))),
+		resumeInferenceWorker: catchErrors(validate(inferenceWorkerValid, auth(enforceSetup(resumeWorker)))),
+		deleteInferenceWorker: catchErrors(validate(inferenceWorkerValid, auth(enforceSetup(deleteWorker)))),
 	});
