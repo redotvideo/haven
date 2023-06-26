@@ -10,17 +10,18 @@ import {Status} from "../api/pb/manager_pb";
 export async function generateName(model: string) {
 	// use a MS timestamp as the base
 	const ms = Date.now().toString(36);
-	return `haven-${model}-${ms}`;
+	const modelName = model.split("/").pop();
+	return `haven-${modelName}-${ms}`;
 }
 
 export function getWorkerIP(worker: compute_v1.Schema$Instance | undefined) {
 	return worker?.networkInterfaces?.[0]?.accessConfigs?.[0]?.natIP;
 }
 
-export async function createStartupScript(path: string, dockerImageUrl: string, configFileUrl: string) {
+export async function createStartupScript(path: string, dockerImageUrl: string, configFileString: string) {
 	const file = await fs.readFile(path);
 	let startupScript = file.toString();
-	startupScript = startupScript.replace("{config_url}", configFileUrl);
+	startupScript = startupScript.replace("{config}", configFileString);
 	startupScript = startupScript.replace(/{image_url}/g, dockerImageUrl);
 	return startupScript;
 }
