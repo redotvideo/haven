@@ -3,7 +3,7 @@ import * as fs from "fs/promises";
 import {Code, ConnectError} from "@bufbuild/connect";
 import {setup} from "../lib/setup";
 
-export async function setupController(file: string) {
+export async function setupController(file: string, telemetryOkay: boolean) {
 	// Now we can assume that the key file is being uploaded
 	const isValidJson = await Promise.resolve()
 		.then(() => JSON.parse(file))
@@ -17,7 +17,7 @@ export async function setupController(file: string) {
 
 	await fs.writeFile("./key.json", file);
 
-	await setup().catch((err) => {
+	await setup(telemetryOkay).catch((err) => {
 		throw new ConnectError(err.message, Code.Internal);
 	});
 }

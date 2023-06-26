@@ -1,5 +1,6 @@
 const config = {
 	setupDone: false, // Tells us if the manager is in a working state
+	telemetryOkay: true,
 	server: {
 		port: 3000,
 	},

@@ -9,7 +9,7 @@ const BUCKET = config.gcloud.bucket;
 /*
  * Runs when the manager starts. Checks that the setup has already been done.
  */
-export async function setup() {
+export async function setup(telemetryOkay: boolean) {
 	// Check for key.json
 	const doesKeyExist = await fs
 		.access("./key.json")

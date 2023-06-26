@@ -37,6 +37,7 @@ async function setupHandler(req: SetupRequest) {
 	}
 
 	const file = req.keyFile;
+	const telemetryOkay = req.telemetryOkay;
 
 	if (file === undefined) {
 		// Endpoint is being called as "ping" to check if the setup is done.
@@ -45,7 +46,7 @@ async function setupHandler(req: SetupRequest) {
 	}
 
 	// Now we can assume that the setup is not done and the user wants to finish it.
-	return setupController(file);
+	return setupController(file, telemetryOkay);
 }
 
 /**
@@ -116,6 +117,8 @@ async function pauseWorker(req: InferenceWorker) {
 		throw new ConnectError(`Failed to pause worker ${workerId}: ${e.message}`, Code.Internal);
 	});
 
+	sendEvent("pauseWorker", {workerName: worker.name});
+
 	return new InferenceWorker({
 		workerId: worker.name,
 	});
@@ -169,6 +172,8 @@ async function deleteWorker(req: InferenceWorker) {
 		console.error(e);
 		throw new ConnectError(`Failed to delete worker ${workerId}: ${e.message}`, Code.Internal);
 	});
+
+	sendEvent("deleteWorker", {workerName: worker.name});
 
 	return new InferenceWorker({
 		workerId: worker.name,
