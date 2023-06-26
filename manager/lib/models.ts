@@ -1,4 +1,5 @@
 import * as fs from "fs/promises";
+import typia from "typia";
 
 export interface ModelFile {
 	architecture: string;
@@ -24,8 +25,8 @@ async function findModelFile(model: string) {
 	for (const file of files) {
 		const text = await fs.readFile(`./config/models/${file}`, "utf-8");
 
-		// TODO(konsti): Validation
-		const parsed = JSON.parse(text) as ModelFile;
+		const configValid = typia.createAssertEquals<ModelFile>();
+		const parsed = configValid(JSON.parse(text));
 
 		if (parsed.name === model) {
 			return parsed;

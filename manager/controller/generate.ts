@@ -27,5 +27,10 @@ export async function generateController(workerName: string, prompt: string, set
 
 	// TODO(konsti): check status and throw if the worker can't be reached.
 
-	return getTransport(ip).generate({prompt, ...settings});
+	return Promise.resolve()
+		.then(() => getTransport(ip).generate({prompt, ...settings}))
+		.catch((e) => {
+			console.error(e);
+			throw new ConnectError(`Failed to establish a connection.: ${e.message}`, Code.Internal);
+		});
 }
