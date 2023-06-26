@@ -6,12 +6,10 @@ import deepspeed
 from peft import LoraConfig, prepare_model_for_int8_training, get_peft_model
 from typing import List
 
-from models.base_causal import AutoCausalModel
+from .base_causal import AutoCausalModel
 from .training_utils.tokenizer_resize import resize_tokenizer_and_embeddings
 from .training_utils.data_processing import make_supervised_data_module
 from .inference_utils.stopping_criteria import StopOnTokens
-
-
 
 class Falcon7BModel(AutoCausalModel):
         
