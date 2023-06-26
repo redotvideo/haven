@@ -8,8 +8,7 @@ if [ ! -f ~/startup_complete ]; then
 	sudo apt-get update	
 	sudo apt-get install -y docker.io
 
-	# Download config file from url
-	wget "{config_url}" -O ~/config.json
+	echo '{config}' > ~/config.json
 
 	# Pull docker image
 	docker pull "{image_url}"

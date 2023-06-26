@@ -6,6 +6,7 @@ export interface ArchitectureConfiguration {
 	gpuType?: GpuType;
 	gpuCount?: number;
 	cpuMachineType: string;
+	contextSize: string;
 }
 
 /**
@@ -14,7 +15,7 @@ export interface ArchitectureConfiguration {
  */
 export async function matchArchitectureAndConfiguration(
 	architecture: string,
-	config: Omit<ArchitectureConfiguration, "cpuMachineType">,
+	config: Partial<ArchitectureConfiguration>,
 ): Promise<Required<ArchitectureConfiguration>> {
 	const files = await fs.readdir(`./config/architectures/${architecture}`);
 
