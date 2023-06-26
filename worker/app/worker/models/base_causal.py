@@ -12,19 +12,33 @@ from .training_utils.data_processing import make_supervised_data_module
 
 
 class AutoCausalModel(RegisteredModel):
+
+    architecture_name = "causal_model"
         
     def __init__(self, config):
-
         self.model_config = config
+
+        if config["name"].startswith("@huggingface"):
+            self.model_config["huggingface_name"] = "/".join(config["name"].split("/")[1:])
+
 
 
     ##############################
     ### INFERENCE    #############
     ##############################
     def prepare_for_inference(self):
-        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", load_in_8bit=self.model_config["int8"])
-        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["model_name"])
-        self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, self.model_config["stop_tokens"]+[self.tokenizer.eos_token])])
+        if self.model_config["quantization"] == "int8":
+            self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], device_map="auto", load_in_8bit=True)
+        
+        elif self.model_config["quantization"] == "float16":
+            self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], device_map="auto")
+
+        else:
+            raise NotImplementedError(f"{self.model_config['quantization']} is not a valid quantization config")
+
+
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
+        self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, self.model_config["stopTokens"]+[self.tokenizer.eos_token])])
 
 
     def generate_stream(self, text_input: str, conversation_history: List, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
@@ -33,7 +47,7 @@ class AutoCausalModel(RegisteredModel):
         else:
             history_prompt = self.create_history_prompt(conversation_history)
 
-        adapted_text_input = history_prompt + self.model_config["instruction_prefix"] + text_input + self.model_config["output_prefix"]
+        adapted_text_input = history_prompt + self.model_config["instructionPrefix"] + text_input + self.model_config["outputPrefix"]
         input_tokenized = self.tokenizer([adapted_text_input], return_tensors='pt').input_ids.to('cuda')
 
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True)
@@ -59,10 +73,10 @@ class AutoCausalModel(RegisteredModel):
         prompt = ""
         for message_obj in conversation_history:
             if message_obj["role"] == "user":
-                prompt += self.model_config["instruction_prefix"] + message_obj["content"] + self.model_config["output_prefix"]
+                prompt += self.model_config["instructionPrefix"] + message_obj["content"] + self.model_config["outputPrefix"]
 
             elif message_obj["role"] == "assistant":
-                prompt += message_obj["content"] + self.model_config["stop_tokens"][0]
+                prompt += message_obj["content"] + self.model_config["stopTokens"][0]
 
 
         return prompt
@@ -75,8 +89,8 @@ class AutoCausalModel(RegisteredModel):
     ##############################
     def prepare_model_for_training(self):
         
-        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["model_name"], device_map="auto", load_in_8bit=self.model_config["lora"])
-        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["model_name"])
+        self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], device_map="auto", load_in_8bit=self.model_config["lora"])
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
 
         if self.tokenizer.pad_token is None:
             resize_tokenizer_and_embeddings(
@@ -93,8 +107,8 @@ class AutoCausalModel(RegisteredModel):
 
 
     def prepare_data_for_training(self):
-        self.train_dataset, self.collator = make_supervised_data_module(tokenizer=self.tokenizer, data_path=self.model_config["train_data_path"], instruction_prefix=self.model_config["instruction_prefix"], output_prefix=self.model_config["output_prefix"])
-        self.eval_dataset, _ = make_supervised_data_module(tokenizer=self.tokenizer, data_path=self.model_config["eval_data_path"], instruction_prefix=self.model_config["instruction_prefix"], output_prefix=self.model_config["output_prefix"])
+        self.train_dataset, self.collator = make_supervised_data_module(tokenizer=self.tokenizer, data_path=self.model_config["train_data_path"], instruction_prefix=self.model_config["instructionPrefix"], output_prefix=self.model_config["outputPrefix"])
+        self.eval_dataset, _ = make_supervised_data_module(tokenizer=self.tokenizer, data_path=self.model_config["eval_data_path"], instruction_prefix=self.model_config["instructionPrefix"], output_prefix=self.model_config["outputPrefix"])
 
 
 
