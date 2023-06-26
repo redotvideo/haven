@@ -1,0 +1,10 @@
+{
+	"architecture": "mpt",
+	"name": "@huggingface/mosaicml/mpt-7b-chat",
+	"tokenizer": "@huggingface/mosaicml/mpt-7b-chat",
+	"instructionPrefix": "<|im_start|>user\n",
+	"outputPrefix": "<|im_end|><|im_start|>assistant\n",
+	"stopTokens": [
+		"<|im_end|>"
+	]
+}

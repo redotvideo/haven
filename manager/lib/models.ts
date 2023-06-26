@@ -1,8 +1,12 @@
 import * as fs from "fs/promises";
 
-interface ModelFile {
-	name: string;
+export interface ModelFile {
 	architecture: string;
+	name: string;
+	tokenizer: string;
+	instructionPrefix: string;
+	outputPrefix: string;
+	stopTokens: string[];
 }
 
 /**
@@ -13,11 +17,33 @@ export async function getAllModels() {
 	return files.map((file) => file.replace(".json", ""));
 }
 
-export async function getModelArchitecture(model: string) {
-	const modelFile = await fs.readFile(`./config/models/${model}.json`, "utf-8");
+async function findModelFile(model: string) {
+	const files = await fs.readdir("./config/models");
 
-	// TODO(konsti): Validation
-	const parsed = JSON.parse(modelFile) as ModelFile;
+	// Slow...
+	for (const file of files) {
+		const text = await fs.readFile(`./config/models/${file}`, "utf-8");
 
-	return parsed.architecture;
+		// TODO(konsti): Validation
+		const parsed = JSON.parse(text) as ModelFile;
+
+		if (parsed.name === model) {
+			return parsed;
+		}
+	}
+}
+
+/**
+ *
+ * @param model of the form `@huggingface/${string}`
+ * @returns
+ */
+export async function getModelFile(model: string) {
+	const file = await findModelFile(model);
+
+	if (!file) {
+		throw new Error(`Model ${model} not supported. Feel free to open an issue on GitHub.`);
+	}
+
+	return file;
 }
