@@ -21,17 +21,4 @@ class InferenceClient:
     def generate(self, text_input, conversation_history=None, **kwargs):
         return self.model_engine.generate_stream(text_input, conversation_history, **kwargs)
 
-        
-
-if __name__ == '__main__':
-
-    client = InferenceClient("models/model_configs/mpt_chat_7b_newconfig.json")
-
-    history = [
-        {"role": "user", "content": "Hey. I want to surprise my friend with a small trip! Which countries could I visit with her?"},
-        {"role": "assistant", "content": "There are many nice countries you could visit. Which kinds of activities does your friend like?"},
-    ]
-
-    stream = client.generate("She likes the mountains, particularly skiing.", conversation_history=history)
-    for s in stream:
-        print(s)
+    
