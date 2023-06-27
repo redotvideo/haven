@@ -28,8 +28,18 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 		prompt = request.prompt
 		streamer = inference_client.generate(text_input=prompt)
 
+		sus_string = ""
 		for text in streamer:
+			if text in inference_client.model_engine.model_config["stopTokens"][0]:
+				sus_string += text
+				continue
+
+			elif sus_string == inference_client.model_engine.model_config["stopTokens"][0]:
+				break
+
+			sus_string = ""
 			yield worker_pb2.GenerateResponse(text=text)
+
 
 async def serve():
 	server = grpc.aio.server()
