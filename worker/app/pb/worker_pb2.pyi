@@ -16,23 +16,22 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-class _Status:
+class _WorkerStatus:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _StatusEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Status.ValueType], builtins.type):
+class _WorkerStatusEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_WorkerStatus.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    OK: _Status.ValueType  # 0
-    STOPPING: _Status.ValueType  # 1
-    OFFLINE: _Status.ValueType  # 99
+    OK: _WorkerStatus.ValueType  # 0
+    STOPPING: _WorkerStatus.ValueType  # 1
+    OFFLINE: _WorkerStatus.ValueType  # 99
 
-class Status(_Status, metaclass=_StatusEnumTypeWrapper):
-    """TODO(konsti): Rename to WorkerStatus for more clarity."""
+class WorkerStatus(_WorkerStatus, metaclass=_WorkerStatusEnumTypeWrapper): ...
 
-OK: Status.ValueType  # 0
-STOPPING: Status.ValueType  # 1
-OFFLINE: Status.ValueType  # 99
-global___Status = Status
+OK: WorkerStatus.ValueType  # 0
+STOPPING: WorkerStatus.ValueType  # 1
+OFFLINE: WorkerStatus.ValueType  # 99
+global___WorkerStatus = WorkerStatus
 
 @typing_extensions.final
 class HealthRequest(google.protobuf.message.Message):
@@ -49,11 +48,11 @@ class HealthResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STATUS_FIELD_NUMBER: builtins.int
-    status: global___Status.ValueType
+    status: global___WorkerStatus.ValueType
     def __init__(
         self,
         *,
-        status: global___Status.ValueType = ...,
+        status: global___WorkerStatus.ValueType = ...,
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["status", b"status"]) -> None: ...
 

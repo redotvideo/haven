@@ -1,7 +1,7 @@
 import * as fs from "fs/promises";
 import {compute_v1} from "googleapis";
 
-import * as WorkerAPI from "./client/pb/worker_pb";
+import {WorkerStatus} from "./client/pb/worker_pb";
 import {Status} from "../api/pb/manager_pb";
 
 /**
@@ -26,34 +26,30 @@ export async function createStartupScript(path: string, dockerImageUrl: string, 
 	return startupScript;
 }
 
-export function mapStatus(workerStatus: WorkerAPI.Status, cloudStatus: string | undefined | null): Status {
-	if (workerStatus === WorkerAPI.Status.OK) {
-		return Status.RUNNING;
+export function mapStatus(serviceStatus: WorkerStatus, vmStatus: string | undefined | null): Status {
+	if (serviceStatus === WorkerStatus.OK) {
+		return Status.ONLINE;
 	}
 
-	if (workerStatus === WorkerAPI.Status.STOPPING) {
-		return Status.STOPPING;
+	if (serviceStatus === WorkerStatus.STOPPING) {
+		return Status.UNREACHABLE;
 	}
 
 	const map = {
-		PROVISIONING: Status.STARTING,
-		STAGING: Status.STARTING,
-
 		/**
-		 * If the underlying cloud vm is running but the worker is not,
-		 * we assume that the worker is starting.
-		 *
-		 * TODO(konsti): this sucks. when the docker container is not running,
-		 * something could also be wrong and we wouldn't know.
+		 * We default to unreachable for all of these
 		 */
-		RUNNING: Status.STARTING,
+		PROVISIONING: Status.UNREACHABLE,
+		STAGING: Status.UNREACHABLE,
+		RUNNING: Status.UNREACHABLE,
+		STOPPING: Status.UNREACHABLE,
+		SUSPENDING: Status.UNREACHABLE,
 
-		STOPPING: Status.STOPPING,
-		SUSPENDING: Status.STOPPING,
 		SUSPENDED: Status.PAUSED,
 		TERMINATED: Status.PAUSED,
+
 		REPAIRING: Status.ERROR,
 	};
 
-	return map[cloudStatus as keyof typeof map] || Status.STOPPED;
+	return map[vmStatus as keyof typeof map] || Status.ERROR;
 }

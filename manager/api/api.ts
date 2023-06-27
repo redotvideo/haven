@@ -9,6 +9,7 @@ import {
 	GenerateResponse,
 	InferenceWorker,
 	ListModelsResponse,
+	ListWorkersResponse,
 	SetupRequest,
 } from "./pb/manager_pb";
 
@@ -22,6 +23,7 @@ import {generateController} from "../controller/generate";
 import {createInferenceWorkerController} from "../controller/createInferenceWorker";
 import {getWorkerIP} from "../lib/workers";
 import {validate} from "./validate";
+import {listWorkersController} from "../controller/workers";
 
 /////////////////////
 // Setup
@@ -72,7 +74,7 @@ async function* generate(req: GenerateRequest) {
 }
 
 /////////////////////
-// Generate text
+// List models
 /////////////////////
 
 const listModelsInputValid = typia.createAssertEquals<Empty>();
@@ -90,6 +92,23 @@ async function listModels(req: Empty) {
 }
 
 /////////////////////
+// List workers
+/////////////////////
+
+const listWorkersInputValid = typia.createAssertEquals<Empty>();
+
+/**
+ * Get a list of all workers and their status.
+ */
+async function listWorkers(req: Empty) {
+	const workerList = await listWorkersController();
+
+	return new ListWorkersResponse({
+		workers: workerList,
+	});
+}
+
+/////////////////////
 // Create inference worker
 /////////////////////
 
@@ -97,7 +116,7 @@ const createInferenceWorkerInputValid = typia.createAssertEquals<CreateInference
 
 async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	const modelName = req.modelName;
-	let workerName = req.workerName;
+	let worker = req.workerName;
 
 	const requestedResources = {
 		quantization: req.quantization,
@@ -105,10 +124,10 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 		gpuCount: req.gpuCount,
 	};
 
-	const workerId = await createInferenceWorkerController(modelName, requestedResources, workerName);
+	const workerName = await createInferenceWorkerController(modelName, requestedResources, worker);
 
 	return new InferenceWorker({
-		workerId,
+		workerName,
 	});
 }
 
@@ -119,15 +138,15 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 const inferenceWorkerValid = typia.createAssertEquals<InferenceWorker>();
 
 async function pauseWorker(req: InferenceWorker) {
-	const workerId = req.workerId;
+	const workerName = req.workerName;
 
 	// Check if worker exists
 	const api = await createComputeAPI();
 	const workers = await list(api);
-	const worker = workers.find((worker) => worker.name === workerId);
+	const worker = workers.find((worker) => worker.name === workerName);
 
 	if (!worker || !worker.name) {
-		throw new ConnectError(`Worker ${workerId} does not exist`, Code.NotFound);
+		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
 	if (getWorkerIP(worker)) {
@@ -136,11 +155,11 @@ async function pauseWorker(req: InferenceWorker) {
 
 	await pause(api, worker.name).catch((e) => {
 		console.error(e);
-		throw new ConnectError(`Failed to pause worker ${workerId}: ${e.message}`, Code.Internal);
+		throw new ConnectError(`Failed to pause worker ${workerName}: ${e.message}`, Code.Internal);
 	});
 
 	return new InferenceWorker({
-		workerId: worker.name,
+		workerName: worker.name,
 	});
 }
 
@@ -149,28 +168,28 @@ async function pauseWorker(req: InferenceWorker) {
 /////////////////////
 
 async function resumeWorker(req: InferenceWorker) {
-	const workerId = req.workerId;
+	const workerName = req.workerName;
 
 	// Check if worker exists
 	const api = await createComputeAPI();
 	const workers = await list(api);
-	const worker = workers.find((worker) => worker.name === workerId);
+	const worker = workers.find((worker) => worker.name === workerName);
 
 	if (!worker || !worker.name) {
-		throw new ConnectError(`Worker ${workerId} does not exist`, Code.NotFound);
+		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
 	if (worker.status !== "TERMINATED") {
-		throw new ConnectError(`Worker ${workerId} is not paused`, Code.FailedPrecondition);
+		throw new ConnectError(`Worker ${workerName} is not paused`, Code.FailedPrecondition);
 	}
 
 	await start(api, worker.name).catch((e) => {
 		console.error(e);
-		throw new ConnectError(`Failed to resume worker ${workerId}: ${e.message}`, Code.Internal);
+		throw new ConnectError(`Failed to resume worker ${workerName}: ${e.message}`, Code.Internal);
 	});
 
 	return new InferenceWorker({
-		workerId: worker.name,
+		workerName: worker.name,
 	});
 }
 
@@ -179,15 +198,15 @@ async function resumeWorker(req: InferenceWorker) {
 /////////////////////
 
 async function deleteWorker(req: InferenceWorker) {
-	const workerId = req.workerId;
+	const workerName = req.workerName;
 
 	// Check if worker exists
 	const api = await createComputeAPI();
 	const workers = await list(api);
-	const worker = workers.find((worker) => worker.name === workerId);
+	const worker = workers.find((worker) => worker.name === workerName);
 
 	if (!worker || !worker.name) {
-		throw new ConnectError(`Worker ${workerId} does not exist`, Code.NotFound);
+		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
 	if (getWorkerIP(worker)) {
@@ -196,11 +215,11 @@ async function deleteWorker(req: InferenceWorker) {
 
 	await remove(api, worker.name).catch((e) => {
 		console.error(e);
-		throw new ConnectError(`Failed to delete worker ${workerId}: ${e.message}`, Code.Internal);
+		throw new ConnectError(`Failed to delete worker ${workerName}: ${e.message}`, Code.Internal);
 	});
 
 	return new InferenceWorker({
-		workerId: worker.name,
+		workerName: worker.name,
 	});
 }
 
@@ -211,6 +230,7 @@ export const haven = (router: ConnectRouter) =>
 		generate: auth(enforceSetup(generate)),
 
 		listModels: catchErrors(validate(listModelsInputValid, auth(enforceSetup(listModels)))),
+		listWorkers: catchErrors(validate(listWorkersInputValid, auth(enforceSetup(listWorkers)))),
 
 		createInferenceWorker: catchErrors(
 			validate(createInferenceWorkerInputValid, auth(enforceSetup(createInferenceWorker))),

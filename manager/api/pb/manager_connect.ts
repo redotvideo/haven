@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateInferenceWorkerRequest, Empty, GenerateRequest, GenerateResponse, InferenceWorker, ListModelsResponse, SetupRequest } from "./manager_pb.js";
+import { CreateInferenceWorkerRequest, Empty, GenerateRequest, GenerateResponse, InferenceWorker, ListModelsResponse, ListWorkersResponse, SetupRequest } from "./manager_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -43,6 +43,17 @@ export const Haven = {
       name: "ListModels",
       I: Empty,
       O: ListModelsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * Get the list of workers and their statuses.
+     *
+     * @generated from rpc haven.Haven.ListWorkers
+     */
+    listWorkers: {
+      name: "ListWorkers",
+      I: Empty,
+      O: ListWorkersResponse,
       kind: MethodKind.Unary,
     },
     /**

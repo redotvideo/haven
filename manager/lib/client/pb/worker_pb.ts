@@ -7,11 +7,9 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3 } from "@bufbuild/protobuf";
 
 /**
- * TODO(konsti): Rename to WorkerStatus for more clarity.
- *
- * @generated from enum worker.Status
+ * @generated from enum worker.WorkerStatus
  */
-export enum Status {
+export enum WorkerStatus {
   /**
    * @generated from enum value: OK = 0;
    */
@@ -27,8 +25,8 @@ export enum Status {
    */
   OFFLINE = 99,
 }
-// Retrieve enum metadata with: proto3.getEnumType(Status)
-proto3.util.setEnumType(Status, "worker.Status", [
+// Retrieve enum metadata with: proto3.getEnumType(WorkerStatus)
+proto3.util.setEnumType(WorkerStatus, "worker.WorkerStatus", [
   { no: 0, name: "OK" },
   { no: 1, name: "STOPPING" },
   { no: 99, name: "OFFLINE" },
@@ -70,9 +68,9 @@ export class HealthRequest extends Message<HealthRequest> {
  */
 export class HealthResponse extends Message<HealthResponse> {
   /**
-   * @generated from field: worker.Status status = 1;
+   * @generated from field: worker.WorkerStatus status = 1;
    */
-  status = Status.OK;
+  status = WorkerStatus.OK;
 
   constructor(data?: PartialMessage<HealthResponse>) {
     super();
@@ -82,7 +80,7 @@ export class HealthResponse extends Message<HealthResponse> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "worker.HealthResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "status", kind: "enum", T: proto3.getEnumType(Status) },
+    { no: 1, name: "status", kind: "enum", T: proto3.getEnumType(WorkerStatus) },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): HealthResponse {

@@ -24,25 +24,17 @@ class _Status:
 
 class _StatusEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Status.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    RUNNING: _Status.ValueType  # 0
-    STOPPED: _Status.ValueType  # 1
-    """Worker doesn't exist."""
-    STARTING: _Status.ValueType  # 2
-    STOPPING: _Status.ValueType  # 3
-    """When going to STOPPED or PAUSED."""
-    PAUSED: _Status.ValueType  # 4
-    ERROR: _Status.ValueType  # 5
+    ONLINE: _Status.ValueType  # 0
+    UNREACHABLE: _Status.ValueType  # 1
+    PAUSED: _Status.ValueType  # 2
+    ERROR: _Status.ValueType  # 3
 
 class Status(_Status, metaclass=_StatusEnumTypeWrapper): ...
 
-RUNNING: Status.ValueType  # 0
-STOPPED: Status.ValueType  # 1
-"""Worker doesn't exist."""
-STARTING: Status.ValueType  # 2
-STOPPING: Status.ValueType  # 3
-"""When going to STOPPED or PAUSED."""
-PAUSED: Status.ValueType  # 4
-ERROR: Status.ValueType  # 5
+ONLINE: Status.ValueType  # 0
+UNREACHABLE: Status.ValueType  # 1
+PAUSED: Status.ValueType  # 2
+ERROR: Status.ValueType  # 3
 global___Status = Status
 
 class _GpuType:
@@ -180,6 +172,40 @@ class ListModelsResponse(google.protobuf.message.Message):
 global___ListModelsResponse = ListModelsResponse
 
 @typing_extensions.final
+class Worker(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    WORKER_NAME_FIELD_NUMBER: builtins.int
+    STATUS_FIELD_NUMBER: builtins.int
+    worker_name: builtins.str
+    status: global___Status.ValueType
+    def __init__(
+        self,
+        *,
+        worker_name: builtins.str = ...,
+        status: global___Status.ValueType = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["status", b"status", "worker_name", b"worker_name"]) -> None: ...
+
+global___Worker = Worker
+
+@typing_extensions.final
+class ListWorkersResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    WORKERS_FIELD_NUMBER: builtins.int
+    @property
+    def workers(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Worker]: ...
+    def __init__(
+        self,
+        *,
+        workers: collections.abc.Iterable[global___Worker] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["workers", b"workers"]) -> None: ...
+
+global___ListWorkersResponse = ListWorkersResponse
+
+@typing_extensions.final
 class CreateInferenceWorkerRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -188,11 +214,14 @@ class CreateInferenceWorkerRequest(google.protobuf.message.Message):
     WORKER_NAME_FIELD_NUMBER: builtins.int
     GPU_TYPE_FIELD_NUMBER: builtins.int
     GPU_COUNT_FIELD_NUMBER: builtins.int
+    ZONE_FIELD_NUMBER: builtins.int
     model_name: builtins.str
     quantization: builtins.str
     worker_name: builtins.str
     gpu_type: global___GpuType.ValueType
     gpu_count: builtins.int
+    zone: builtins.str
+    """TODO: implement"""
     def __init__(
         self,
         *,
@@ -201,15 +230,18 @@ class CreateInferenceWorkerRequest(google.protobuf.message.Message):
         worker_name: builtins.str | None = ...,
         gpu_type: global___GpuType.ValueType | None = ...,
         gpu_count: builtins.int | None = ...,
+        zone: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "worker_name", b"worker_name"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "model_name", b"model_name", "quantization", b"quantization", "worker_name", b"worker_name"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "_zone", b"_zone", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "worker_name", b"worker_name", "zone", b"zone"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "_zone", b"_zone", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "model_name", b"model_name", "quantization", b"quantization", "worker_name", b"worker_name", "zone", b"zone"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_gpu_count", b"_gpu_count"]) -> typing_extensions.Literal["gpu_count"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_gpu_type", b"_gpu_type"]) -> typing_extensions.Literal["gpu_type"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_worker_name", b"_worker_name"]) -> typing_extensions.Literal["worker_name"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_zone", b"_zone"]) -> typing_extensions.Literal["zone"] | None: ...
 
 global___CreateInferenceWorkerRequest = CreateInferenceWorkerRequest
 
@@ -217,13 +249,13 @@ global___CreateInferenceWorkerRequest = CreateInferenceWorkerRequest
 class InferenceWorker(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    WORKER_ID_FIELD_NUMBER: builtins.int
-    worker_id: builtins.str
+    WORKER_NAME_FIELD_NUMBER: builtins.int
+    worker_name: builtins.str
     def __init__(
         self,
         *,
-        worker_id: builtins.str = ...,
+        worker_name: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["worker_id", b"worker_id"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["worker_name", b"worker_name"]) -> None: ...
 
 global___InferenceWorker = InferenceWorker

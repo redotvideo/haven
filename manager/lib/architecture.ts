@@ -20,8 +20,6 @@ export async function matchArchitectureAndConfiguration(
 ): Promise<Required<ArchitectureConfiguration>> {
 	const files = await fs.readdir(`./config/architectures/${architecture}`);
 
-	console.log(files);
-
 	// TODO(konsti): Speed up by loading these into memory when the process starts
 	for (const file of files) {
 		const text = await fs.readFile(`./config/architectures/${architecture}/${file}`, "utf-8");
@@ -34,8 +32,6 @@ export async function matchArchitectureAndConfiguration(
 		const json = configValid(parsed);
 
 		if (json.quantization === config.quantization) {
-			console.log(config.gpuType!.toString());
-
 			if (config.gpuType && json.gpuType !== config.gpuType) {
 				continue;
 			}
