@@ -1,7 +1,7 @@
 const config = {
 	setupDone: false, // Tells us if the manager is in a working state
 	server: {
-		port: 3000,
+		bearerToken: "insecure" || process.env.BEARER_TOKEN,
 	},
 	gcloud: {
 		projectId: "", // Set during setup
