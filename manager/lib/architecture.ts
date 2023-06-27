@@ -7,7 +7,7 @@ export interface ArchitectureConfiguration {
 	gpuType?: GpuType;
 	gpuCount?: number;
 	cpuMachineType: string;
-	contextSize: string;
+	contextSize: number;
 }
 
 /**
