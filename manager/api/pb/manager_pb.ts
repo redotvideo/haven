@@ -11,47 +11,31 @@ import { Message, proto3 } from "@bufbuild/protobuf";
  */
 export enum Status {
   /**
-   * @generated from enum value: RUNNING = 0;
+   * @generated from enum value: ONLINE = 0;
    */
-  RUNNING = 0,
+  ONLINE = 0,
 
   /**
-   * Worker doesn't exist.
-   *
-   * @generated from enum value: STOPPED = 1;
+   * @generated from enum value: UNREACHABLE = 1;
    */
-  STOPPED = 1,
+  UNREACHABLE = 1,
 
   /**
-   * @generated from enum value: STARTING = 2;
+   * @generated from enum value: PAUSED = 2;
    */
-  STARTING = 2,
+  PAUSED = 2,
 
   /**
-   * When going to STOPPED or PAUSED.
-   *
-   * @generated from enum value: STOPPING = 3;
+   * @generated from enum value: ERROR = 3;
    */
-  STOPPING = 3,
-
-  /**
-   * @generated from enum value: PAUSED = 4;
-   */
-  PAUSED = 4,
-
-  /**
-   * @generated from enum value: ERROR = 5;
-   */
-  ERROR = 5,
+  ERROR = 3,
 }
 // Retrieve enum metadata with: proto3.getEnumType(Status)
 proto3.util.setEnumType(Status, "haven.Status", [
-  { no: 0, name: "RUNNING" },
-  { no: 1, name: "STOPPED" },
-  { no: 2, name: "STARTING" },
-  { no: 3, name: "STOPPING" },
-  { no: 4, name: "PAUSED" },
-  { no: 5, name: "ERROR" },
+  { no: 0, name: "ONLINE" },
+  { no: 1, name: "UNREACHABLE" },
+  { no: 2, name: "PAUSED" },
+  { no: 3, name: "ERROR" },
 ]);
 
 /**
@@ -333,6 +317,86 @@ export class ListModelsResponse extends Message<ListModelsResponse> {
 }
 
 /**
+ * @generated from message haven.Worker
+ */
+export class Worker extends Message<Worker> {
+  /**
+   * @generated from field: string worker_name = 1;
+   */
+  workerName = "";
+
+  /**
+   * @generated from field: haven.Status status = 2;
+   */
+  status = Status.ONLINE;
+
+  constructor(data?: PartialMessage<Worker>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "haven.Worker";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "worker_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "status", kind: "enum", T: proto3.getEnumType(Status) },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Worker {
+    return new Worker().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Worker {
+    return new Worker().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Worker {
+    return new Worker().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Worker | PlainMessage<Worker> | undefined, b: Worker | PlainMessage<Worker> | undefined): boolean {
+    return proto3.util.equals(Worker, a, b);
+  }
+}
+
+/**
+ * @generated from message haven.ListWorkersResponse
+ */
+export class ListWorkersResponse extends Message<ListWorkersResponse> {
+  /**
+   * @generated from field: repeated haven.Worker workers = 1;
+   */
+  workers: Worker[] = [];
+
+  constructor(data?: PartialMessage<ListWorkersResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "haven.ListWorkersResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "workers", kind: "message", T: Worker, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListWorkersResponse {
+    return new ListWorkersResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListWorkersResponse {
+    return new ListWorkersResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListWorkersResponse {
+    return new ListWorkersResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListWorkersResponse | PlainMessage<ListWorkersResponse> | undefined, b: ListWorkersResponse | PlainMessage<ListWorkersResponse> | undefined): boolean {
+    return proto3.util.equals(ListWorkersResponse, a, b);
+  }
+}
+
+/**
  * @generated from message haven.CreateInferenceWorkerRequest
  */
 export class CreateInferenceWorkerRequest extends Message<CreateInferenceWorkerRequest> {
@@ -361,6 +425,13 @@ export class CreateInferenceWorkerRequest extends Message<CreateInferenceWorkerR
    */
   gpuCount?: number;
 
+  /**
+   * TODO: implement
+   *
+   * @generated from field: optional string zone = 7;
+   */
+  zone?: string;
+
   constructor(data?: PartialMessage<CreateInferenceWorkerRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -374,6 +445,7 @@ export class CreateInferenceWorkerRequest extends Message<CreateInferenceWorkerR
     { no: 3, name: "worker_name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 4, name: "gpu_type", kind: "enum", T: proto3.getEnumType(GpuType), opt: true },
     { no: 6, name: "gpu_count", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 7, name: "zone", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateInferenceWorkerRequest {
@@ -398,9 +470,9 @@ export class CreateInferenceWorkerRequest extends Message<CreateInferenceWorkerR
  */
 export class InferenceWorker extends Message<InferenceWorker> {
   /**
-   * @generated from field: string worker_id = 1;
+   * @generated from field: string worker_name = 1;
    */
-  workerId = "";
+  workerName = "";
 
   constructor(data?: PartialMessage<InferenceWorker>) {
     super();
@@ -410,7 +482,7 @@ export class InferenceWorker extends Message<InferenceWorker> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "haven.InferenceWorker";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "worker_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "worker_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InferenceWorker {

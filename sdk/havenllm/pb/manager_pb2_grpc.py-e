@@ -29,6 +29,11 @@ class HavenStub(object):
                 request_serializer=manager__pb2.Empty.SerializeToString,
                 response_deserializer=manager__pb2.ListModelsResponse.FromString,
                 )
+        self.ListWorkers = channel.unary_unary(
+                '/haven.Haven/ListWorkers',
+                request_serializer=manager__pb2.Empty.SerializeToString,
+                response_deserializer=manager__pb2.ListWorkersResponse.FromString,
+                )
         self.CreateInferenceWorker = channel.unary_unary(
                 '/haven.Haven/CreateInferenceWorker',
                 request_serializer=manager__pb2.CreateInferenceWorkerRequest.SerializeToString,
@@ -70,6 +75,13 @@ class HavenServicer(object):
 
     def ListModels(self, request, context):
         """Get the list of models and their descriptions.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListWorkers(self, request, context):
+        """Get the list of workers and their statuses.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -117,6 +129,11 @@ def add_HavenServicer_to_server(servicer, server):
                     servicer.ListModels,
                     request_deserializer=manager__pb2.Empty.FromString,
                     response_serializer=manager__pb2.ListModelsResponse.SerializeToString,
+            ),
+            'ListWorkers': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListWorkers,
+                    request_deserializer=manager__pb2.Empty.FromString,
+                    response_serializer=manager__pb2.ListWorkersResponse.SerializeToString,
             ),
             'CreateInferenceWorker': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateInferenceWorker,
@@ -196,6 +213,23 @@ class Haven(object):
         return grpc.experimental.unary_unary(request, target, '/haven.Haven/ListModels',
             manager__pb2.Empty.SerializeToString,
             manager__pb2.ListModelsResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListWorkers(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/haven.Haven/ListWorkers',
+            manager__pb2.Empty.SerializeToString,
+            manager__pb2.ListWorkersResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

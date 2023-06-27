@@ -190,12 +190,8 @@ export async function getAllRegions(api: compute_v1.Compute) {
 		project: config.gcloud.projectId,
 	};
 
-	console.log("before");
-	console.log(request);
-
 	const res = await api.regions.list(request);
 
-	console.log("after");
 	const regions = res.data.items || [];
 
 	return regions.filter((region) => region);
@@ -256,9 +252,6 @@ export async function checkIfQuotaPermitsGPUs(
 	}
 
 	const quotaPermits = quota.limit - quota.usage >= gpuNum;
-	console.log(
-		`currently checking ${region.name}, maths: ${quota.limit} - ${quota.usage} >= ${gpuNum} = ${quotaPermits}`,
-	);
 	return quotaPermits;
 }
 
@@ -275,8 +268,6 @@ export async function findRegionsWithPermissiveGPUQuotas(
 	gpuNum: number,
 ) {
 	const allRegions = await getAllRegions(api);
-
-	console.log("still running");
 
 	const res = await Promise.all(
 		allRegions.map(async (region) => {
@@ -307,11 +298,7 @@ export async function getZonesToCreateVM(
 	gpuName: keyof typeof gcpGpuNameToQuota,
 	gpuNum: number,
 ) {
-	console.log(gpuName, gpuNum);
-
 	const permissibleRegions = await findRegionsWithPermissiveGPUQuotas(api, gpuName, gpuNum);
-
-	console.log("we're still running");
 
 	// TODO(konsti): this return type is super vague. get rid of null and undefined
 	const permissibleZones = permissibleRegions.flatMap((region) => region?.zones);
