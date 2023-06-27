@@ -7,7 +7,7 @@ class ModelRegistry(type):
         # this is currently RegisterBase but in child classes will be the child class
 
         new_cls = type.__new__(cls, name, bases, attrs)
-        cls.REGISTRY[new_cls.model_id] = new_cls
+        cls.REGISTRY[new_cls.architecture_name] = new_cls
         return new_cls
 
     @classmethod
