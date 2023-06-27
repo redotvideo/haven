@@ -18,11 +18,3 @@ class TrainingClient:
     def train(self):
         self.model_engine.train()
 
-        
-
-if __name__ == '__main__':
-
-    client = TrainingClient("models/model_configs/mpt_7b_chat_newconfig_lora_training.json")
-    client.train()
-
-
