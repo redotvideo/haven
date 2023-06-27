@@ -33,7 +33,7 @@ export function validate<Base, Req extends {[K in keyof Req]: K extends keyof Ba
 		try {
 			input(req);
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 			throw e;
 		}
 

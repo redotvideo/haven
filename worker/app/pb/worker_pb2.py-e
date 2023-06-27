@@ -13,27 +13,27 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cworker.proto\x12\x06worker\"\x0f\n\rHealthRequest\"0\n\x0eHealthResponse\x12\x1e\n\x06status\x18\x01 \x01(\x0e\x32\x0e.worker.Status\"\x11\n\x0fShutdownRequest\"\x12\n\x10ShutdownResponse\"\xcf\x01\n\x0fGenerateRequest\x12\x0e\n\x06prompt\x18\x01 \x01(\t\x12\x17\n\nmax_tokens\x18\x03 \x01(\x05H\x00\x88\x01\x01\x12\x18\n\x0btemperature\x18\x04 \x01(\x02H\x01\x88\x01\x01\x12\x12\n\x05top_p\x18\x05 \x01(\x05H\x02\x88\x01\x01\x12\x12\n\x05top_k\x18\x06 \x01(\x05H\x03\x88\x01\x01\x12\x13\n\x06sample\x18\x07 \x01(\x08H\x04\x88\x01\x01\x42\r\n\x0b_max_tokensB\x0e\n\x0c_temperatureB\x08\n\x06_top_pB\x08\n\x06_top_kB\t\n\x07_sample\" \n\x10GenerateResponse\x12\x0c\n\x04text\x18\x01 \x01(\t*+\n\x06Status\x12\x06\n\x02OK\x10\x00\x12\x0c\n\x08STOPPING\x10\x01\x12\x0b\n\x07OFFLINE\x10\x63\x32\xce\x01\n\rWorkerService\x12\x39\n\x06Health\x12\x15.worker.HealthRequest\x1a\x16.worker.HealthResponse\"\x00\x12?\n\x08Shutdown\x12\x17.worker.ShutdownRequest\x1a\x18.worker.ShutdownResponse\"\x00\x12\x41\n\x08Generate\x12\x17.worker.GenerateRequest\x1a\x18.worker.GenerateResponse\"\x00\x30\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cworker.proto\x12\x06worker\"\x0f\n\rHealthRequest\"6\n\x0eHealthResponse\x12$\n\x06status\x18\x01 \x01(\x0e\x32\x14.worker.WorkerStatus\"\x11\n\x0fShutdownRequest\"\x12\n\x10ShutdownResponse\"\xcf\x01\n\x0fGenerateRequest\x12\x0e\n\x06prompt\x18\x01 \x01(\t\x12\x17\n\nmax_tokens\x18\x03 \x01(\x05H\x00\x88\x01\x01\x12\x18\n\x0btemperature\x18\x04 \x01(\x02H\x01\x88\x01\x01\x12\x12\n\x05top_p\x18\x05 \x01(\x05H\x02\x88\x01\x01\x12\x12\n\x05top_k\x18\x06 \x01(\x05H\x03\x88\x01\x01\x12\x13\n\x06sample\x18\x07 \x01(\x08H\x04\x88\x01\x01\x42\r\n\x0b_max_tokensB\x0e\n\x0c_temperatureB\x08\n\x06_top_pB\x08\n\x06_top_kB\t\n\x07_sample\" \n\x10GenerateResponse\x12\x0c\n\x04text\x18\x01 \x01(\t*1\n\x0cWorkerStatus\x12\x06\n\x02OK\x10\x00\x12\x0c\n\x08STOPPING\x10\x01\x12\x0b\n\x07OFFLINE\x10\x63\x32\xce\x01\n\rWorkerService\x12\x39\n\x06Health\x12\x15.worker.HealthRequest\x1a\x16.worker.HealthResponse\"\x00\x12?\n\x08Shutdown\x12\x17.worker.ShutdownRequest\x1a\x18.worker.ShutdownResponse\"\x00\x12\x41\n\x08Generate\x12\x17.worker.GenerateRequest\x1a\x18.worker.GenerateResponse\"\x00\x30\x01\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'worker_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _STATUS._serialized_start=374
-  _STATUS._serialized_end=417
+  _WORKERSTATUS._serialized_start=380
+  _WORKERSTATUS._serialized_end=429
   _HEALTHREQUEST._serialized_start=24
   _HEALTHREQUEST._serialized_end=39
   _HEALTHRESPONSE._serialized_start=41
-  _HEALTHRESPONSE._serialized_end=89
-  _SHUTDOWNREQUEST._serialized_start=91
-  _SHUTDOWNREQUEST._serialized_end=108
-  _SHUTDOWNRESPONSE._serialized_start=110
-  _SHUTDOWNRESPONSE._serialized_end=128
-  _GENERATEREQUEST._serialized_start=131
-  _GENERATEREQUEST._serialized_end=338
-  _GENERATERESPONSE._serialized_start=340
-  _GENERATERESPONSE._serialized_end=372
-  _WORKERSERVICE._serialized_start=420
-  _WORKERSERVICE._serialized_end=626
+  _HEALTHRESPONSE._serialized_end=95
+  _SHUTDOWNREQUEST._serialized_start=97
+  _SHUTDOWNREQUEST._serialized_end=114
+  _SHUTDOWNRESPONSE._serialized_start=116
+  _SHUTDOWNRESPONSE._serialized_end=134
+  _GENERATEREQUEST._serialized_start=137
+  _GENERATEREQUEST._serialized_end=344
+  _GENERATERESPONSE._serialized_start=346
+  _GENERATERESPONSE._serialized_end=378
+  _WORKERSERVICE._serialized_start=432
+  _WORKERSERVICE._serialized_end=638
 # @@protoc_insertion_point(module_scope)

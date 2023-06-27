@@ -14,6 +14,9 @@ service Haven {
 	// Get the list of models and their descriptions.
 	rpc ListModels(Empty) returns (ListModelsResponse) {}
 
+	// Get the list of workers and their statuses.
+	rpc ListWorkers(Empty) returns (ListWorkersResponse) {}
+
 	// Inference worker management.
 	rpc CreateInferenceWorker(CreateInferenceWorkerRequest) returns (InferenceWorker) {}
 	rpc PauseInferenceWorker(InferenceWorker) returns (InferenceWorker) {}
@@ -41,12 +44,10 @@ message GenerateResponse {
 }
 
 enum Status {
-	RUNNING = 0;
-	STOPPED = 1; // Worker doesn't exist.
-	STARTING = 2;
-	STOPPING = 3; // When going to STOPPED or PAUSED.
-	PAUSED = 4;
-	ERROR = 5;
+	ONLINE = 0;
+	UNREACHABLE = 1;
+	PAUSED = 2;
+	ERROR = 3;
 }
 
 message Model {
@@ -55,6 +56,15 @@ message Model {
 
 message ListModelsResponse {
 	repeated Model models = 1;
+}
+
+message Worker {
+	string worker_name = 1;
+	Status status = 2;
+}
+
+message ListWorkersResponse {
+	repeated Worker workers = 1;
 }
 
 enum GpuType {
@@ -73,5 +83,5 @@ message CreateInferenceWorkerRequest {
 }
 
 message InferenceWorker {
-	string worker_id = 1;
+	string worker_name = 1;
 }
