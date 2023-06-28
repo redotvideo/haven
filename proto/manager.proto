@@ -9,7 +9,7 @@ service Haven {
 	rpc Setup(SetupRequest) returns (Empty) {}
 
 	// Generate text from a prompt.
-	rpc Generate(GenerateRequest) returns (stream GenerateResponse) {}
+	rpc ChatCompletion(ChatCompletionRequest) returns (stream ChatCompletionResponse) {}
 
 	// Get the list of models and their descriptions.
 	rpc ListModels(Empty) returns (ListModelsResponse) {}
@@ -28,18 +28,22 @@ message SetupRequest {
 	optional string key_file = 1;
 }
 
-message GenerateRequest {
-	string worker_name = 1;
-	string prompt = 2;
-
-	optional int32 max_tokens = 3;
-	optional float temperature = 4;
-	optional int32 top_p = 5;
-	optional int32 top_k = 6;
-	optional bool sample = 7;
+enum Role {
+	SYSTEM = 0;
+	USER = 1;
 }
 
-message GenerateResponse {
+message Message {
+	Role role = 1;
+	string content = 2;
+}
+
+message ChatCompletionRequest {
+	string worker_name = 1;
+	repeated Message messages = 2;
+}
+
+message ChatCompletionResponse {
 	string text = 1;
 }
 
@@ -79,7 +83,6 @@ message CreateInferenceWorkerRequest {
 	optional string worker_name = 3;
 	optional GpuType gpu_type = 4;
 	optional int32 gpu_count = 6;
-	optional string zone = 7; // TODO: implement
 }
 
 message InferenceWorker {

@@ -10,7 +10,7 @@ service WorkerService {
 	rpc Shutdown(ShutdownRequest) returns (ShutdownResponse) {}
 
 	// Generate text from a prompt. Only valid if worker is in inference mode.
-	rpc Generate(GenerateRequest) returns (stream GenerateResponse) {}
+	rpc ChatCompletion(ChatCompletionRequest) returns (stream ChatCompletionResponse) {}
 }
 
 enum WorkerStatus {
@@ -29,16 +29,20 @@ message ShutdownRequest {}
 
 message ShutdownResponse {}
 
-message GenerateRequest {
-	string prompt = 1;
-
-	optional int32 max_tokens = 3;
-	optional float temperature = 4;
-	optional int32 top_p = 5;
-	optional int32 top_k = 6;
-	optional bool sample = 7;
+enum Role {
+	SYSTEM = 0;
+	USER = 1;
 }
 
-message GenerateResponse {
+message Message {
+	Role role = 1;
+	string content = 2;
+}
+
+message ChatCompletionRequest {
+	repeated Message messages = 1;
+}
+
+message ChatCompletionResponse {
 	string text = 1;
 }
