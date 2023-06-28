@@ -3,8 +3,7 @@
 	"name": "@huggingface/mosaicml/mpt-7b-instruct",
 	"tokenizer": "@huggingface/mosaicml/mpt-7b-instruct",
 	"instructionPrefix": "### Instruction:\n",
-	"outputPrefix": "### Response:",
-	"stopTokens": [
-		"###"
-	]
+	"instructionPostfix": "\n",
+	"outputPrefix": "### Response:\n",
+	"outputPostfix": "\n"
 }
