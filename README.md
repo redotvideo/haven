@@ -12,8 +12,6 @@
 
 [💻 Quickstart](https://docs-havenhq.vercel.app/)
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-[🏠 Website]()
-<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 [📄 Docs](https://docs-havenhq.vercel.app/)
 <br>
 <p align="center">
