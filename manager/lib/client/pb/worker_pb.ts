@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3 } from "@bufbuild/protobuf";
+import { Message as Message$1, proto3 } from "@bufbuild/protobuf";
 
 /**
  * @generated from enum worker.WorkerStatus
@@ -33,9 +33,29 @@ proto3.util.setEnumType(WorkerStatus, "worker.WorkerStatus", [
 ]);
 
 /**
+ * @generated from enum worker.Role
+ */
+export enum Role {
+  /**
+   * @generated from enum value: SYSTEM = 0;
+   */
+  SYSTEM = 0,
+
+  /**
+   * @generated from enum value: USER = 1;
+   */
+  USER = 1,
+}
+// Retrieve enum metadata with: proto3.getEnumType(Role)
+proto3.util.setEnumType(Role, "worker.Role", [
+  { no: 0, name: "SYSTEM" },
+  { no: 1, name: "USER" },
+]);
+
+/**
  * @generated from message worker.HealthRequest
  */
-export class HealthRequest extends Message<HealthRequest> {
+export class HealthRequest extends Message$1<HealthRequest> {
   constructor(data?: PartialMessage<HealthRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -66,7 +86,7 @@ export class HealthRequest extends Message<HealthRequest> {
 /**
  * @generated from message worker.HealthResponse
  */
-export class HealthResponse extends Message<HealthResponse> {
+export class HealthResponse extends Message$1<HealthResponse> {
   /**
    * @generated from field: worker.WorkerStatus status = 1;
    */
@@ -103,7 +123,7 @@ export class HealthResponse extends Message<HealthResponse> {
 /**
  * @generated from message worker.ShutdownRequest
  */
-export class ShutdownRequest extends Message<ShutdownRequest> {
+export class ShutdownRequest extends Message$1<ShutdownRequest> {
   constructor(data?: PartialMessage<ShutdownRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -134,7 +154,7 @@ export class ShutdownRequest extends Message<ShutdownRequest> {
 /**
  * @generated from message worker.ShutdownResponse
  */
-export class ShutdownResponse extends Message<ShutdownResponse> {
+export class ShutdownResponse extends Message$1<ShutdownResponse> {
   constructor(data?: PartialMessage<ShutdownResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -163,106 +183,119 @@ export class ShutdownResponse extends Message<ShutdownResponse> {
 }
 
 /**
- * @generated from message worker.GenerateRequest
+ * @generated from message worker.Message
  */
-export class GenerateRequest extends Message<GenerateRequest> {
+export class Message extends Message$1<Message> {
   /**
-   * @generated from field: string prompt = 1;
+   * @generated from field: worker.Role role = 1;
    */
-  prompt = "";
+  role = Role.SYSTEM;
 
   /**
-   * @generated from field: optional int32 max_tokens = 3;
+   * @generated from field: string content = 2;
    */
-  maxTokens?: number;
+  content = "";
 
-  /**
-   * @generated from field: optional float temperature = 4;
-   */
-  temperature?: number;
-
-  /**
-   * @generated from field: optional int32 top_p = 5;
-   */
-  topP?: number;
-
-  /**
-   * @generated from field: optional int32 top_k = 6;
-   */
-  topK?: number;
-
-  /**
-   * @generated from field: optional bool sample = 7;
-   */
-  sample?: boolean;
-
-  constructor(data?: PartialMessage<GenerateRequest>) {
+  constructor(data?: PartialMessage<Message>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "worker.GenerateRequest";
+  static readonly typeName = "worker.Message";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "prompt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "max_tokens", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
-    { no: 4, name: "temperature", kind: "scalar", T: 2 /* ScalarType.FLOAT */, opt: true },
-    { no: 5, name: "top_p", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
-    { no: 6, name: "top_k", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
-    { no: 7, name: "sample", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
+    { no: 1, name: "role", kind: "enum", T: proto3.getEnumType(Role) },
+    { no: 2, name: "content", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GenerateRequest {
-    return new GenerateRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Message {
+    return new Message().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GenerateRequest {
-    return new GenerateRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Message {
+    return new Message().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GenerateRequest {
-    return new GenerateRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Message {
+    return new Message().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GenerateRequest | PlainMessage<GenerateRequest> | undefined, b: GenerateRequest | PlainMessage<GenerateRequest> | undefined): boolean {
-    return proto3.util.equals(GenerateRequest, a, b);
+  static equals(a: Message | PlainMessage<Message> | undefined, b: Message | PlainMessage<Message> | undefined): boolean {
+    return proto3.util.equals(Message, a, b);
   }
 }
 
 /**
- * @generated from message worker.GenerateResponse
+ * @generated from message worker.ChatCompletionRequest
  */
-export class GenerateResponse extends Message<GenerateResponse> {
+export class ChatCompletionRequest extends Message$1<ChatCompletionRequest> {
+  /**
+   * @generated from field: repeated worker.Message messages = 1;
+   */
+  messages: Message[] = [];
+
+  constructor(data?: PartialMessage<ChatCompletionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "worker.ChatCompletionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "messages", kind: "message", T: Message, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatCompletionRequest {
+    return new ChatCompletionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatCompletionRequest {
+    return new ChatCompletionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatCompletionRequest {
+    return new ChatCompletionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ChatCompletionRequest | PlainMessage<ChatCompletionRequest> | undefined, b: ChatCompletionRequest | PlainMessage<ChatCompletionRequest> | undefined): boolean {
+    return proto3.util.equals(ChatCompletionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message worker.ChatCompletionResponse
+ */
+export class ChatCompletionResponse extends Message$1<ChatCompletionResponse> {
   /**
    * @generated from field: string text = 1;
    */
   text = "";
 
-  constructor(data?: PartialMessage<GenerateResponse>) {
+  constructor(data?: PartialMessage<ChatCompletionResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "worker.GenerateResponse";
+  static readonly typeName = "worker.ChatCompletionResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GenerateResponse {
-    return new GenerateResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatCompletionResponse {
+    return new ChatCompletionResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GenerateResponse {
-    return new GenerateResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ChatCompletionResponse {
+    return new ChatCompletionResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GenerateResponse {
-    return new GenerateResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ChatCompletionResponse {
+    return new ChatCompletionResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GenerateResponse | PlainMessage<GenerateResponse> | undefined, b: GenerateResponse | PlainMessage<GenerateResponse> | undefined): boolean {
-    return proto3.util.equals(GenerateResponse, a, b);
+  static equals(a: ChatCompletionResponse | PlainMessage<ChatCompletionResponse> | undefined, b: ChatCompletionResponse | PlainMessage<ChatCompletionResponse> | undefined): boolean {
+    return proto3.util.equals(ChatCompletionResponse, a, b);
   }
 }
 

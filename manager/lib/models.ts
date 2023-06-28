@@ -6,7 +6,9 @@ export interface ModelFile {
 	name: string;
 	tokenizer: string;
 	instructionPrefix: string;
+	instructionPostfix: string;
 	outputPrefix: string;
+	outputPostfix: string;
 }
 
 /**
