@@ -3,7 +3,9 @@
 	"name": "@huggingface/mosaicml/mpt-7b-chat",
 	"tokenizer": "@huggingface/mosaicml/mpt-7b-chat",
 	"instructionPrefix": "<|im_start|>user\n",
-	"outputPrefix": "<|im_end|><|im_start|>assistant\n",
+	"instructionPostfix": "<|im_end|>",
+	"outputPrefix": "<|im_start|>assistant\n",
+	"outputPostfix": "<|im_end|>",
 	"stopTokens": [
 		"<|im_end|>"
 	]

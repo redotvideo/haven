@@ -26,8 +26,7 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 	async def ChatCompletion(self, request, context):
 		messages = request.messages
 
-		# TODO(Justus): Add context support.
-		streamer = inference_client.generate(text_input=prompt)
+		streamer = inference_client.complete_chat(messages=messages)
 
 		sus_string = ""
 		for text in streamer:

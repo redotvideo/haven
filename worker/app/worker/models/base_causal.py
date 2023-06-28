@@ -41,14 +41,10 @@ class AutoCausalModel(RegisteredModel):
         self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, self.model_config["stopTokens"]+[self.tokenizer.eos_token])])
 
 
-    def generate_stream(self, text_input: str, conversation_history: List, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
-        if conversation_history is None:
-            history_prompt = ""
-        else:
-            history_prompt = self.create_history_prompt(conversation_history)
+    def generate_stream(self, messages: List, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
+        prompt = self.create_prompt_messages(messages)
 
-        adapted_text_input = history_prompt + self.model_config["instructionPrefix"] + text_input + self.model_config["outputPrefix"]
-        input_tokenized = self.tokenizer([adapted_text_input], return_tensors='pt').input_ids.to('cuda')
+        input_tokenized = self.tokenizer([prompt], return_tensors='pt').input_ids.to('cuda')
 
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True)
 
@@ -69,15 +65,19 @@ class AutoCausalModel(RegisteredModel):
         return streamer
     
 
-    def create_history_prompt(self, conversation_history):
+    def create_prompt_from_messages(self, messages):
+        if messages[-1]["role"] == "assistant":
+            raise Exception("Last message should be from user, not assistant")
+                
         prompt = ""
-        for message_obj in conversation_history:
+        for message_obj in messages:
             if message_obj["role"] == "user":
-                prompt += self.model_config["instructionPrefix"] + message_obj["content"] + self.model_config["outputPrefix"]
+                prompt += self.model_config["instructionPrefix"] + message_obj["content"] + self.model_config["instructionPostfix"]
 
             elif message_obj["role"] == "assistant":
-                prompt += message_obj["content"] + self.model_config["stopTokens"][0]
+                prompt += self.model_config["outputPrefix"] + message_obj["content"] + self.model_config["outputPostfix"]
 
+        prompt += self.model_config["outputPrefix"]
 
         return prompt
 
