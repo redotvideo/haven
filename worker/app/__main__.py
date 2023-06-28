@@ -23,8 +23,10 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 		running = False
 		return worker_pb2.ShutdownResponse()
 
-	async def Generate(self, request, context):
-		prompt = request.prompt
+	async def ChatCompletion(self, request, context):
+		messages = request.messages
+
+		# TODO(Justus): Add context support.
 		streamer = inference_client.generate(text_input=prompt)
 
 		sus_string = ""
