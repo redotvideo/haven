@@ -1,0 +1,10 @@
+{
+	"architecture": "causal_model",
+	"name": "@huggingface/togethercomputer/RedPajama-INCITE-Chat-3B-v1",
+	"tokenizer": "@huggingface/togethercomputer/RedPajama-INCITE-Chat-3B-v1",
+	"instructionPrefix": "<human>:",
+	"outputPrefix": "\n<bot>:",
+	"stopTokens": [
+		"\n<human>"
+	]
+}
