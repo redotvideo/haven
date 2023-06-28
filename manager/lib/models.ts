@@ -9,7 +9,6 @@ export interface ModelFile {
 	instructionPostfix: string;
 	outputPrefix: string;
 	outputPostfix: string;
-	stopTokens: string[];
 }
 
 /**

@@ -5,8 +5,5 @@
 	"instructionPrefix": "<|im_start|>user\n",
 	"instructionPostfix": "<|im_end|>",
 	"outputPrefix": "<|im_start|>assistant\n",
-	"outputPostfix": "<|im_end|>",
-	"stopTokens": [
-		"<|im_end|>"
-	]
+	"outputPostfix": "<|im_end|>"
 }
