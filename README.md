@@ -15,8 +15,6 @@
 [🏠 Website]()
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 [📄 Docs](https://docs-havenhq.vercel.app/)
-<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-[💬 Slack]()
 <br>
 <p align="center">
     Haven lets you build LLM-powered applications <b>hosted entirely on your own infrastructure</b>.<br>
