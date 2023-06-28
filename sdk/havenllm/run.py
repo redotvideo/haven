@@ -3,6 +3,8 @@ import grpc
 from .interceptor import add_header
 from .pb import manager_pb2_grpc, manager_pb2
 
+from typing import List
+
 class Haven:
 	client: manager_pb2_grpc.HavenStub
 
@@ -16,9 +18,9 @@ class Haven:
 		request = manager_pb2.SetupRequest(key_file=key_file)
 		return self.client.Setup(request)
 
-	def generate(self, worker_name: str, prompt: str, stream: bool = False) -> manager_pb2.GenerateResponse or str:
-		request = manager_pb2.GenerateRequest(worker_name=worker_name, prompt=prompt)
-		responseStream: manager_pb2.GenerateResponse = self.client.Generate(request)
+	def chat_completion(self, worker_name: str, prompt: List[manager_pb2.Message], stream: bool = False) -> manager_pb2.ChatCompletionResponse or str:
+		request = manager_pb2.ChatCompletionRequest(worker_name=worker_name, prompt=prompt)
+		responseStream: manager_pb2.ChatCompletionResponse = self.client.ChatCompletion(request)
 
 		if stream:
 			return responseStream

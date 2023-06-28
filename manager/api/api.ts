@@ -3,10 +3,10 @@ import typia from "typia";
 
 import {Haven} from "./pb/manager_connect";
 import {
+	ChatCompletionRequest,
+	ChatCompletionResponse,
 	CreateInferenceWorkerRequest,
 	Empty,
-	GenerateRequest,
-	GenerateResponse,
 	InferenceWorker,
 	ListModelsResponse,
 	ListWorkersResponse,
@@ -60,16 +60,14 @@ async function setupHandler(req: SetupRequest) {
 /**
  * Generate text from a prompt.
  */
-async function* generate(req: GenerateRequest) {
+async function* chatCompletion(req: ChatCompletionRequest) {
 	const workerName = req.workerName;
-	const prompt = req.prompt;
+	const messages = req.messages;
 
-	const {maxTokens, temperature, topP, topK, sample} = req;
-
-	const stream = await generateController(workerName, prompt, {maxTokens, temperature, topP, topK, sample});
+	const stream = await generateController(workerName, messages);
 
 	for await (const data of stream) {
-		yield new GenerateResponse({text: data.text});
+		yield new ChatCompletionResponse({text: data.text});
 	}
 }
 
@@ -227,7 +225,7 @@ export const haven = (router: ConnectRouter) =>
 	router.service(Haven, {
 		setup: catchErrors(validate(setupInputValid, auth(setupHandler))),
 
-		generate: auth(enforceSetup(generate)),
+		chatCompletion: auth(enforceSetup(chatCompletion)),
 
 		listModels: catchErrors(validate(listModelsInputValid, auth(enforceSetup(listModels)))),
 		listWorkers: catchErrors(validate(listWorkersInputValid, auth(enforceSetup(listWorkers)))),
