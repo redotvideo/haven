@@ -4,6 +4,11 @@ client = Haven("localhost:50051", "insecure")
 
 print(client.list_workers())
 
+client.chat_completion("haven-example-base-lj7ieyhi", messages=[{
+    "content": "Give me a recipe for cake!",
+    "role": "USER"
+}], stream=True)
+
 #key_file = open("key.txt", "r")
 #client.setup(key_file=key_file.read())
 
