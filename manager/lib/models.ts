@@ -7,7 +7,6 @@ export interface ModelFile {
 	tokenizer: string;
 	instructionPrefix: string;
 	outputPrefix: string;
-	stopTokens: string[];
 }
 
 /**
