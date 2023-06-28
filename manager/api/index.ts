@@ -1,6 +1,5 @@
 import {fastify} from "fastify";
 import cors from "@fastify/cors";
-import fastifyStatic from "@fastify/static";
 import {fastifyConnectPlugin} from "@bufbuild/connect-fastify";
 import {haven} from "./api";
 import {config} from "../lib/config";

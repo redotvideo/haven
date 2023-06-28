@@ -1,5 +1,5 @@
 import {Code, ConnectError} from "@bufbuild/connect";
-import {getModelArchitecture} from "../lib/models";
+import {ModelFile, getModelFile} from "../lib/models";
 import {ArchitectureConfiguration, matchArchitectureAndConfiguration} from "../lib/architecture";
 import {
 	createComputeAPI,
@@ -9,22 +9,29 @@ import {
 	getZonesToCreateVM,
 	gpuTypeToGcloudName,
 } from "../gcloud/resources";
-import {generateName} from "../lib/workers";
+import {createStartupScript, generateName} from "../lib/workers";
 import {compute_v1} from "googleapis";
 import {config} from "../lib/config";
-import {createStartupScript} from "../lib/misc";
 
-async function checkForModelArchitecture(modelName: string) {
-	return await getModelArchitecture(modelName).catch((e) => {
+/**
+ * Takes in a model name and returns the name of the corresponding config/architectures folder.
+ * @param modelName
+ * @returns
+ */
+async function checkForModelFile(modelName: string) {
+	return await getModelFile(modelName).catch((e) => {
 		console.error(e);
 		throw new ConnectError(
-			"Could not get model architecture. Please make sure the model has been added beforehand.",
+			`Could not get model architecture. Please make sure the model has been added beforehand. Message: ${e.message}`,
 			Code.FailedPrecondition,
 		);
 	});
 }
 
-async function checkArchitectureSupportsRequestedResources(architecture: string, config: ArchitectureConfiguration) {
+async function checkArchitectureSupportsRequestedResources(
+	architecture: string,
+	config: Partial<ArchitectureConfiguration>,
+) {
 	return matchArchitectureAndConfiguration(architecture, config).catch((e) => {
 		console.error(e);
 		throw new ConnectError(
@@ -72,13 +79,23 @@ async function checkViableZoneToDeploy(api: compute_v1.Compute, config: Required
 	return possibleZones[0]!;
 }
 
+function createWorkerConfig(modelFile: ModelFile, architectureFile: Required<ArchitectureConfiguration>) {
+	const workerConfig = {
+		...modelFile,
+		...architectureFile,
+	};
+
+	return JSON.stringify(workerConfig);
+}
+
 export async function createInferenceWorkerController(
 	modelName: string,
-	requestedResources: ArchitectureConfiguration,
+	requestedResources: Partial<ArchitectureConfiguration>,
 	workerName?: string,
 ) {
 	// Get architecture
-	const architecture = await checkForModelArchitecture(modelName);
+	const modelFile = await checkForModelFile(modelName);
+	const architecture = modelFile.architecture;
 
 	// Validate requested configuration with architecture
 	const validConfiguration = await checkArchitectureSupportsRequestedResources(architecture, requestedResources);
@@ -99,13 +116,13 @@ export async function createInferenceWorkerController(
 		validConfiguration.gpuCount,
 		zone,
 		500,
-		"n1-standard-4",
+		validConfiguration.cpuMachineType,
 	);
 
 	// Create instance from template
 	const workerStartupScript = config.worker.startupScript;
 	const workerImageUrl = config.worker.dockerImage;
-	const workerConfig = "";
+	const workerConfig = createWorkerConfig(modelFile, validConfiguration);
 
 	const startupScript = await createStartupScript(workerStartupScript, workerImageUrl, workerConfig);
 

@@ -1,0 +1,9 @@
+{
+	"architecture": "mpt",
+	"name": "@huggingface/mosaicml/mpt-7b-instruct",
+	"tokenizer": "@huggingface/mosaicml/mpt-7b-instruct",
+	"instructionPrefix": "### Instruction:\n",
+	"instructionPostfix": "\n",
+	"outputPrefix": "### Response:\n",
+	"outputPostfix": "\n"
+}

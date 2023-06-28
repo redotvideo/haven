@@ -1,32 +1,42 @@
 import * as fs from "fs/promises";
 import {GpuType} from "../api/pb/manager_pb";
+import typia from "typia";
 
 export interface ArchitectureConfiguration {
 	quantization: string;
 	gpuType?: GpuType;
 	gpuCount?: number;
+	cpuMachineType: string;
+	contextSize: number;
 }
 
 /**
  * Checks if the requested configuration (quantization + gpu + gpu quantity)
  * is supported by the model architecture.
  */
-export async function matchArchitectureAndConfiguration(architecture: string, config: ArchitectureConfiguration) {
+export async function matchArchitectureAndConfiguration(
+	architecture: string,
+	config: Partial<ArchitectureConfiguration>,
+): Promise<Required<ArchitectureConfiguration>> {
 	const files = await fs.readdir(`./config/architectures/${architecture}`);
 
 	// TODO(konsti): Speed up by loading these into memory when the process starts
 	for (const file of files) {
 		const text = await fs.readFile(`./config/architectures/${architecture}/${file}`, "utf-8");
+		const parsed = JSON.parse(text) as any;
 
-		// TODO(konsti): Validation
-		const json = JSON.parse(text) as Required<ArchitectureConfiguration>;
+		// Convert string to enum numerical value
+		parsed.gpuType = GpuType[parsed.gpuType as keyof typeof GpuType];
+
+		const configValid = typia.createAssertEquals<Required<ArchitectureConfiguration>>();
+		const json = configValid(parsed);
 
 		if (json.quantization === config.quantization) {
-			if (json.gpuType && json.gpuType !== config.gpuType) {
+			if (config.gpuType && json.gpuType !== config.gpuType) {
 				continue;
 			}
 
-			if (json.gpuCount && json.gpuCount !== config.gpuCount) {
+			if (config.gpuCount && json.gpuCount !== config.gpuCount) {
 				continue;
 			}
 

@@ -1,10 +1,6 @@
 import * as fs from "fs/promises";
-import {readFilesInBucket, uploadFileToBucket} from "../gcloud/storage";
 import {config} from "./config";
 import { sendEvent } from "./telemetry";
-
-const WORKER_IMAGE = config.worker.dockerImage;
-const BUCKET = config.gcloud.bucket;
 
 /*
  * Runs when the manager starts. Checks that the setup has already been done.

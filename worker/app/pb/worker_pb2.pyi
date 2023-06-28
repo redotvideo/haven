@@ -3,7 +3,9 @@
 isort:skip_file
 """
 import builtins
+import collections.abc
 import google.protobuf.descriptor
+import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
 import sys
@@ -16,23 +18,37 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
-class _Status:
+class _WorkerStatus:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 
-class _StatusEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Status.ValueType], builtins.type):
+class _WorkerStatusEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_WorkerStatus.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    OK: _Status.ValueType  # 0
-    STOPPING: _Status.ValueType  # 1
-    OFFLINE: _Status.ValueType  # 99
+    OK: _WorkerStatus.ValueType  # 0
+    STOPPING: _WorkerStatus.ValueType  # 1
+    OFFLINE: _WorkerStatus.ValueType  # 99
 
-class Status(_Status, metaclass=_StatusEnumTypeWrapper):
-    """TODO(konsti): Rename to WorkerStatus for more clarity."""
+class WorkerStatus(_WorkerStatus, metaclass=_WorkerStatusEnumTypeWrapper): ...
 
-OK: Status.ValueType  # 0
-STOPPING: Status.ValueType  # 1
-OFFLINE: Status.ValueType  # 99
-global___Status = Status
+OK: WorkerStatus.ValueType  # 0
+STOPPING: WorkerStatus.ValueType  # 1
+OFFLINE: WorkerStatus.ValueType  # 99
+global___WorkerStatus = WorkerStatus
+
+class _Role:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _RoleEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Role.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    SYSTEM: _Role.ValueType  # 0
+    USER: _Role.ValueType  # 1
+
+class Role(_Role, metaclass=_RoleEnumTypeWrapper): ...
+
+SYSTEM: Role.ValueType  # 0
+USER: Role.ValueType  # 1
+global___Role = Role
 
 @typing_extensions.final
 class HealthRequest(google.protobuf.message.Message):
@@ -49,11 +65,11 @@ class HealthResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     STATUS_FIELD_NUMBER: builtins.int
-    status: global___Status.ValueType
+    status: global___WorkerStatus.ValueType
     def __init__(
         self,
         *,
-        status: global___Status.ValueType = ...,
+        status: global___WorkerStatus.ValueType = ...,
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["status", b"status"]) -> None: ...
 
@@ -80,48 +96,41 @@ class ShutdownResponse(google.protobuf.message.Message):
 global___ShutdownResponse = ShutdownResponse
 
 @typing_extensions.final
-class GenerateRequest(google.protobuf.message.Message):
+class Message(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    PROMPT_FIELD_NUMBER: builtins.int
-    MAX_TOKENS_FIELD_NUMBER: builtins.int
-    TEMPERATURE_FIELD_NUMBER: builtins.int
-    TOP_P_FIELD_NUMBER: builtins.int
-    TOP_K_FIELD_NUMBER: builtins.int
-    SAMPLE_FIELD_NUMBER: builtins.int
-    prompt: builtins.str
-    max_tokens: builtins.int
-    temperature: builtins.float
-    top_p: builtins.int
-    top_k: builtins.int
-    sample: builtins.bool
+    ROLE_FIELD_NUMBER: builtins.int
+    CONTENT_FIELD_NUMBER: builtins.int
+    role: global___Role.ValueType
+    content: builtins.str
     def __init__(
         self,
         *,
-        prompt: builtins.str = ...,
-        max_tokens: builtins.int | None = ...,
-        temperature: builtins.float | None = ...,
-        top_p: builtins.int | None = ...,
-        top_k: builtins.int | None = ...,
-        sample: builtins.bool | None = ...,
+        role: global___Role.ValueType = ...,
+        content: builtins.str = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_max_tokens", b"_max_tokens", "_sample", b"_sample", "_temperature", b"_temperature", "_top_k", b"_top_k", "_top_p", b"_top_p", "max_tokens", b"max_tokens", "sample", b"sample", "temperature", b"temperature", "top_k", b"top_k", "top_p", b"top_p"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_max_tokens", b"_max_tokens", "_sample", b"_sample", "_temperature", b"_temperature", "_top_k", b"_top_k", "_top_p", b"_top_p", "max_tokens", b"max_tokens", "prompt", b"prompt", "sample", b"sample", "temperature", b"temperature", "top_k", b"top_k", "top_p", b"top_p"]) -> None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_max_tokens", b"_max_tokens"]) -> typing_extensions.Literal["max_tokens"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_sample", b"_sample"]) -> typing_extensions.Literal["sample"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_temperature", b"_temperature"]) -> typing_extensions.Literal["temperature"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_top_k", b"_top_k"]) -> typing_extensions.Literal["top_k"] | None: ...
-    @typing.overload
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["_top_p", b"_top_p"]) -> typing_extensions.Literal["top_p"] | None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["content", b"content", "role", b"role"]) -> None: ...
 
-global___GenerateRequest = GenerateRequest
+global___Message = Message
 
 @typing_extensions.final
-class GenerateResponse(google.protobuf.message.Message):
+class ChatCompletionRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MESSAGES_FIELD_NUMBER: builtins.int
+    @property
+    def messages(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Message]: ...
+    def __init__(
+        self,
+        *,
+        messages: collections.abc.Iterable[global___Message] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["messages", b"messages"]) -> None: ...
+
+global___ChatCompletionRequest = ChatCompletionRequest
+
+@typing_extensions.final
+class ChatCompletionResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     TEXT_FIELD_NUMBER: builtins.int
@@ -133,4 +142,4 @@ class GenerateResponse(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["text", b"text"]) -> None: ...
 
-global___GenerateResponse = GenerateResponse
+global___ChatCompletionResponse = ChatCompletionResponse

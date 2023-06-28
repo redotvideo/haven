@@ -1,8 +1,10 @@
 import {Code, ConnectError} from "@bufbuild/connect";
 import {createComputeAPI, list} from "../gcloud/resources";
-import {getWorkerIP} from "../lib/misc";
 import {getTransport} from "../lib/client";
+import {getWorkerIP} from "../lib/workers";
+import {Message} from "../api/pb/manager_pb";
 
+// TODO: Currently unused
 interface Settings {
 	maxTokens?: number;
 	temperature?: number;
@@ -11,7 +13,7 @@ interface Settings {
 	sample?: boolean;
 }
 
-export async function generateController(workerName: string, prompt: string, settings: Settings) {
+export async function generateController(workerName: string, messages: Message[]) {
 	// Check if worker exists and is running
 	const api = await createComputeAPI();
 	const workers = await list(api).catch((e) => {
@@ -25,5 +27,12 @@ export async function generateController(workerName: string, prompt: string, set
 		throw new ConnectError(`Worker ${workerName} has no public ip.`, Code.FailedPrecondition);
 	}
 
-	return getTransport(ip).generate({prompt, ...settings});
+	// TODO(konsti): check status and throw if the worker can't be reached.
+
+	return Promise.resolve()
+		.then(() => getTransport(ip).chatCompletion({messages}, {timeoutMs: 20000}))
+		.catch((e) => {
+			console.error(e);
+			throw new ConnectError(`Failed to establish a connection.: ${e.message}`, Code.Internal);
+		});
 }

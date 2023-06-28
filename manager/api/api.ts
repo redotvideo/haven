@@ -1,30 +1,36 @@
-import * as fs from "fs";
-
 import {ConnectError, Code, ConnectRouter} from "@bufbuild/connect";
+import typia from "typia";
 
 import {Haven} from "./pb/manager_connect";
 import {
+	ChatCompletionRequest,
+	ChatCompletionResponse,
 	CreateInferenceWorkerRequest,
 	Empty,
-	GenerateRequest,
-	GenerateResponse,
 	InferenceWorker,
 	ListModelsResponse,
+	ListWorkersResponse,
 	SetupRequest,
 } from "./pb/manager_pb";
 
 import {config} from "../lib/config";
 import {createComputeAPI, list, pause, remove, start} from "../gcloud/resources";
-import {encodeName, getWorkerIP} from "../lib/misc";
 import {getTransport} from "../lib/client";
 import {catchErrors, enforceSetup, auth} from "./middleware";
 import {getAllModels} from "../lib/models";
 import {setupController} from "../controller/setup";
 import {generateController} from "../controller/generate";
 import {createInferenceWorkerController} from "../controller/createInferenceWorker";
-import { sendEvent } from "../lib/telemetry";
+import {sendEvent} from "../lib/telemetry";
+import {getWorkerIP} from "../lib/workers";
+import {validate} from "./validate";
+import {listWorkersController} from "../controller/workers";
 
-const ZONE = config.gcloud.zone;
+/////////////////////
+// Setup
+/////////////////////
+
+const setupInputValid = typia.createAssertEquals<SetupRequest>();
 
 /**
  * Set up the manager by providing the Google Cloud key.
@@ -41,7 +47,7 @@ async function setupHandler(req: SetupRequest) {
 
 	if (file === undefined) {
 		// Endpoint is being called as "ping" to check if the setup is done.
-		// It's not, so we throw an error.
+		// It's not, but we also can't do the setup now, so we throw an error.
 		throw new ConnectError("Setup not complete.", Code.FailedPrecondition);
 	}
 
@@ -49,21 +55,29 @@ async function setupHandler(req: SetupRequest) {
 	return setupController(file, telemetryOkay);
 }
 
+/////////////////////
+// Generate text
+/////////////////////
+
 /**
  * Generate text from a prompt.
  */
-async function* generate(req: GenerateRequest) {
+async function* chatCompletion(req: ChatCompletionRequest) {
 	const workerName = req.workerName;
-	const prompt = req.prompt;
+	const messages = req.messages;
 
-	const {maxTokens, temperature, topP, topK, sample} = req;
-
-	const stream = await generateController(workerName, prompt, {maxTokens, temperature, topP, topK, sample});
+	const stream = await generateController(workerName, messages);
 
 	for await (const data of stream) {
-		yield new GenerateResponse({text: data.text});
+		yield new ChatCompletionResponse({text: data.text});
 	}
 }
+
+/////////////////////
+// List models
+/////////////////////
+
+const listModelsInputValid = typia.createAssertEquals<Empty>();
 
 /**
  * Get all models that are available for inference.
@@ -77,9 +91,32 @@ async function listModels(req: Empty) {
 		});
 }
 
+/////////////////////
+// List workers
+/////////////////////
+
+const listWorkersInputValid = typia.createAssertEquals<Empty>();
+
+/**
+ * Get a list of all workers and their status.
+ */
+async function listWorkers(req: Empty) {
+	const workerList = await listWorkersController();
+
+	return new ListWorkersResponse({
+		workers: workerList,
+	});
+}
+
+/////////////////////
+// Create inference worker
+/////////////////////
+
+const createInferenceWorkerInputValid = typia.createAssertEquals<CreateInferenceWorkerRequest>();
+
 async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	const modelName = req.modelName;
-	let workerName = req.workerName;
+	let worker = req.workerName;
 
 	const requestedResources = {
 		quantization: req.quantization,
@@ -87,109 +124,126 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 		gpuCount: req.gpuCount,
 	};
 
-	const workerId = await createInferenceWorkerController(modelName, requestedResources, workerName);
+	const workerName = await createInferenceWorkerController(modelName, requestedResources, worker);
 
 	sendEvent("createInferenceWorker", {workerName: workerName, modelName:modelName, ...requestedResources});
 
 	return new InferenceWorker({
-		workerId,
+		workerName,
 	});
 }
 
+/////////////////////
+// Pause worker
+/////////////////////
+
+const inferenceWorkerValid = typia.createAssertEquals<InferenceWorker>();
+
 async function pauseWorker(req: InferenceWorker) {
-	const workerId = req.workerId;
+	const workerName = req.workerName;
 
 	// Check if worker exists
 	const api = await createComputeAPI();
 	const workers = await list(api);
-	const worker = workers.find((worker) => worker.name === workerId);
+	const worker = workers.find((worker) => worker.name === workerName);
 
 	if (!worker || !worker.name) {
-		throw new ConnectError(`Worker ${workerId} does not exist`, Code.NotFound);
+		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
 	if (getWorkerIP(worker)) {
 		await getTransport(getWorkerIP(worker)!).shutdown({});
 	}
 
-	await pause(api, ZONE, worker.name).catch((e) => {
+	await pause(api, worker.name).catch((e) => {
 		console.error(e);
-		throw new ConnectError(`Failed to pause worker ${workerId}: ${e.message}`, Code.Internal);
+		throw new ConnectError(`Failed to pause worker ${workerName}: ${e.message}`, Code.Internal);
 	});
 
 	sendEvent("pauseWorker", {workerName: worker.name});
 
 	return new InferenceWorker({
-		workerId: worker.name,
+		workerName: worker.name,
 	});
 }
 
+/////////////////////
+// Resume worker
+/////////////////////
+
 async function resumeWorker(req: InferenceWorker) {
-	const workerId = req.workerId;
+	const workerName = req.workerName;
 
 	// Check if worker exists
 	const api = await createComputeAPI();
 	const workers = await list(api);
-	const worker = workers.find((worker) => worker.name === encodeName(workerId));
+	const worker = workers.find((worker) => worker.name === workerName);
 
 	if (!worker || !worker.name) {
-		throw new ConnectError(`Worker ${workerId} does not exist`, Code.NotFound);
+		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
 	if (worker.status !== "TERMINATED") {
-		throw new ConnectError(`Worker ${workerId} is not paused`, Code.FailedPrecondition);
+		throw new ConnectError(`Worker ${workerName} is not paused`, Code.FailedPrecondition);
 	}
 
-	await start(api, ZONE, worker.name).catch((e) => {
+	await start(api, worker.name).catch((e) => {
 		console.error(e);
-		throw new ConnectError(`Failed to resume worker ${workerId}: ${e.message}`, Code.Internal);
+		throw new ConnectError(`Failed to resume worker ${workerName}: ${e.message}`, Code.Internal);
 	});
 
 	sendEvent("resumeWorker", {workerName: worker.name});
 
 	return new InferenceWorker({
-		workerId: worker.name,
+		workerName: worker.name,
 	});
 }
 
+/////////////////////
+// Delete worker
+/////////////////////
+
 async function deleteWorker(req: InferenceWorker) {
-	const workerId = req.workerId;
+	const workerName = req.workerName;
 
 	// Check if worker exists
 	const api = await createComputeAPI();
 	const workers = await list(api);
-	const worker = workers.find((worker) => worker.name === workerId);
+	const worker = workers.find((worker) => worker.name === workerName);
 
 	if (!worker || !worker.name) {
-		throw new ConnectError(`Worker ${workerId} does not exist`, Code.NotFound);
+		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
 	if (getWorkerIP(worker)) {
 		await getTransport(getWorkerIP(worker)!).shutdown({});
 	}
 
-	await remove(api, ZONE, worker.name).catch((e) => {
+	await remove(api, worker.name).catch((e) => {
 		console.error(e);
-		throw new ConnectError(`Failed to delete worker ${workerId}: ${e.message}`, Code.Internal);
+		throw new ConnectError(`Failed to delete worker ${workerName}: ${e.message}`, Code.Internal);
 	});
 
 	sendEvent("deleteWorker", {workerName: worker.name});
 
 	return new InferenceWorker({
-		workerId: worker.name,
+		workerName: worker.name,
 	});
 }
 
 export const haven = (router: ConnectRouter) =>
 	router.service(Haven, {
-		setup: catchErrors(auth(setupHandler)),
+		setup: catchErrors(validate(setupInputValid, auth(setupHandler))),
 
-		generate: auth(enforceSetup(generate)),
+		chatCompletion: auth(enforceSetup(chatCompletion)),
 
-		listModels: catchErrors(auth(enforceSetup(listModels))),
+		listModels: catchErrors(validate(listModelsInputValid, auth(enforceSetup(listModels)))),
+		listWorkers: catchErrors(validate(listWorkersInputValid, auth(enforceSetup(listWorkers)))),
 
-		createInferenceWorker: catchErrors(auth(enforceSetup(createInferenceWorker))),
-		pauseInferenceWorker: catchErrors(auth(enforceSetup(pauseWorker))),
-		resumeInferenceWorker: catchErrors(auth(enforceSetup(resumeWorker))),
-		deleteInferenceWorker: catchErrors(auth(enforceSetup(deleteWorker))),
+		createInferenceWorker: catchErrors(
+			validate(createInferenceWorkerInputValid, auth(enforceSetup(createInferenceWorker))),
+		),
+		pauseInferenceWorker: catchErrors(validate(inferenceWorkerValid, auth(enforceSetup(pauseWorker)))),
+		resumeInferenceWorker: catchErrors(validate(inferenceWorkerValid, auth(enforceSetup(resumeWorker)))),
+		deleteInferenceWorker: catchErrors(validate(inferenceWorkerValid, auth(enforceSetup(deleteWorker)))),
 	});

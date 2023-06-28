@@ -1,18 +1,13 @@
 import os
-import json
 
 import asyncio
 import grpc
 
 from app.pb import worker_pb2, worker_pb2_grpc
-from app.inference_worker.haven.inference_server import InferenceClient
-
-def get_path():
-	with open("./config.json", "r") as f:
-		return json.load(f)["path"]
+from app.worker.inference_worker import InferenceClient
 
 ABSOLUTE_PATH = os.path.dirname(__file__)
-inference_client = InferenceClient(config=os.path.join(ABSOLUTE_PATH, get_path()))
+inference_client = InferenceClient(config=os.path.join(ABSOLUTE_PATH, "../config.json"))
 running = True
 
 
@@ -28,12 +23,23 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 		running = False
 		return worker_pb2.ShutdownResponse()
 
-	async def GenerateStream(self, request, context):
-		prompt = request.prompt
-		streamer = inference_client.generate_stream(text_input=prompt)
+	async def ChatCompletion(self, request, context):
+		messages = request.messages
 
+		streamer = inference_client.complete_chat(messages=messages)
+
+		sus_string = ""
 		for text in streamer:
+			if text in inference_client.model_engine.model_config["instructionPrefix"]:
+				sus_string += text
+				continue
+
+			elif sus_string == inference_client.model_engine.model_config["instructionPrefix"]:
+				break
+
+			sus_string = ""
 			yield worker_pb2.GenerateResponse(text=text)
+
 
 async def serve():
 	server = grpc.aio.server()

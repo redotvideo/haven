@@ -10,7 +10,7 @@ export type Message<T> = Pick<T, {[K in keyof T]: T[K] extends Function ? never 
  * @param input - Created using typia.createAssertEquals<YourType>()
  * @param handler - Your handler function
  */
-export function check<Base, Req extends {[K in keyof Req]: K extends keyof Base ? Req[K] : never}, Res>(
+export function validate<Base, Req extends {[K in keyof Req]: K extends keyof Base ? Req[K] : never}, Res>(
 	/**
 	 * Base is the generated type from the protobuf file.
 	 * Req is the type that you want to validate against. It must extend Base.
@@ -21,23 +21,21 @@ export function check<Base, Req extends {[K in keyof Req]: K extends keyof Base 
 	 * => Req extends { [K in keyof Req]: K extends keyof Base ? Req[K] : never }
 	 *
 	 * e.g.: Base = { greeting: string }
-	 *       Req  = { greeting: "hello" | "hi" }             // This is valid
-	 * 	     Req  = { greeting: "hello" | "hi", foo: "bar" } // This is invalid
+	 *       Req  = { greeting: "hello" | "hi" }             // This is a valid extension
+	 * 	     Req  = { greeting: "hello" | "hi", foo: "bar" } // This is an invalid extension
 	 */
 
 	input: Check<Req>, // typia.createAssertEquals<Req>,
-	handler:
-		| ((req: Req, ctx: HandlerContext) => Promise<Res>)
-		| ((req: Req, ctx: HandlerContext) => Promise<Message<Res>>),
+	handler: (req: Req, ctx: HandlerContext) => Promise<Res>,
 ) {
 	return async (req: Base, ctx: HandlerContext) => {
-		// Validate input. No promise required but I think it's prettier this way.
-		await Promise.resolve()
-			.then(() => input(req))
-			.catch((e) => {
-				console.log(e);
-				throw e;
-			});
+		// Validate input.
+		try {
+			input(req);
+		} catch (e) {
+			console.error(e);
+			throw e;
+		}
 
 		return handler(req as unknown as Req, ctx);
 	};

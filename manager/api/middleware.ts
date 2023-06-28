@@ -2,12 +2,11 @@ import {Code, ConnectError, HandlerContext} from "@bufbuild/connect";
 import {config} from "../lib/config";
 
 /**
- * This middleware is used for both authentication and catch-all error handling.
+ * Check if the request is authenticated and throw an error if not.
  */
 export function auth<T, U>(func: (req: T, context: HandlerContext) => U) {
 	return (req: T, context: HandlerContext): U => {
-		// TODO(konsti): we're just hardcoding the token here for now
-		if (context.requestHeader.get("authorization") !== "Bearer awmzbmspqoadbvkse") {
+		if (context.requestHeader.get("authorization") !== `Bearer ${config.server.bearerToken}`) {
 			throw new ConnectError("Unauthorized", Code.Unauthenticated);
 		}
 
@@ -15,6 +14,9 @@ export function auth<T, U>(func: (req: T, context: HandlerContext) => U) {
 	};
 }
 
+/**
+ * Catch errors and throw a ConnectError instead.
+ */
 export function catchErrors<T, U>(func: (req: T, context: HandlerContext) => Promise<U>) {
 	return async (req: T, context: HandlerContext): Promise<U> => {
 		try {

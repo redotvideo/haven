@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { GenerateRequest, GenerateResponse, HealthRequest, HealthResponse, ShutdownRequest, ShutdownResponse } from "./worker_pb.js";
+import { ChatCompletionRequest, ChatCompletionResponse, HealthRequest, HealthResponse, ShutdownRequest, ShutdownResponse } from "./worker_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -37,12 +37,12 @@ export const WorkerService = {
     /**
      * Generate text from a prompt. Only valid if worker is in inference mode.
      *
-     * @generated from rpc worker.WorkerService.Generate
+     * @generated from rpc worker.WorkerService.ChatCompletion
      */
-    generate: {
-      name: "Generate",
-      I: GenerateRequest,
-      O: GenerateResponse,
+    chatCompletion: {
+      name: "ChatCompletion",
+      I: ChatCompletionRequest,
+      O: ChatCompletionResponse,
       kind: MethodKind.ServerStreaming,
     },
   }

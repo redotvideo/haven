@@ -8,18 +8,17 @@ if [ ! -f ~/startup_complete ]; then
 	sudo apt-get update	
 	sudo apt-get install -y docker.io
 
-	# Download config file from url
-	wget "{config_url}" -O ~/config.json
+	echo '{config}' > ~/config.json
 
 	# Pull docker image
-	docker pull -t my-image "{image_url}"
+	docker pull "{image_url}"
 
 	# Run docker image and mount the config.json
 	docker run -d \
 		-v /usr/local/nvidia:/usr/local/nvidia \
 		-v ~/config.json:/app/config.json \
 		--restart always \
-		--gpus all -p 50051:50051 my-image
+		--gpus all -p 50051:50051 {image_url}
   
 	# Create the indicator file
 	touch ~/startup_complete

@@ -1,4 +1,3 @@
-
 class ModelRegistry(type):
 
     REGISTRY = {}
@@ -8,7 +7,7 @@ class ModelRegistry(type):
         # this is currently RegisterBase but in child classes will be the child class
 
         new_cls = type.__new__(cls, name, bases, attrs)
-        cls.REGISTRY[new_cls.__name__] = new_cls
+        cls.REGISTRY[new_cls.architecture_name] = new_cls
         return new_cls
 
     @classmethod
@@ -17,13 +16,13 @@ class ModelRegistry(type):
     
 
 class RegisteredModel(metaclass=ModelRegistry):
-    pass
+
+    architecture_name = "model"
 
 
 # REGISTER ALL MODELS
 
-from models.base_causal import AutoCausalModel
-from models.mpt import MPTModel
-from models.falcon_7b import Falcon7BModel
+from .base_causal import AutoCausalModel
+from .mpt import MPTModel
+from .falcon_7b import Falcon7BModel
 
-print(ModelRegistry.REGISTRY)

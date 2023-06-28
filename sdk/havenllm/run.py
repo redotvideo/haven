@@ -3,6 +3,8 @@ import grpc
 from .interceptor import add_header
 from .pb import manager_pb2_grpc, manager_pb2
 
+from typing import List
+
 class Haven:
 	client: manager_pb2_grpc.HavenStub
 
@@ -16,9 +18,9 @@ class Haven:
 		request = manager_pb2.SetupRequest(key_file=key_file)
 		return self.client.Setup(request)
 
-	def generate(self, model: str, prompt: str, stream: bool = False) -> manager_pb2.GenerateResponse or str:
-		request = manager_pb2.GenerateRequest(model=model, prompt=prompt)
-		responseStream: manager_pb2.GenerateResponse = self.client.Generate(request)
+	def chat_completion(self, worker_name: str, messages: List[manager_pb2.Message], stream: bool = False) -> manager_pb2.ChatCompletionResponse or str:
+		request = manager_pb2.ChatCompletionRequest(worker_name=worker_name, messages=messages)
+		responseStream: manager_pb2.ChatCompletionResponse = self.client.ChatCompletion(request)
 
 		if stream:
 			return responseStream
@@ -33,18 +35,22 @@ class Haven:
 		request = manager_pb2.Empty()
 		return self.client.ListModels(request)
 	
+	def list_workers(self) -> manager_pb2.ListWorkersResponse:
+		request = manager_pb2.Empty()
+		return self.client.ListWorkers(request)
+	
 	def create_inference_worker(self, model_name: str, quantization: str, worker_name:str=None, gpu_type: manager_pb2.GpuType=None, gpu_count: int=None) -> manager_pb2.InferenceWorker:
 		request = manager_pb2.CreateInferenceWorkerRequest(model_name=model_name, quantization=quantization, worker_name=worker_name, gpu_type=gpu_type, gpu_count=gpu_count)
 		return self.client.CreateInferenceWorker(request)
 	
-	def pause_inference_worker(self, worker_id: str) -> manager_pb2.InferenceWorker:
-		request = manager_pb2.InferenceWorker(worker_id=worker_id)
+	def pause_inference_worker(self, worker_name: str) -> manager_pb2.InferenceWorker:
+		request = manager_pb2.InferenceWorker(worker_name=worker_name)
 		return self.client.PauseInferenceWorker(request)
 	
-	def resume_inference_worker(self, worker_id: str) -> manager_pb2.InferenceWorker:
-		request = manager_pb2.InferenceWorker(worker_id=worker_id)
+	def resume_inference_worker(self, worker_name: str) -> manager_pb2.InferenceWorker:
+		request = manager_pb2.InferenceWorker(worker_name=worker_name)
 		return self.client.ResumeInferenceWorker(request)
 	
-	def delete_inference_worker(self, worker_id: str) -> manager_pb2.InferenceWorker:
-		request = manager_pb2.InferenceWorker(worker_id=worker_id)
+	def delete_inference_worker(self, worker_name: str) -> manager_pb2.InferenceWorker:
+		request = manager_pb2.InferenceWorker(worker_name=worker_name)
 		return self.client.DeleteInferenceWorker(request)

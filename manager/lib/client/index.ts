@@ -1,7 +1,7 @@
 import {PromiseClient, Transport, createPromiseClient} from "@bufbuild/connect";
 import {createGrpcTransport} from "@bufbuild/connect-node";
 import {WorkerService} from "./pb/worker_connect";
-import {Status} from "./pb/worker_pb";
+import {WorkerStatus} from "./pb/worker_pb";
 
 const clients = new Map<string, PromiseClient<typeof WorkerService>>();
 
@@ -27,9 +27,9 @@ export function getTransport(ip: string): PromiseClient<typeof WorkerService> {
 	return clients.get(ip)!;
 }
 
-export async function getStatus(ip: string): Promise<Status> {
+export async function getStatus(ip: string): Promise<WorkerStatus> {
 	return getTransport(ip)
-		.health({}, {timeoutMs: 1000})
+		.health({}, {timeoutMs: 5000})
 		.then((res) => res.status)
-		.catch(() => Status.OFFLINE);
+		.catch(() => WorkerStatus.OFFLINE);
 }

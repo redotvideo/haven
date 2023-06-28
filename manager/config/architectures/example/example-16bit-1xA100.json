@@ -1,5 +1,0 @@
-{
-	"quantization": "float16",
-	"gpuType": "A100",
-	"gpuCount": 1
-}

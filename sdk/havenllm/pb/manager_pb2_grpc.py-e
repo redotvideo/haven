@@ -19,15 +19,20 @@ class HavenStub(object):
                 request_serializer=manager__pb2.SetupRequest.SerializeToString,
                 response_deserializer=manager__pb2.Empty.FromString,
                 )
-        self.Generate = channel.unary_stream(
-                '/haven.Haven/Generate',
-                request_serializer=manager__pb2.GenerateRequest.SerializeToString,
-                response_deserializer=manager__pb2.GenerateResponse.FromString,
+        self.ChatCompletion = channel.unary_stream(
+                '/haven.Haven/ChatCompletion',
+                request_serializer=manager__pb2.ChatCompletionRequest.SerializeToString,
+                response_deserializer=manager__pb2.ChatCompletionResponse.FromString,
                 )
         self.ListModels = channel.unary_unary(
                 '/haven.Haven/ListModels',
                 request_serializer=manager__pb2.Empty.SerializeToString,
                 response_deserializer=manager__pb2.ListModelsResponse.FromString,
+                )
+        self.ListWorkers = channel.unary_unary(
+                '/haven.Haven/ListWorkers',
+                request_serializer=manager__pb2.Empty.SerializeToString,
+                response_deserializer=manager__pb2.ListWorkersResponse.FromString,
                 )
         self.CreateInferenceWorker = channel.unary_unary(
                 '/haven.Haven/CreateInferenceWorker',
@@ -61,7 +66,7 @@ class HavenServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Generate(self, request, context):
+    def ChatCompletion(self, request, context):
         """Generate text from a prompt.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -70,6 +75,13 @@ class HavenServicer(object):
 
     def ListModels(self, request, context):
         """Get the list of models and their descriptions.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListWorkers(self, request, context):
+        """Get the list of workers and their statuses.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -108,15 +120,20 @@ def add_HavenServicer_to_server(servicer, server):
                     request_deserializer=manager__pb2.SetupRequest.FromString,
                     response_serializer=manager__pb2.Empty.SerializeToString,
             ),
-            'Generate': grpc.unary_stream_rpc_method_handler(
-                    servicer.Generate,
-                    request_deserializer=manager__pb2.GenerateRequest.FromString,
-                    response_serializer=manager__pb2.GenerateResponse.SerializeToString,
+            'ChatCompletion': grpc.unary_stream_rpc_method_handler(
+                    servicer.ChatCompletion,
+                    request_deserializer=manager__pb2.ChatCompletionRequest.FromString,
+                    response_serializer=manager__pb2.ChatCompletionResponse.SerializeToString,
             ),
             'ListModels': grpc.unary_unary_rpc_method_handler(
                     servicer.ListModels,
                     request_deserializer=manager__pb2.Empty.FromString,
                     response_serializer=manager__pb2.ListModelsResponse.SerializeToString,
+            ),
+            'ListWorkers': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListWorkers,
+                    request_deserializer=manager__pb2.Empty.FromString,
+                    response_serializer=manager__pb2.ListWorkersResponse.SerializeToString,
             ),
             'CreateInferenceWorker': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateInferenceWorker,
@@ -166,7 +183,7 @@ class Haven(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Generate(request,
+    def ChatCompletion(request,
             target,
             options=(),
             channel_credentials=None,
@@ -176,9 +193,9 @@ class Haven(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/haven.Haven/Generate',
-            manager__pb2.GenerateRequest.SerializeToString,
-            manager__pb2.GenerateResponse.FromString,
+        return grpc.experimental.unary_stream(request, target, '/haven.Haven/ChatCompletion',
+            manager__pb2.ChatCompletionRequest.SerializeToString,
+            manager__pb2.ChatCompletionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -196,6 +213,23 @@ class Haven(object):
         return grpc.experimental.unary_unary(request, target, '/haven.Haven/ListModels',
             manager__pb2.Empty.SerializeToString,
             manager__pb2.ListModelsResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListWorkers(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/haven.Haven/ListWorkers',
+            manager__pb2.Empty.SerializeToString,
+            manager__pb2.ListWorkersResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
