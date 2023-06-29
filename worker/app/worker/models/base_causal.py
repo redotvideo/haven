@@ -57,7 +57,8 @@ class AutoCausalModel(RegisteredModel):
             top_p=top_p, 
             top_k=top_k, 
             temperature=temperature, 
-            stopping_criteria=self.stopping_criteria
+            stopping_criteria=self.stopping_criteria,
+            max_length=max_length-20,
         )
 
         thread = Thread(target=self.model.generate, kwargs=generation_kwargs)
