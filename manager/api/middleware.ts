@@ -1,5 +1,6 @@
 import {Code, ConnectError, HandlerContext} from "@bufbuild/connect";
 import {config} from "../lib/config";
+import {EventName, sendEvent} from "../lib/telemetry";
 
 /**
  * Check if the request is authenticated and throw an error if not.
@@ -25,8 +26,10 @@ export function catchErrors<T, U>(func: (req: T, context: HandlerContext) => Pro
 		} catch (err) {
 			console.error(err);
 			if (err instanceof ConnectError) {
+				sendEvent(EventName.ERROR, {code: err.code});
 				throw err;
 			} else {
+				sendEvent(EventName.ERROR, {code: Code.Unknown});
 				throw new ConnectError(err.message, Code.Unknown);
 			}
 		}

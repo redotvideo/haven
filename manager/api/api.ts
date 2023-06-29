@@ -14,7 +14,7 @@ import {
 } from "./pb/manager_pb";
 
 import {config} from "../lib/config";
-import {createComputeAPI, list, pause, remove, start} from "../gcloud/resources";
+import {createComputeAPI, instanceToGpuTypeAndCount, list, pause, remove, start} from "../gcloud/resources";
 import {getTransport} from "../lib/client";
 import {catchErrors, enforceSetup, auth} from "./middleware";
 import {getAllModels} from "../lib/models";
@@ -24,6 +24,7 @@ import {createInferenceWorkerController} from "../controller/createInferenceWork
 import {getWorkerIP} from "../lib/workers";
 import {validate} from "./validate";
 import {listWorkersController} from "../controller/workers";
+import {EventName, sendEvent} from "../lib/telemetry";
 
 /////////////////////
 // Setup
@@ -123,6 +124,7 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	};
 
 	const workerName = await createInferenceWorkerController(modelName, requestedResources, worker);
+	sendEvent(EventName.CREATE_WORKER, {gpuType: req.gpuType, gpuCount: req.gpuCount});
 
 	return new InferenceWorker({
 		workerName,
@@ -160,6 +162,9 @@ async function pauseWorker(req: InferenceWorker) {
 		throw new ConnectError(`Failed to pause worker ${workerName}: ${e.message}`, Code.Internal);
 	});
 
+	const {type, count} = instanceToGpuTypeAndCount(worker);
+	sendEvent(EventName.PAUSE_WORKER, {gpuType: type, gpuCount: count});
+
 	return new InferenceWorker({
 		workerName: worker.name,
 	});
@@ -189,6 +194,9 @@ async function resumeWorker(req: InferenceWorker) {
 		console.error(e);
 		throw new ConnectError(`Failed to resume worker ${workerName}: ${e.message}`, Code.Internal);
 	});
+
+	const {type, count} = instanceToGpuTypeAndCount(worker);
+	sendEvent(EventName.RESUME_WORKER, {gpuType: type, gpuCount: count});
 
 	return new InferenceWorker({
 		workerName: worker.name,
@@ -223,6 +231,9 @@ async function deleteWorker(req: InferenceWorker) {
 		console.error(e);
 		throw new ConnectError(`Failed to delete worker ${workerName}: ${e.message}`, Code.Internal);
 	});
+
+	const {type, count} = instanceToGpuTypeAndCount(worker);
+	sendEvent(EventName.DELETE_WORKER, {gpuType: type, gpuCount: count});
 
 	return new InferenceWorker({
 		workerName: worker.name,

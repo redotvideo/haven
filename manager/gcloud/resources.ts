@@ -4,8 +4,6 @@ import {compute_v1, google} from "googleapis";
 import {config} from "../lib/config";
 import {GpuType} from "../api/pb/manager_pb";
 
-const serviceAccount = config.gcloud.serviceAccount;
-
 export function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -43,17 +41,13 @@ export async function list(api: compute_v1.Compute) {
 /**
  * Get info on vm in zone.
  * @param api
- * @param zone
  * @param vmName
  * @returns
  */
 export async function get(api: compute_v1.Compute, vmName: string) {
-	return (
-		await api.instances.get({
-			project: config.gcloud.projectId,
-			instance: vmName,
-		})
-	).data;
+	const vms = await list(api);
+	const result = vms.find((vm) => vm.name === vmName);
+	return result;
 }
 
 /**
@@ -223,6 +217,31 @@ export const gpuTypeToGcloudName = Object.freeze({
 	[GpuType.A100_80GB]: "nvidia-a100-80gb",
 	[GpuType.T4]: "nvidia-tesla-t4",
 });
+
+export const gcloudNameToGpuType = Object.freeze({
+	"nvidia-tesla-a100": GpuType.A100,
+	"nvidia-a100-80gb": GpuType.A100_80GB,
+	"nvidia-tesla-t4": GpuType.T4,
+});
+
+export function instanceToGpuTypeAndCount(instance: compute_v1.Schema$Instance) {
+	const gpuType = instance.guestAccelerators?.[0]?.acceleratorType;
+	if (!gpuType) {
+		return {
+			type: null,
+			count: 0,
+		};
+	}
+
+	const gcloudName = gpuType.split("/").pop() ?? "";
+	const type = gcloudNameToGpuType[gcloudName as unknown as keyof typeof gcloudNameToGpuType] ?? null;
+	const count = instance.guestAccelerators?.[0]?.acceleratorCount ?? 0;
+
+	return {
+		type,
+		count,
+	};
+}
 
 /**
  * Maps google cloud config gpu names to quota names (see e.g. gcloud/configurations/skeleton.json.template)
