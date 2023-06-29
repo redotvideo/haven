@@ -1,5 +1,6 @@
 import * as fs from "fs/promises";
 import {config} from "./config";
+import {EventName, sendEvent} from "./telemetry";
 
 /*
  * Runs when the manager starts. Checks that the setup has already been done.
@@ -25,6 +26,12 @@ export async function setup() {
 	config.gcloud.serviceAccount = key.client_email;
 
 	console.log(`Project ID: ${config.gcloud.projectId}`);
+
+	// Check for disable telemetry flag
+	const useTelemetry = process.env.DISABLE_TELEMETRY !== "true";
+	config.telemetry = useTelemetry;
+
+	sendEvent(EventName.START_MANAGER);
 
 	console.log("Setup done.");
 	config.setupDone = true;

@@ -11,6 +11,7 @@ const config = {
 		dockerImage: "docker.io/konsti1/peacefulplace-worker",
 		startupScript: "./gcloud/configurations/startup-script.sh",
 	},
+	telemetry: false, // Set during setup
 };
 
 export {config};

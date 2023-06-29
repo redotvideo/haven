@@ -52,7 +52,7 @@ async function checkWorkerNameOrGenerate(api: compute_v1.Compute, modelName: str
 			);
 		});
 
-		if (result.name !== undefined) {
+		if (result?.name !== undefined) {
 			throw new ConnectError(`Worker name ${workerName} is already taken.`, Code.AlreadyExists);
 		}
 
