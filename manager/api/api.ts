@@ -148,7 +148,11 @@ async function pauseWorker(req: InferenceWorker) {
 	}
 
 	if (getWorkerIP(worker)) {
-		await getTransport(getWorkerIP(worker)!).shutdown({});
+		await getTransport(getWorkerIP(worker)!)
+			.shutdown({})
+			.catch((e) => {
+				console.error(`Error sending shutdown signal to worker ${workerName}: ${e.message}`);
+			});
 	}
 
 	await pause(api, worker.name).catch((e) => {
@@ -208,7 +212,11 @@ async function deleteWorker(req: InferenceWorker) {
 	}
 
 	if (getWorkerIP(worker)) {
-		await getTransport(getWorkerIP(worker)!).shutdown({});
+		await getTransport(getWorkerIP(worker)!)
+			.shutdown({})
+			.catch((e) => {
+				console.error(`Error sending shutdown signal to worker ${workerName}: ${e.message}`);
+			});
 	}
 
 	await remove(api, worker.name).catch((e) => {

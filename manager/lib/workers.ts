@@ -10,7 +10,7 @@ import {Status} from "../api/pb/manager_pb";
 export async function generateName(model: string) {
 	// use a MS timestamp as the base
 	const ms = Date.now().toString(36);
-	const modelName = model.split("/").pop();
+	const modelName = model.split("/").pop()?.toLowerCase();
 	return `haven-${modelName}-${ms}`;
 }
 

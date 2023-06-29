@@ -4,6 +4,7 @@ from threading import Thread
 from typing import List
 from peft import LoraConfig, prepare_model_for_int8_training, get_peft_model
 
+from app.pb import worker_pb2, worker_pb2_grpc
 
 from .model_registry import RegisteredModel
 from .inference_utils.stopping_criteria import StopOnTokens
@@ -38,11 +39,11 @@ class AutoCausalModel(RegisteredModel):
 
 
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
-        self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, self.model_config["instructionPrefix"]+[self.tokenizer.eos_token])])
+        self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, [self.model_config["instructionPrefix"]]+[self.tokenizer.eos_token])])
 
 
     def generate_stream(self, messages: List, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
-        prompt = self.create_prompt_messages(messages)
+        prompt = self.create_prompt_from_messages(messages)
 
         input_tokenized = self.tokenizer([prompt], return_tensors='pt').input_ids.to('cuda')
 
@@ -66,16 +67,16 @@ class AutoCausalModel(RegisteredModel):
     
 
     def create_prompt_from_messages(self, messages):
-        if messages[-1]["role"] == "assistant":
+        if messages[-1].role == worker_pb2.SYSTEM:
             raise Exception("Last message should be from user, not assistant")
                 
         prompt = ""
         for message_obj in messages:
-            if message_obj["role"] == "user":
-                prompt += self.model_config["instructionPrefix"] + message_obj["content"] + self.model_config["instructionPostfix"]
+            if message_obj.role == worker_pb2.USER:
+                prompt += self.model_config["instructionPrefix"] + message_obj.content + self.model_config["instructionPostfix"]
 
-            elif message_obj["role"] == "assistant":
-                prompt += self.model_config["outputPrefix"] + message_obj["content"] + self.model_config["outputPostfix"]
+            elif message_obj.role == worker_pb2.SYSTEM:
+                prompt += self.model_config["outputPrefix"] + message_obj.content + self.model_config["outputPostfix"]
 
         prompt += self.model_config["outputPrefix"]
 
