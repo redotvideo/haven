@@ -25,19 +25,12 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 
 	async def ChatCompletion(self, request: worker_pb2.ChatCompletionRequest, context):
 		messages = list(request.messages)
-
 		streamer = inference_client.complete_chat(messages=messages)
-
-		sus_string = ""
+		
 		for text in streamer:
-			if text in inference_client.model_engine.model_config["instructionPrefix"]:
-				sus_string += text
-				continue
-
-			elif sus_string == inference_client.model_engine.model_config["instructionPrefix"]:
+			if inference_client.model_engine.model_config["instructionPrefix"] in text:
 				break
 
-			sus_string = ""
 			yield worker_pb2.ChatCompletionResponse(text=text)
 
 
