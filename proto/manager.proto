@@ -29,7 +29,7 @@ message SetupRequest {
 }
 
 enum Role {
-	SYSTEM = 0;
+	ASSISTANT = 0;
 	USER = 1;
 }
 

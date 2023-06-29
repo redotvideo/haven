@@ -11,9 +11,9 @@ import { Message as Message$1, proto3 } from "@bufbuild/protobuf";
  */
 export enum Role {
   /**
-   * @generated from enum value: SYSTEM = 0;
+   * @generated from enum value: ASSISTANT = 0;
    */
-  SYSTEM = 0,
+  ASSISTANT = 0,
 
   /**
    * @generated from enum value: USER = 1;
@@ -22,7 +22,7 @@ export enum Role {
 }
 // Retrieve enum metadata with: proto3.getEnumType(Role)
 proto3.util.setEnumType(Role, "haven.Role", [
-  { no: 0, name: "SYSTEM" },
+  { no: 0, name: "ASSISTANT" },
   { no: 1, name: "USER" },
 ]);
 
@@ -159,7 +159,7 @@ export class Message extends Message$1<Message> {
   /**
    * @generated from field: haven.Role role = 1;
    */
-  role = Role.SYSTEM;
+  role = Role.ASSISTANT;
 
   /**
    * @generated from field: string content = 2;

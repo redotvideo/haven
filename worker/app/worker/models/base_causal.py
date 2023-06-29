@@ -67,7 +67,7 @@ class AutoCausalModel(RegisteredModel):
     
 
     def create_prompt_from_messages(self, messages):
-        if messages[-1].role == worker_pb2.SYSTEM:
+        if messages[-1].role == worker_pb2.ASSISTANT:
             raise Exception("Last message should be from user, not assistant")
                 
         prompt = ""
@@ -75,7 +75,7 @@ class AutoCausalModel(RegisteredModel):
             if message_obj.role == worker_pb2.USER:
                 prompt += self.model_config["instructionPrefix"] + message_obj.content + self.model_config["instructionPostfix"]
 
-            elif message_obj.role == worker_pb2.SYSTEM:
+            elif message_obj.role == worker_pb2.ASSISTANT:
                 prompt += self.model_config["outputPrefix"] + message_obj.content + self.model_config["outputPostfix"]
 
         prompt += self.model_config["outputPrefix"]

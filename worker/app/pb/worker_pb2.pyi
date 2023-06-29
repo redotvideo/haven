@@ -41,12 +41,12 @@ class _Role:
 
 class _RoleEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Role.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    SYSTEM: _Role.ValueType  # 0
+    ASSISTANT: _Role.ValueType  # 0
     USER: _Role.ValueType  # 1
 
 class Role(_Role, metaclass=_RoleEnumTypeWrapper): ...
 
-SYSTEM: Role.ValueType  # 0
+ASSISTANT: Role.ValueType  # 0
 USER: Role.ValueType  # 1
 global___Role = Role
 
