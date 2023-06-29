@@ -15,7 +15,7 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 
 	def Health(self, request, context):
 		global running
-		status = worker_pb2.Status.OK if running else worker_pb2.Status.STOPPING
+		status = worker_pb2.WorkerStatus.OK if running else worker_pb2.WorkerStatus.STOPPING
 		return worker_pb2.HealthResponse(status=status)
 
 	def Shutdown(self, request, context):
@@ -23,8 +23,8 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 		running = False
 		return worker_pb2.ShutdownResponse()
 
-	async def ChatCompletion(self, request, context):
-		messages = request.messages
+	async def ChatCompletion(self, request: worker_pb2.ChatCompletionRequest, context):
+		messages = list(request.messages)
 
 		streamer = inference_client.complete_chat(messages=messages)
 
@@ -38,7 +38,7 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 				break
 
 			sus_string = ""
-			yield worker_pb2.GenerateResponse(text=text)
+			yield worker_pb2.ChatCompletionResponse(text=text)
 
 
 async def serve():

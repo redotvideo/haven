@@ -15,7 +15,7 @@ class InferenceClient:
         with open(config, 'r') as f:
             self.config = json.load(f)
 
-        self.model_engine = ModelRegistry.REGISTRY[self.config["architecture_name"]](self.config)
+        self.model_engine = ModelRegistry.REGISTRY[self.config["architecture"]](self.config)
         self.model_engine.prepare_for_inference()
 
     def complete_chat(self, messages, **kwargs):
