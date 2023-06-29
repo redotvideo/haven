@@ -9,7 +9,7 @@ for a in arr.workers:
     
 """
 print(client.create_inference_worker(model_name="@huggingface/mosaicml/mpt-7b-chat", quantization="float16", gpu_type="A100", gpu_count=1))
-print(client.create_inference_worker(model_name="@huggingface/mosaicml/mpt-7b-chat", quantization="float16", gpu_type="T4", gpu_count=1, worker_name="haven-sex"))
+print(client.create_inference_worker(model_name="@huggingface/mosaicml/mpt-7b-chat", quantization="float16", gpu_type="T4", gpu_count=1))
 
 print(client.create_inference_worker(model_name="@huggingface/mosaicml/mpt-7b-instruct", quantization="float16", gpu_type="A100", gpu_count=1))
 
