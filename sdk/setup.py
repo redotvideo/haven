@@ -1,11 +1,14 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='havenllm',
-    version='0.1',
-    author='Konstantin Hohr',
+    name='havenpy',
+    version='0.0.4',
+    author='Haven Technologies Inc.',
     author_email='hello@havenllm.com',
     description='Haven SDK',
     packages=find_packages(),
-    install_requires=[],
+    install_requires=[
+        'grpcio==1.54.2',
+        'protobuf==4.23.3'
+    ],
 )

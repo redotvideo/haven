@@ -1,11 +1,14 @@
-from havenllm import Haven
+from havenpy import Haven
 
 client = Haven("localhost:50051", "insecure")
 
-arr = client.list_workers()
+with open("./key.json", "r") as f:
+	client.setup(f.read())
+
+"""arr = client.list_workers()
 for a in arr.workers:
 	print("DELETE ", a.worker_name)
-	client.delete_inference_worker(a.worker_name)
+	client.delete_inference_worker(a.worker_name)"""
 
 
     
@@ -29,7 +32,7 @@ print(client.create_inference_worker(model_name="@huggingface/togethercomputer/R
 
 # print(client.list_models())
 
-print(client.list_workers())
+print(client.list_models())
 
 """res = client.chat_completion("haven-redpajama-incite-chat-3b-v1-ljgvq2o1", messages=[{
     "content": "Write a newspaper article about Marc Zuckerberg.",
