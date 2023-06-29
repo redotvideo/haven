@@ -70,7 +70,7 @@ class AutoCausalModel(RegisteredModel):
         if messages[-1].role == worker_pb2.ASSISTANT:
             raise Exception("Last message should be from user, not assistant")
                 
-        prompt = ""
+        prompt = self.model_config["systemPrompt"]
         for message_obj in messages:
             if message_obj.role == worker_pb2.USER:
                 prompt += self.model_config["instructionPrefix"] + message_obj.content + self.model_config["instructionPostfix"]

@@ -2,6 +2,7 @@
 	"architecture": "causal_model",
 	"name": "@huggingface/togethercomputer/RedPajama-INCITE-Chat-3B-v1",
 	"tokenizer": "@huggingface/togethercomputer/RedPajama-INCITE-Chat-3B-v1",
+	"systemPrompt": "",
 	"instructionPrefix": "<human>:",
 	"instructionPostfix": "\n",
 	"outputPrefix": "<bot>:",
