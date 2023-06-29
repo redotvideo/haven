@@ -24,6 +24,7 @@ export async function setup() {
 	const key = JSON.parse(await fs.readFile("./key.json", "utf-8"));
 	config.gcloud.projectId = key.project_id;
 	config.gcloud.serviceAccount = key.client_email;
+	config.gcloud.clientId = key.client_id;
 
 	console.log(`Project ID: ${config.gcloud.projectId}`);
 

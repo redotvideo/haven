@@ -25,7 +25,7 @@ export function sendEvent(eventName: EventName, eventProperties: object = {}) {
 	if (config.telemetry) {
 		try {
 			client.capture({
-				distinctId: sha256(config.gcloud.serviceAccount),
+				distinctId: sha256(config.gcloud.clientId),
 				event: eventName,
 				properties: eventProperties,
 			});

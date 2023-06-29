@@ -6,6 +6,7 @@ const config = {
 	gcloud: {
 		projectId: "", // Set during setup
 		serviceAccount: "", // Set during setup
+		clientId: "",
 	},
 	worker: {
 		dockerImage: "docker.io/konsti1/peacefulplace-worker",
