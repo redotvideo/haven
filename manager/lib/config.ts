@@ -9,7 +9,7 @@ const config = {
 		clientId: "",
 	},
 	worker: {
-		dockerImage: "docker.io/konsti1/peacefulplace-worker",
+		dockerImage: "docker.io/havenhq/worker:2023.06.29",
 		startupScript: "./gcloud/configurations/startup-script.sh",
 	},
 	telemetry: false, // Set during setup
