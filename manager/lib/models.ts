@@ -5,6 +5,7 @@ export interface ModelFile {
 	architecture: string;
 	name: string;
 	tokenizer: string;
+	systemPrompt: string;
 	instructionPrefix: string;
 	instructionPostfix: string;
 	outputPrefix: string;
