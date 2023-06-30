@@ -244,7 +244,7 @@ export function instanceToGpuTypeAndCount(instance: compute_v1.Schema$Instance) 
 }
 
 /**
- * Maps google cloud config gpu names to quota names (see e.g. gcloud/configurations/skeleton.json.template)
+ * Maps google cloud config gpu names to quota names (see e.g. skeleton.json.template)
  */
 const gcpGpuNameToQuota = {
 	"nvidia-tesla-a100": "NVIDIA_A100_GPUS",

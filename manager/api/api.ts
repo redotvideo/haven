@@ -14,7 +14,7 @@ import {
 } from "./pb/manager_pb";
 
 import {config} from "../lib/config";
-import {createComputeAPI, instanceToGpuTypeAndCount, list, pause, remove, start} from "../gcloud/resources";
+import {createComputeAPI, instanceToGpuTypeAndCount, list, pause, remove, start} from "../gcp/resources";
 import {getTransport} from "../lib/client";
 import {catchErrors, enforceSetup, auth} from "./middleware";
 import {getAllModels} from "../lib/models";
