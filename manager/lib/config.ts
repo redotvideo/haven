@@ -1,18 +1,18 @@
 const config = {
 	setupDone: false, // Tells us if the manager is in a working state
 	server: {
-		bearerToken: "insecure" || process.env.BEARER_TOKEN,
+		bearerToken: process.env.BEARER_TOKEN || "insecure",
 	},
 	gcloud: {
 		projectId: "", // Set during setup
 		serviceAccount: "", // Set during setup
-		clientId: "",
+		clientId: "", // Set during setup
 	},
 	worker: {
 		dockerImage: "docker.io/havenhq/worker:2023.06.29",
-		startupScript: "./gcloud/configurations/startup-script.sh",
+		startupScript: "./config/gcp/startup-script.sh",
 	},
-	telemetry: false, // Set during setup
+	telemetry: process.env.DISABLE_TELEMETRY !== "true",
 };
 
 export {config};

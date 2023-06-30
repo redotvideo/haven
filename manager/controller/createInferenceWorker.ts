@@ -8,7 +8,7 @@ import {
 	get,
 	getZonesToCreateVM,
 	gpuTypeToGcloudName,
-} from "../gcloud/resources";
+} from "../gcp/resources";
 import {createStartupScript, generateName} from "../lib/workers";
 import {compute_v1} from "googleapis";
 import {config} from "../lib/config";
@@ -110,7 +110,7 @@ export async function createInferenceWorkerController(
 
 	// Create GCP instance template
 	const template = await createInstanceTemplate(
-		"./gcloud/configurations/skeleton.json.template",
+		"./config/gcp/skeleton.json.template",
 		finalName,
 		gpuTypeToGcloudName[validConfiguration.gpuType],
 		validConfiguration.gpuCount,
