@@ -11,7 +11,7 @@ export async function generateName(model: string) {
 	// use a MS timestamp as the base
 	const ms = Date.now().toString(36);
 	const modelName = model.split("/").pop()?.toLowerCase();
-	return `haven-${modelName}-${ms}`;
+	return `haven-w-${modelName}-${ms}`;
 }
 
 export function getWorkerIP(worker: compute_v1.Schema$Instance | undefined) {

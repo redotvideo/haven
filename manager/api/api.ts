@@ -111,7 +111,14 @@ async function listWorkers(req: Empty) {
 // Create inference worker
 /////////////////////
 
-const createInferenceWorkerInputValid = typia.createAssertEquals<CreateInferenceWorkerRequest>();
+interface CreateInferenceWorkerRequestExtended extends CreateInferenceWorkerRequest {
+	/**
+	 * Name of a worker always needs to start with haven-w-
+	 */
+	workerName: `haven-w-${string}`;
+}
+
+const createInferenceWorkerInputValid = typia.createAssertEquals<CreateInferenceWorkerRequestExtended>();
 
 async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	const modelName = req.modelName;

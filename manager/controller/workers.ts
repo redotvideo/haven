@@ -21,8 +21,8 @@ export async function listWorkersController() {
 			continue;
 		}
 
-		// If the name doesn't have the haven- prefix, we ignore it
-		if (!name.startsWith("haven-")) {
+		// If the name doesn't have the haven-w- prefix, we ignore it
+		if (!name.startsWith("haven-w-")) {
 			continue;
 		}
 
