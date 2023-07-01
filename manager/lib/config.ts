@@ -9,7 +9,7 @@ const config = {
 		clientId: "", // Set during setup
 	},
 	worker: {
-		dockerImage: "docker.io/havenhq/worker:2023.06.29",
+		dockerImage: "docker.io/justusmattern/haven-vllm-older:latest",
 		startupScript: "./config/gcp/startup-script.sh",
 	},
 	telemetry: process.env.DISABLE_TELEMETRY !== "true",
