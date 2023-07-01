@@ -10,12 +10,13 @@ from vllm.sampling_params import SamplingParams
 from vllm.utils import random_uuid
 
 from .model_registry import RegisteredModel
+from .vllm_causal import VllmCausalModel
 from .inference_utils.stopping_criteria import StopOnTokens
 from .training_utils.tokenizer_resize import resize_tokenizer_and_embeddings
 from .training_utils.data_processing import make_supervised_data_module
 
 
-class Llama7B(RegisteredModel):
+class Llama7B(VllmCausalModel):
 
     architecture_name = "llama_7b"
 
@@ -52,20 +53,6 @@ class Llama7B(RegisteredModel):
         results_generator = self.model_vllm_engine.generate(adapted_text_input, sampling_params, request_id)
 
         return results_generator
-
-
-
-    def create_history_prompt(self, conversation_history):
-        prompt = ""
-        for message_obj in conversation_history:
-            if message_obj["role"] == "user":
-                prompt += self.model_config["instructionPrefix"] + message_obj["content"] + self.model_config["outputPrefix"]
-
-            elif message_obj["role"] == "assistant":
-                prompt += message_obj["content"] + self.model_config["stopTokens"][0]
-
-
-        return prompt
 
 
 

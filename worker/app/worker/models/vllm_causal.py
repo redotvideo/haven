@@ -4,6 +4,8 @@ from threading import Thread
 from typing import List
 from peft import LoraConfig, prepare_model_for_int8_training, get_peft_model
 
+from app.pb import worker_pb2, worker_pb2_grpc
+
 from vllm.engine.arg_utils import AsyncEngineArgs
 from vllm.engine.async_llm_engine import AsyncLLMEngine
 from vllm.sampling_params import SamplingParams
@@ -20,7 +22,11 @@ class VllmCausalModel(RegisteredModel):
     architecture_name = "causal_vllm_model"
 
     def __init__(self, config):
-        super().__init__(config)
+        self.model_config = config
+
+        if config["name"].startswith("@huggingface"):
+            self.model_config["huggingface_name"] = "/".join(config["name"].split("/")[1:])
+
 
 
     ##############################
@@ -49,6 +55,21 @@ class VllmCausalModel(RegisteredModel):
         return results_generator
 
 
+    def create_prompt_from_messages(self, messages):
+        if messages[-1].role == worker_pb2.ASSISTANT:
+            raise Exception("Last message should be from user, not assistant")
+                
+        prompt = self.model_config["systemPrompt"]
+        for message_obj in messages:
+            if message_obj.role == worker_pb2.USER:
+                prompt += self.model_config["instructionPrefix"] + message_obj.content + self.model_config["instructionPostfix"]
+
+            elif message_obj.role == worker_pb2.ASSISTANT:
+                prompt += self.model_config["outputPrefix"] + message_obj.content + self.model_config["outputPostfix"]
+
+        prompt += self.model_config["outputPrefix"]
+
+        return prompt
 
 
     ##############################
