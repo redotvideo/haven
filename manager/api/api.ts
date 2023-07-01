@@ -115,7 +115,7 @@ interface CreateInferenceWorkerRequestExtended extends CreateInferenceWorkerRequ
 	/**
 	 * Name of a worker always needs to start with haven-w-
 	 */
-	workerName: `haven-w-${string}`;
+	workerName?: `haven-w-${string}`;
 }
 
 const createInferenceWorkerInputValid = typia.createAssertEquals<CreateInferenceWorkerRequestExtended>();
