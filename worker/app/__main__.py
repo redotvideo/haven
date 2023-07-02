@@ -36,7 +36,7 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 		"""
 
 		inference_params = get_inference_parameter_dict(dict(max_tokens=request.max_tokens, top_p=request.top_p, top_k=request.top_k, temperature=request.top_k))
-		streamer = inference_client.complete_chat(messages=messages **inference_params)
+		streamer = inference_client.complete_chat(messages=messages, inference_params=inference_params)
 
 		if isinstance(streamer, TextIteratorStreamer):
 			for text in streamer:
