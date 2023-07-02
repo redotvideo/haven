@@ -46,10 +46,16 @@ class VllmCausalModel(RegisteredModel):
 
 
 
-    async def generate_stream(self, messages: List, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
+    async def generate_stream(self, messages: List, max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
         prompt = self.create_prompt_from_messages(messages)
 
-        sampling_params = SamplingParams(max_tokens=max_length, top_p=top_p, temperature=temperature, stop=[self.model_config["outputPostfix"]+self.model_config["instructionPrefix"]])
+        sampling_params = SamplingParams(
+                max_tokens=max_tokens if max_tokens < self.model_config["contextSize"] else self.model_config["contextSize"],
+                top_p=top_p, 
+                temperature=temperature, 
+                stop=[self.model_config["outputPostfix"]+self.model_config["instructionPrefix"]]
+            )
+        
         id = random_uuid()
         results_generator = self.model_vllm_engine.generate(prompt, sampling_params, id)
         

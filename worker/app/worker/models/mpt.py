@@ -36,8 +36,8 @@ class MPTModel(AutoCausalModel):
         self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, [self.model_config["instructionPrefix"]]+[self.tokenizer.eos_token])])
 
 
-    def generate_stream(self, messages: List, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 28000):
-        return super().generate_stream(messages, sample, top_p, top_k, temperature, max_length)
+    def generate_stream(self, messages: List, max_tokens: int = 28000, top_p=0.8, top_k=500, temperature=0.9):
+        return super().generate_stream(messages, max_tokens=max_tokens, top_p=top_p, top_k=top_k, temperature=temperature)
     
 
 

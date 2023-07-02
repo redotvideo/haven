@@ -42,7 +42,7 @@ class AutoCausalModel(RegisteredModel):
         self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, [self.model_config["instructionPrefix"]]+[self.tokenizer.eos_token])])
 
 
-    def generate_stream(self, messages: List, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
+    def generate_stream(self, messages: List, max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
         prompt = self.create_prompt_from_messages(messages)
 
         input_tokenized = self.tokenizer([prompt], return_tensors='pt').input_ids.to('cuda')
@@ -52,13 +52,11 @@ class AutoCausalModel(RegisteredModel):
         generation_kwargs=dict(
             inputs=input_tokenized,
             streamer=streamer,
-            do_sample=sample, 
-            max_new_tokens=max_length, 
             top_p=top_p, 
             top_k=top_k, 
             temperature=temperature, 
             stopping_criteria=self.stopping_criteria,
-            max_length=max_length-20,
+            max_length=max_tokens if max_tokens < self.model_config["contextSize"] else self.model_config["contextSize"],
         )
 
         thread = Thread(target=self.model.generate, kwargs=generation_kwargs)
