@@ -19,7 +19,7 @@ RUn pip install --upgrade pip
 
 RUN apt-get update && apt-get install -y build-essential
 
-RUN pip install -r requirements.txt && pip uninstall -y protobuf && pip install protobuf==3.20.2
+RUN pip install -r requirements.txt && pip uninstall -y protobuf && pip install protobuf==3.20.2 && pip -y uninstall pydantic
 
 COPY ./app /app/app
 

@@ -18,9 +18,6 @@ class Llama7B(VllmCausalModel):
 
 
     async def generate_stream(self, messages: List, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 8000):
-        super().generate_stream(messages, top_p, top_k, temperature, max_length)
-
-
-    def create_prompt_from_messages(self, messages):
-        super().create_prompt_from_messages(messages)
-
+        stream = super().generate_stream(messages, top_p, top_k, temperature, max_length)
+        async for text in stream:
+            yield text

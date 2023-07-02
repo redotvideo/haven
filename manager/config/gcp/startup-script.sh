@@ -18,7 +18,8 @@ if [ ! -f ~/startup_complete ]; then
 		-v /usr/local/nvidia:/usr/local/nvidia \
 		-v ~/config.json:/app/config.json \
 		--restart always \
-		--gpus all -p 50051:50051 {image_url}
+		--gpus all --shm-size=10.24gb \
+		-p 50051:50051 {image_url}
   
 	# Create the indicator file
 	touch ~/startup_complete
