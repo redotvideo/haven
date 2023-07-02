@@ -26,6 +26,14 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 
 	async def ChatCompletion(self, request: worker_pb2.ChatCompletionRequest, context):
 		messages = list(request.messages)
+
+		"""
+		max_tokens = request.max_tokens
+		top_p = request.top_p
+		top_k = request.top_k
+		temperature = request.temperature
+		"""
+
 		streamer = inference_client.complete_chat(messages=messages)
 
 		if isinstance(streamer, TextIteratorStreamer):

@@ -65,7 +65,9 @@ async function* chatCompletion(req: ChatCompletionRequest) {
 	const workerName = req.workerName;
 	const messages = req.messages;
 
-	const stream = await generateController(workerName, messages);
+	const {maxTokens, topP, topK, temperature} = req;
+
+	const stream = await generateController(workerName, messages, {maxTokens, topP, topK, temperature});
 
 	for await (const data of stream) {
 		yield new ChatCompletionResponse({text: data.text});

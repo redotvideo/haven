@@ -4,16 +4,14 @@ import {getTransport} from "../lib/client";
 import {getWorkerIP} from "../lib/workers";
 import {Message} from "../api/pb/manager_pb";
 
-// TODO: Currently unused
 interface Settings {
 	maxTokens?: number;
-	temperature?: number;
 	topP?: number;
 	topK?: number;
-	sample?: boolean;
+	temperature?: number;
 }
 
-export async function generateController(workerName: string, messages: Message[]) {
+export async function generateController(workerName: string, messages: Message[], settings: Settings) {
 	// Check if worker exists and is running
 	const api = await createComputeAPI();
 	const workers = await list(api).catch((e) => {
@@ -34,7 +32,7 @@ export async function generateController(workerName: string, messages: Message[]
 	// TODO(konsti): check status and throw if the worker can't be reached.
 
 	return Promise.resolve()
-		.then(() => getTransport(ip).chatCompletion({messages}))
+		.then(() => getTransport(ip).chatCompletion({messages, ...settings}))
 		.catch((e) => {
 			console.error(e);
 			throw new ConnectError(`Failed to establish a connection.: ${e.message}`, Code.Internal);

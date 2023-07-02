@@ -2,10 +2,9 @@ import {fastify} from "fastify";
 import cors from "@fastify/cors";
 import {fastifyConnectPlugin} from "@bufbuild/connect-fastify";
 import {haven} from "./api";
-import {config} from "../lib/config";
+import {v4 as uuidv4} from "uuid";
 
 async function createApiServer(server: any, port: number) {
-	// TODO(konsti): Finer cors configuration
 	server.register(cors);
 	await server.register(fastifyConnectPlugin, {routes: haven});
 	await server.listen({host: "0.0.0.0", port: port});
@@ -22,8 +21,17 @@ async function createApiServer(server: any, port: number) {
  * - HTTP/1.1: grpc-web
  */
 export async function runServer() {
-	const http1 = await createApiServer(fastify(), 50052);
-	const http2 = await createApiServer(fastify({http2: true}), 50051);
+	const settings = {
+		logger: true,
+
+		// Give each request a unique ID
+		genReqId(req: any) {
+			return uuidv4();
+		},
+	};
+
+	const http1 = await createApiServer(fastify({...settings}), 50052);
+	const http2 = await createApiServer(fastify({...settings, http2: true}), 50051);
 
 	return async () => {
 		await http1.close();
