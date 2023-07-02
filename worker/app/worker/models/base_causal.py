@@ -48,10 +48,18 @@ class AutoCausalModel(RegisteredModel):
         input_tokenized = self.tokenizer([prompt], return_tensors='pt').input_ids.to('cuda')
 
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True)
+        
+        if temperature == 0:
+            sample = False
+            temperature = 1
+        else:
+            sample = True
+
 
         generation_kwargs=dict(
             inputs=input_tokenized,
             streamer=streamer,
+            do_sample=sample,
             top_p=top_p, 
             top_k=top_k, 
             temperature=temperature, 
