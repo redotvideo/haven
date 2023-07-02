@@ -11,7 +11,11 @@ export async function generateName(model: string) {
 	// use a MS timestamp as the base
 	const ms = Date.now().toString(36);
 	const modelName = model.split("/").pop()?.toLowerCase();
-	return `haven-w-${modelName}-${ms}`;
+	const escaped = modelName
+		?.replace(/[^a-z0-9]/g, "-") // replace non-alphanumeric with dashes
+		.replace(/^-+/g, "") // remove leading dashes
+		.replace(/-+$/g, ""); // remove trailing dashes
+	return `haven-w-${escaped}-${ms}`;
 }
 
 export function getWorkerIP(worker: compute_v1.Schema$Instance | undefined) {
