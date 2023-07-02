@@ -30,6 +30,9 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 
 		if isinstance(streamer, TextIteratorStreamer):
 			for text in streamer:
+				if inference_client.model_engine.model_config["instructionPrefix"] in text:
+					break
+				
 				yield worker_pb2.ChatCompletionResponse(text=text)
 		else:
 			async for text in streamer:
