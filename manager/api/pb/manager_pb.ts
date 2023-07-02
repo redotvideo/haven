@@ -209,6 +209,26 @@ export class ChatCompletionRequest extends Message$1<ChatCompletionRequest> {
    */
   messages: Message[] = [];
 
+  /**
+   * @generated from field: optional int32 max_tokens = 3;
+   */
+  maxTokens?: number;
+
+  /**
+   * @generated from field: optional float top_p = 4;
+   */
+  topP?: number;
+
+  /**
+   * @generated from field: optional int32 top_k = 5;
+   */
+  topK?: number;
+
+  /**
+   * @generated from field: optional float temperature = 6;
+   */
+  temperature?: number;
+
   constructor(data?: PartialMessage<ChatCompletionRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -219,6 +239,10 @@ export class ChatCompletionRequest extends Message$1<ChatCompletionRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "worker_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "messages", kind: "message", T: Message, repeated: true },
+    { no: 3, name: "max_tokens", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 4, name: "top_p", kind: "scalar", T: 2 /* ScalarType.FLOAT */, opt: true },
+    { no: 5, name: "top_k", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 6, name: "temperature", kind: "scalar", T: 2 /* ScalarType.FLOAT */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatCompletionRequest {
