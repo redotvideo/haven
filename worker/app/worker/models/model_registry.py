@@ -26,5 +26,3 @@ from .base_causal import AutoCausalModel
 from .mpt import MPTModel
 from .falcon_7b import Falcon7BModel
 from .vllm_causal import VllmCausalModel
-from .llama_7b import Llama7B
-

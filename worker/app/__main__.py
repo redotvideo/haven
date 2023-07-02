@@ -3,6 +3,7 @@ import os
 import asyncio
 import grpc
 
+from transformers import TextIteratorStreamer
 from app.pb import worker_pb2, worker_pb2_grpc
 from app.worker.inference_worker import InferenceClient
 
@@ -26,14 +27,14 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 	async def ChatCompletion(self, request: worker_pb2.ChatCompletionRequest, context):
 		messages = list(request.messages)
 		streamer = inference_client.complete_chat(messages=messages)
-		
-		for text in streamer:
-			if inference_client.model_engine.model_config["instructionPrefix"] in text:
-				break
 
-			yield worker_pb2.ChatCompletionResponse(text=text)
-
-
+		if isinstance(streamer, TextIteratorStreamer):
+			for text in streamer:
+				yield worker_pb2.ChatCompletionResponse(text=text)
+		else:
+			async for text in streamer:
+				yield worker_pb2.ChatCompletionResponse(text=text)
+				
 async def serve():
 	server = grpc.aio.server()
 	worker_pb2_grpc.add_WorkerServiceServicer_to_server(WorkerService(), server)

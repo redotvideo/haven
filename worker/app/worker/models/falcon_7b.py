@@ -2,7 +2,6 @@ import transformers
 from transformers import TextIteratorStreamer, StoppingCriteriaList
 from threading import Thread
 import torch
-import deepspeed
 from peft import LoraConfig, prepare_model_for_int8_training, get_peft_model
 from typing import List
 
@@ -28,9 +27,6 @@ class Falcon7BModel(AutoCausalModel):
 
         elif self.model_config["quantization"] == "float16":
             self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], device_map="auto", trust_remote_code=True, torch_dtype=torch.bfloat16)
-
-            if self.model_config["gpuType"] == "A100" and self.model_config["gpuCount"] == 1:
-                self.model = deepspeed.init_inference(self.model, mp_size=1, replace_with_kernel_inject=True, replace_method="auto")
 
         else:
             raise NotImplementedError(f"{self.model_config['quantization']} is not a valid quantization config")

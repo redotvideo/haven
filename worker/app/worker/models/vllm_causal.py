@@ -46,13 +46,21 @@ class VllmCausalModel(RegisteredModel):
 
 
 
-    def generate_stream(self, messages: List, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
+    async def generate_stream(self, messages: List, sample: bool = True, top_p: float = 0.8, top_k: int = 500, temperature: float = 0.9, max_length: int = 2048):
         prompt = self.create_prompt_from_messages(messages)
 
-        sampling_params = SamplingParams(max_tokens=max_length, top_p=top_p, temperature=temperature, stop=self.model_config["stopTokens"]+[self.model_config["instructionPrefix"]])
-        results_generator = self.model_vllm_engine.generate(prompt, sampling_params)
+        sampling_params = SamplingParams(max_tokens=max_length, top_p=top_p, temperature=temperature, stop=[self.model_config["instructionPrefix"]]+[self.model_config["outputPostfix"]])
+        id = random_uuid()
+        results_generator = self.model_vllm_engine.generate(prompt, sampling_params, id)
+        
+        prev_text = ""
+        async for request_output in results_generator:
+            text = request_output.outputs[0].text
+            text = text.replace(prev_text, "")
+            prev_text += text
+            yield text
 
-        return results_generator
+
 
 
     def create_prompt_from_messages(self, messages):
@@ -70,7 +78,6 @@ class VllmCausalModel(RegisteredModel):
         prompt += self.model_config["outputPrefix"]
 
         return prompt
-
 
     ##############################
     ### FINETUNING   #############
@@ -119,6 +126,3 @@ class VllmCausalModel(RegisteredModel):
 
         self.model.save_pretrained(self.model_config["trained_model_path"])
         self.tokenizer.save_pretrained(self.model_config["trained_model_path"])
-
-
-
