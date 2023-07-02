@@ -41,6 +41,11 @@ message Message {
 
 message ChatCompletionRequest {
 	repeated Message messages = 1;
+
+	optional int32 max_tokens = 2;
+	optional float top_p = 3;
+	optional int32 top_k = 4;
+	optional float temperature = 5;
 }
 
 message ChatCompletionResponse {

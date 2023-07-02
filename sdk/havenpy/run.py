@@ -18,8 +18,8 @@ class Haven:
 		request = manager_pb2.SetupRequest(key_file=key_file)
 		return self.client.Setup(request)
 
-	def chat_completion(self, worker_name: str, messages: List[manager_pb2.Message], stream: bool = False) -> manager_pb2.ChatCompletionResponse or str:
-		request = manager_pb2.ChatCompletionRequest(worker_name=worker_name, messages=messages)
+	def chat_completion(self, worker_name: str, messages: List[manager_pb2.Message], stream: bool = False, max_tokens: int = None, top_p: float = None, top_k: int = None, temperature: float = None) -> manager_pb2.ChatCompletionResponse or str:
+		request = manager_pb2.ChatCompletionRequest(worker_name=worker_name, messages=messages, max_tokens=max_tokens, top_p=top_p, top_k=top_k, temperature=temperature)
 		responseStream: manager_pb2.ChatCompletionResponse = self.client.ChatCompletion(request)
 
 		if stream:

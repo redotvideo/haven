@@ -13,17 +13,17 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cworker.proto\x12\x06worker\"\x0f\n\rHealthRequest\"6\n\x0eHealthResponse\x12$\n\x06status\x18\x01 \x01(\x0e\x32\x14.worker.WorkerStatus\"\x11\n\x0fShutdownRequest\"\x12\n\x10ShutdownResponse\"6\n\x07Message\x12\x1a\n\x04role\x18\x01 \x01(\x0e\x32\x0c.worker.Role\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\t\":\n\x15\x43hatCompletionRequest\x12!\n\x08messages\x18\x01 \x03(\x0b\x32\x0f.worker.Message\"&\n\x16\x43hatCompletionResponse\x12\x0c\n\x04text\x18\x01 \x01(\t*1\n\x0cWorkerStatus\x12\x06\n\x02OK\x10\x00\x12\x0c\n\x08STOPPING\x10\x01\x12\x0b\n\x07OFFLINE\x10\x63*\x1f\n\x04Role\x12\r\n\tASSISTANT\x10\x00\x12\x08\n\x04USER\x10\x01\x32\xe0\x01\n\rWorkerService\x12\x39\n\x06Health\x12\x15.worker.HealthRequest\x1a\x16.worker.HealthResponse\"\x00\x12?\n\x08Shutdown\x12\x17.worker.ShutdownRequest\x1a\x18.worker.ShutdownResponse\"\x00\x12S\n\x0e\x43hatCompletion\x12\x1d.worker.ChatCompletionRequest\x1a\x1e.worker.ChatCompletionResponse\"\x00\x30\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cworker.proto\x12\x06worker\"\x0f\n\rHealthRequest\"6\n\x0eHealthResponse\x12$\n\x06status\x18\x01 \x01(\x0e\x32\x14.worker.WorkerStatus\"\x11\n\x0fShutdownRequest\"\x12\n\x10ShutdownResponse\"6\n\x07Message\x12\x1a\n\x04role\x18\x01 \x01(\x0e\x32\x0c.worker.Role\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\t\"\xc8\x01\n\x15\x43hatCompletionRequest\x12!\n\x08messages\x18\x01 \x03(\x0b\x32\x0f.worker.Message\x12\x17\n\nmax_tokens\x18\x02 \x01(\x05H\x00\x88\x01\x01\x12\x12\n\x05top_p\x18\x03 \x01(\x02H\x01\x88\x01\x01\x12\x12\n\x05top_k\x18\x04 \x01(\x05H\x02\x88\x01\x01\x12\x18\n\x0btemperature\x18\x05 \x01(\x02H\x03\x88\x01\x01\x42\r\n\x0b_max_tokensB\x08\n\x06_top_pB\x08\n\x06_top_kB\x0e\n\x0c_temperature\"&\n\x16\x43hatCompletionResponse\x12\x0c\n\x04text\x18\x01 \x01(\t*1\n\x0cWorkerStatus\x12\x06\n\x02OK\x10\x00\x12\x0c\n\x08STOPPING\x10\x01\x12\x0b\n\x07OFFLINE\x10\x63*\x1f\n\x04Role\x12\r\n\tASSISTANT\x10\x00\x12\x08\n\x04USER\x10\x01\x32\xe0\x01\n\rWorkerService\x12\x39\n\x06Health\x12\x15.worker.HealthRequest\x1a\x16.worker.HealthResponse\"\x00\x12?\n\x08Shutdown\x12\x17.worker.ShutdownRequest\x1a\x18.worker.ShutdownResponse\"\x00\x12S\n\x0e\x43hatCompletion\x12\x1d.worker.ChatCompletionRequest\x1a\x1e.worker.ChatCompletionResponse\"\x00\x30\x01\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'worker_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _WORKERSTATUS._serialized_start=292
-  _WORKERSTATUS._serialized_end=341
-  _ROLE._serialized_start=343
-  _ROLE._serialized_end=374
+  _WORKERSTATUS._serialized_start=435
+  _WORKERSTATUS._serialized_end=484
+  _ROLE._serialized_start=486
+  _ROLE._serialized_end=517
   _HEALTHREQUEST._serialized_start=24
   _HEALTHREQUEST._serialized_end=39
   _HEALTHRESPONSE._serialized_start=41
@@ -34,10 +34,10 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _SHUTDOWNRESPONSE._serialized_end=134
   _MESSAGE._serialized_start=136
   _MESSAGE._serialized_end=190
-  _CHATCOMPLETIONREQUEST._serialized_start=192
-  _CHATCOMPLETIONREQUEST._serialized_end=250
-  _CHATCOMPLETIONRESPONSE._serialized_start=252
-  _CHATCOMPLETIONRESPONSE._serialized_end=290
-  _WORKERSERVICE._serialized_start=377
-  _WORKERSERVICE._serialized_end=601
+  _CHATCOMPLETIONREQUEST._serialized_start=193
+  _CHATCOMPLETIONREQUEST._serialized_end=393
+  _CHATCOMPLETIONRESPONSE._serialized_start=395
+  _CHATCOMPLETIONRESPONSE._serialized_end=433
+  _WORKERSERVICE._serialized_start=520
+  _WORKERSERVICE._serialized_end=744
 # @@protoc_insertion_point(module_scope)
