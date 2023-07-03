@@ -97,6 +97,24 @@ class SetupRequest(google.protobuf.message.Message):
 global___SetupRequest = SetupRequest
 
 @typing_extensions.final
+class SetupResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MESSAGE_FIELD_NUMBER: builtins.int
+    message: builtins.str
+    """Used for warnings when running on an outdated version."""
+    def __init__(
+        self,
+        *,
+        message: builtins.str | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_message", b"_message", "message", b"message"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_message", b"_message", "message", b"message"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_message", b"_message"]) -> typing_extensions.Literal["message"] | None: ...
+
+global___SetupResponse = SetupResponse
+
+@typing_extensions.final
 class Message(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

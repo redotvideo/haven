@@ -2,8 +2,8 @@ from havenpy import Haven
 
 client = Haven("localhost:50051", "insecure")
 
-with open("./key.json", "r") as f:
-	client.setup(f.read())
+#with open("./key.json", "r") as f:
+	#client.setup(f.read())
 
 """arr = client.list_workers()
 for a in arr.workers:
@@ -22,7 +22,6 @@ print(client.create_inference_worker(model_name="@huggingface/h2oai/h2ogpt-gm-oa
 print(client.create_inference_worker(model_name="@huggingface/h2oai/h2ogpt-gm-oasst1-en-2048-falcon-7b-v2", quantization="float16", gpu_type="T4", gpu_count=1))
 print(client.create_inference_worker(model_name="@huggingface/h2oai/h2ogpt-gm-oasst1-en-2048-falcon-7b-v2", quantization="float16", gpu_type="A100", gpu_count=1))
 
-print(client.create_inference_worker(model_name="@huggingface/togethercomputer/RedPajama-INCITE-Chat-3B-v1", quantization="float16", gpu_type="T4", gpu_count=1))
 """
 
 """client.chat_completion("haven-example-base-lj7ieyhi", messages=[{
@@ -32,9 +31,12 @@ print(client.create_inference_worker(model_name="@huggingface/togethercomputer/R
 
 # print(client.list_models())
 
-print(client.list_models())
+print(client.list_workers())
 
-"""res = client.chat_completion("haven-redpajama-incite-chat-3b-v1-ljgvq2o1", messages=[{
+# print(client.create_inference_worker("@huggingface/lmsys/vicuna-7b-v1.3", gpu_type="A100", gpu_count=1, quantization="float16"))
+# print(client.create_inference_worker("@huggingface/lmsys/vicuna-7b-v1.3", gpu_type="T4", gpu_count=1, quantization="float16"))
+
+"""res = client.chat_completion("haven-w-vicuna-7b-v1-3-ljm41836", messages=[{
     "content": "Write a newspaper article about Marc Zuckerberg.",
     "role": "USER"
 }], stream=True)
