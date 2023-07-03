@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ChatCompletionRequest, ChatCompletionResponse, CreateInferenceWorkerRequest, Empty, InferenceWorker, ListModelsResponse, ListWorkersResponse, SetupRequest } from "./manager_pb.js";
+import { ChatCompletionRequest, ChatCompletionResponse, CreateInferenceWorkerRequest, Empty, InferenceWorker, ListModelsResponse, ListWorkersResponse, SetupRequest, SetupResponse } from "./manager_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -20,7 +20,7 @@ export const Haven = {
     setup: {
       name: "Setup",
       I: SetupRequest,
-      O: Empty,
+      O: SetupResponse,
       kind: MethodKind.Unary,
     },
     /**

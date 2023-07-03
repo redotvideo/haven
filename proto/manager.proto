@@ -6,7 +6,7 @@ message Empty {}
 
 service Haven {
 	// Setup (first time starting the manager)
-	rpc Setup(SetupRequest) returns (Empty) {}
+	rpc Setup(SetupRequest) returns (SetupResponse) {}
 
 	// Generate text from a prompt.
 	rpc ChatCompletion(ChatCompletionRequest) returns (stream ChatCompletionResponse) {}
@@ -26,6 +26,11 @@ service Haven {
 
 message SetupRequest {
 	optional string key_file = 1;
+}
+
+message SetupResponse {
+	// Used for warnings when running on an outdated version.
+	optional string message = 1;
 }
 
 enum Role {
