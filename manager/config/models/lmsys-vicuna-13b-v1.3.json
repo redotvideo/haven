@@ -1,8 +1,8 @@
 {
-	"architecture": "llama_7b",
+	"architecture": "llama_13b",
 	"name": "@huggingface/lmsys/vicuna-13b-v1.3",
 	"tokenizer": "@huggingface/lmsys/vicuna-13b-v1.3",
-	"systemPrompt": "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions.",
+	"systemPrompt": "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the users questions.",
 	"instructionPrefix": "USER: ",
 	"instructionPostfix": "\n",
 	"outputPrefix": "ASSISTANT: ",
