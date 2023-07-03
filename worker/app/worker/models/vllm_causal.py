@@ -6,16 +6,21 @@ from peft import LoraConfig, prepare_model_for_int8_training, get_peft_model
 
 from app.pb import worker_pb2, worker_pb2_grpc
 
+from vllm.engine.arg_utils import AsyncEngineArgs
+from vllm.engine.async_llm_engine import AsyncLLMEngine
+from vllm.sampling_params import SamplingParams
+from vllm.utils import random_uuid
+
 from .model_registry import RegisteredModel
 from .inference_utils.stopping_criteria import StopOnTokens
 from .training_utils.tokenizer_resize import resize_tokenizer_and_embeddings
 from .training_utils.data_processing import make_supervised_data_module
 
 
-class AutoCausalModel(RegisteredModel):
+class VllmCausalModel(RegisteredModel):
 
-    architecture_name = "causal_model"
-        
+    architecture_name = "causal_vllm_model"
+
     def __init__(self, config):
         self.model_config = config
 
@@ -29,49 +34,40 @@ class AutoCausalModel(RegisteredModel):
     ##############################
     def prepare_for_inference(self):
         if self.model_config["quantization"] == "int8":
-            self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], device_map="auto", load_in_8bit=True)
-        
+            raise NotImplementedError("VLLM Models do not yet support 8bit-quantization.")
+
+
         elif self.model_config["quantization"] == "float16":
-            self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], device_map="auto")
+            engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], engine_use_ray=True)
+            self.model_vllm_engine = AsyncLLMEngine.from_engine_args(engine_args)
 
         else:
             raise NotImplementedError(f"{self.model_config['quantization']} is not a valid quantization config")
 
 
-        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
-        self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, [self.model_config["instructionPrefix"]]+[self.tokenizer.eos_token])])
 
-
-    def generate_stream(self, messages: List, max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
+    async def generate_stream(self, messages: List, max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
         prompt = self.create_prompt_from_messages(messages)
 
-        input_tokenized = self.tokenizer([prompt], return_tensors='pt').input_ids.to('cuda')
-
-        streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True)
+        sampling_params = SamplingParams(
+                max_tokens=max_tokens if max_tokens < self.model_config["contextSize"] else self.model_config["contextSize"],
+                top_p=top_p, 
+                temperature=temperature, 
+                stop=[self.model_config["outputPostfix"]+self.model_config["instructionPrefix"]]
+            )
         
-        if temperature == 0:
-            sample = False
-            temperature = 1
-        else:
-            sample = True
+        id = random_uuid()
+        results_generator = self.model_vllm_engine.generate(prompt, sampling_params, id)
+        
+        prev_text = ""
+        async for request_output in results_generator:
+            text = request_output.outputs[0].text
+            text = text.replace(prev_text, "")
+            prev_text += text
+            yield text
 
 
-        generation_kwargs=dict(
-            inputs=input_tokenized,
-            streamer=streamer,
-            do_sample=sample,
-            top_p=top_p, 
-            top_k=top_k, 
-            temperature=temperature, 
-            stopping_criteria=self.stopping_criteria,
-            max_length=max_tokens if max_tokens < self.model_config["contextSize"] else self.model_config["contextSize"],
-        )
 
-        thread = Thread(target=self.model.generate, kwargs=generation_kwargs)
-        thread.start()
-
-        return streamer
-    
 
     def create_prompt_from_messages(self, messages):
         if messages[-1].role == worker_pb2.ASSISTANT:
@@ -89,14 +85,11 @@ class AutoCausalModel(RegisteredModel):
 
         return prompt
 
-      
-      
-
     ##############################
     ### FINETUNING   #############
     ##############################
     def prepare_model_for_training(self):
-        
+
         self.model = transformers.AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], device_map="auto", load_in_8bit=self.model_config["lora"])
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
 
@@ -134,13 +127,8 @@ class AutoCausalModel(RegisteredModel):
             data_collator=self.collator,
             args=training_args
         )
-        
+
         trainer.train()
 
         self.model.save_pretrained(self.model_config["trained_model_path"])
         self.tokenizer.save_pretrained(self.model_config["trained_model_path"])
-
-
-        
-
-    

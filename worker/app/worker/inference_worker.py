@@ -18,7 +18,7 @@ class InferenceClient:
         self.model_engine = ModelRegistry.REGISTRY[self.config["architecture"]](self.config)
         self.model_engine.prepare_for_inference()
 
-    def complete_chat(self, messages, **kwargs):
-        return self.model_engine.generate_stream(messages, **kwargs)
+    def complete_chat(self, messages, inference_params):
+        return self.model_engine.generate_stream(messages, **inference_params)
 
     

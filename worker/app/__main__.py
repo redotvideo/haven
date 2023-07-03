@@ -3,8 +3,10 @@ import os
 import asyncio
 import grpc
 
+from transformers import TextIteratorStreamer
 from app.pb import worker_pb2, worker_pb2_grpc
 from app.worker.inference_worker import InferenceClient
+from app.worker.models.inference_utils.parameter_passing import get_inference_parameter_dict
 
 ABSOLUTE_PATH = os.path.dirname(__file__)
 inference_client = InferenceClient(config=os.path.join(ABSOLUTE_PATH, "../config.json"))
@@ -33,15 +35,20 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 		temperature = request.temperature
 		"""
 
-		streamer = inference_client.complete_chat(messages=messages)
-		
-		for text in streamer:
-			if inference_client.model_engine.model_config["instructionPrefix"] in text:
-				break
+		inference_params = get_inference_parameter_dict(dict(max_tokens=request.max_tokens, top_p=request.top_p, top_k=request.top_k, temperature=request.top_k))
+		streamer = inference_client.complete_chat(messages=messages, inference_params=inference_params)
 
-			yield worker_pb2.ChatCompletionResponse(text=text)
+		if isinstance(streamer, TextIteratorStreamer):
+			for text in streamer:
+				if inference_client.model_engine.model_config["instructionPrefix"] in text:
+					break
+				
+				yield worker_pb2.ChatCompletionResponse(text=text)
+		else:
+			async for text in streamer:
+				yield worker_pb2.ChatCompletionResponse(text=text)
 
-
+				
 async def serve():
 	server = grpc.aio.server()
 	worker_pb2_grpc.add_WorkerServiceServicer_to_server(WorkerService(), server)
