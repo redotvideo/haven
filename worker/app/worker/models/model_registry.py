@@ -27,7 +27,7 @@ from .bigcode_15b import BigCode15B
 from .falcon_7b import Falcon7BModel
 from .gpt_neox_3b import GPTNeoX3B
 from .gpt_neox_7b import GPTNeoX7B
-from .gpt_neox_13b import GPTNeoX13B
+from .gpt_neox_12b import GPTNeoX12B
 from .llama_7b import Llama7B
 from .llama_13b import Llama13B
 from .mpt_7b import Mpt7B
