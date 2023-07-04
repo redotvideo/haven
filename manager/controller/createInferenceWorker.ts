@@ -63,7 +63,11 @@ async function checkWorkerNameOrGenerate(api: compute_v1.Compute, modelName: str
 	}
 }
 
-async function checkViableZoneToDeploy(api: compute_v1.Compute, config: Required<ArchitectureConfiguration>) {
+async function checkViableZoneToDeploy(
+	api: compute_v1.Compute,
+	config: Required<ArchitectureConfiguration>,
+	requestedZone?: string,
+) {
 	// Get possible zones to deploy to
 	const gcpGpuName = gpuTypeToGcloudName[config.gpuType];
 	const possibleZones = await getZonesToCreateVM(api, gcpGpuName, config.gpuCount);
@@ -76,6 +80,22 @@ async function checkViableZoneToDeploy(api: compute_v1.Compute, config: Required
 		);
 	}
 
+	// If a zone was requested, check if it is viable
+	if (requestedZone) {
+		const zoneExists = possibleZones.includes(requestedZone);
+		if (!zoneExists) {
+			throw new ConnectError(
+				`The requested zone ${requestedZone} does not support the requested configuration. Possible zones are: ${possibleZones.join(
+					", ",
+				)}.`,
+				Code.InvalidArgument,
+			);
+		}
+
+		return requestedZone;
+	}
+
+	// If no zone was requested, return the first viable zone
 	return possibleZones[0]!;
 }
 
@@ -92,6 +112,7 @@ export async function createInferenceWorkerController(
 	modelName: string,
 	requestedResources: Partial<ArchitectureConfiguration>,
 	workerName?: string,
+	requestedZone?: string,
 ) {
 	// Get architecture
 	const modelFile = await checkForModelFile(modelName);
@@ -106,7 +127,7 @@ export async function createInferenceWorkerController(
 	const finalName = await checkWorkerNameOrGenerate(api, modelName, workerName);
 
 	// Get zone to deploy to
-	const zone = await checkViableZoneToDeploy(api, validConfiguration);
+	const zone = await checkViableZoneToDeploy(api, validConfiguration, requestedZone);
 
 	// Create GCP instance template
 	const template = await createInstanceTemplate(

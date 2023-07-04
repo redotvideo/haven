@@ -125,11 +125,12 @@ interface CreateInferenceWorkerRequestExtended extends CreateInferenceWorkerRequ
 	workerName?: `haven-w-${string}`;
 }
 
-const createInferenceWorkerInputValid = typia.createAssertEquals<CreateInferenceWorkerRequest>();
+const createInferenceWorkerInputValid = typia.createAssertEquals<CreateInferenceWorkerRequestExtended>();
 
 async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	const modelName = req.modelName;
-	let worker = req.workerName;
+	const worker = req.workerName;
+	const zone = req.zone;
 
 	const requestedResources = {
 		quantization: req.quantization,
@@ -137,7 +138,7 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 		gpuCount: req.gpuCount,
 	};
 
-	const workerName = await createInferenceWorkerController(modelName, requestedResources, worker);
+	const workerName = await createInferenceWorkerController(modelName, requestedResources, worker, zone);
 	sendEvent(EventName.CREATE_WORKER, {gpuType: req.gpuType, gpuCount: req.gpuCount});
 
 	return new InferenceWorker({

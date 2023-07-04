@@ -521,6 +521,11 @@ export class CreateInferenceWorkerRequest extends Message$1<CreateInferenceWorke
    */
   gpuCount?: number;
 
+  /**
+   * @generated from field: optional string zone = 7;
+   */
+  zone?: string;
+
   constructor(data?: PartialMessage<CreateInferenceWorkerRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -534,6 +539,7 @@ export class CreateInferenceWorkerRequest extends Message$1<CreateInferenceWorke
     { no: 3, name: "worker_name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 4, name: "gpu_type", kind: "enum", T: proto3.getEnumType(GpuType), opt: true },
     { no: 6, name: "gpu_count", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 7, name: "zone", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateInferenceWorkerRequest {
