@@ -64,7 +64,7 @@ export async function checkForNewVersion() {
 	}
 }
 
-async function healthCheck() {
+export async function healthCheck() {
 	if (!config.telemetry || !config.setupDone) {
 		return;
 	}
@@ -86,6 +86,11 @@ async function healthCheck() {
 	for (const worker of workers) {
 		const {type, count} = instanceToGpuTypeAndCount(worker);
 
+		// Only count running workers
+		if (worker.status !== "RUNNING") {
+			continue;
+		}
+
 		if (type === GpuType.A100) {
 			A100s += count;
 		} else if (type === GpuType.A100_80GB) {
@@ -98,4 +103,5 @@ async function healthCheck() {
 	sendEvent(EventName.PING, {A100s, A100_80GBs, T4s});
 }
 
+// Run every 30 minutes
 setInterval(() => healthCheck().catch(() => {}), 1000 * 60 * 30);
