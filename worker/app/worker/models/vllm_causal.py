@@ -1,5 +1,5 @@
 import transformers
-from transformers import TextIteratorStreamer, StoppingCriteriaList, Trainer, TrainingArgument, AutoModelForCausalLM, AutoTokenizer
+from transformers import TextIteratorStreamer, StoppingCriteriaList, Trainer, TrainingArguments, AutoModelForCausalLM, AutoTokenizer
 from threading import Thread
 from typing import List
 from peft import LoraConfig, prepare_model_for_int8_training, get_peft_model
