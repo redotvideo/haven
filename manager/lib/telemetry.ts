@@ -98,4 +98,4 @@ async function healthCheck() {
 	sendEvent(EventName.PING, {A100s, A100_80GBs, T4s});
 }
 
-setInterval(healthCheck, 1000 * 60 * 30);
+setInterval(() => healthCheck().catch(() => {}), 1000 * 60 * 30);
