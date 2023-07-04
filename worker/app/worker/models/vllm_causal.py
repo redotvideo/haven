@@ -3,6 +3,7 @@ from transformers import TextIteratorStreamer, StoppingCriteriaList, Trainer, Tr
 from threading import Thread
 from typing import List
 from peft import LoraConfig, prepare_model_for_int8_training, get_peft_model
+import re
 
 from app.pb import worker_pb2, worker_pb2_grpc
 
@@ -39,11 +40,11 @@ class VllmCausalModel(RegisteredModel):
 
         elif self.model_config["quantization"] == "float16":
             engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], engine_use_ray=True)
+
             self.model_vllm_engine = AsyncLLMEngine.from_engine_args(engine_args)
 
         else:
             raise NotImplementedError(f"{self.model_config['quantization']} is not a valid quantization config")
-
 
 
     async def generate_stream(self, messages: List, max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
@@ -51,9 +52,9 @@ class VllmCausalModel(RegisteredModel):
 
         sampling_params = SamplingParams(
                 max_tokens=max_tokens if max_tokens < self.model_config["contextSize"] else self.model_config["contextSize"],
-                top_p=top_p, 
+                top_p=1 if temperature==0 else top_p, 
                 temperature=temperature, 
-                stop=[self.model_config["outputPostfix"]+self.model_config["instructionPrefix"]]
+                stop=self.get_stopword_list()
             )
         
         id = random_uuid()
@@ -65,8 +66,6 @@ class VllmCausalModel(RegisteredModel):
             text = text.replace(prev_text, "")
             prev_text += text
             yield text
-
-
 
 
     def create_prompt_from_messages(self, messages):
@@ -84,6 +83,14 @@ class VllmCausalModel(RegisteredModel):
         prompt += self.model_config["outputPrefix"]
 
         return prompt
+    
+
+    def get_stopword_list(self, input_str):
+        if all(char.isspace() for char in self.model_config["outputPostfix"]):
+            return [self.model_config["instructionPrefix"].strip()]
+        else:
+            return [self.model_config["outputPostfix"].strip()]
+            
 
     ##############################
     ### FINETUNING   #############

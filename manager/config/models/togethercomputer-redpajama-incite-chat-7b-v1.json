@@ -1,0 +1,10 @@
+{
+	"architecture": "gpt_neox_7b",
+	"name": "@huggingface/togethercomputer/RedPajama-INCITE-Chat-7B-v1",
+	"tokenizer": "@huggingface/togethercomputer/RedPajama-INCITE-Chat-7B-v1",
+	"systemPrompt": "",
+	"instructionPrefix": "<human>:",
+	"instructionPostfix": "\n",
+	"outputPrefix": "<bot>:",
+	"outputPostfix": "\n"
+}

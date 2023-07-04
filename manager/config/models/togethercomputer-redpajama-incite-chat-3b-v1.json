@@ -1,5 +1,5 @@
 {
-	"architecture": "causal_model",
+	"architecture": "gpt_neox_3b",
 	"name": "@huggingface/togethercomputer/RedPajama-INCITE-Chat-3B-v1",
 	"tokenizer": "@huggingface/togethercomputer/RedPajama-INCITE-Chat-3B-v1",
 	"systemPrompt": "",
