@@ -11,6 +11,7 @@ import {
 	ListModelsResponse,
 	ListWorkersResponse,
 	SetupRequest,
+	SetupResponse,
 } from "./pb/manager_pb";
 
 import {config} from "../lib/config";
@@ -24,7 +25,7 @@ import {createInferenceWorkerController} from "../controller/createInferenceWork
 import {getWorkerIP} from "../lib/workers";
 import {validate} from "./validate";
 import {listWorkersController} from "../controller/workers";
-import {EventName, sendEvent} from "../lib/telemetry";
+import {EventName, checkForNewVersion, sendEvent} from "../lib/telemetry";
 
 /////////////////////
 // Setup
@@ -36,10 +37,13 @@ const setupInputValid = typia.createAssertEquals<SetupRequest>();
  * Set up the manager by providing the Google Cloud key.
  */
 async function setupHandler(req: SetupRequest) {
+	// Check if there is a new version available and pass a warning to the client if there is.
+	const warning = await checkForNewVersion();
+
 	if (config.setupDone) {
 		// Endpoint is being called as "ping" to check if the setup is done.
 		// It is, so we return.
-		return;
+		return new SetupResponse({message: warning});
 	}
 
 	const file = req.keyFile;
@@ -51,7 +55,8 @@ async function setupHandler(req: SetupRequest) {
 	}
 
 	// Now we can assume that the setup is not done and the user wants to finish it.
-	return setupController(file);
+	await setupController(file);
+	return new SetupResponse({message: warning});
 }
 
 /////////////////////
@@ -125,8 +130,6 @@ const createInferenceWorkerInputValid = typia.createAssertEquals<CreateInference
 async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	const modelName = req.modelName;
 	let worker = req.workerName;
-	console.log("workerName", worker);
-
 
 	const requestedResources = {
 		quantization: req.quantization,
@@ -135,7 +138,6 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	};
 
 	const workerName = await createInferenceWorkerController(modelName, requestedResources, worker);
-	console.log("workerName", workerName);
 	sendEvent(EventName.CREATE_WORKER, {gpuType: req.gpuType, gpuCount: req.gpuCount});
 
 	return new InferenceWorker({

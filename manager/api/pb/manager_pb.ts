@@ -153,6 +153,45 @@ export class SetupRequest extends Message$1<SetupRequest> {
 }
 
 /**
+ * @generated from message haven.SetupResponse
+ */
+export class SetupResponse extends Message$1<SetupResponse> {
+  /**
+   * Used for warnings when running on an outdated version.
+   *
+   * @generated from field: optional string message = 1;
+   */
+  message?: string;
+
+  constructor(data?: PartialMessage<SetupResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "haven.SetupResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SetupResponse {
+    return new SetupResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SetupResponse {
+    return new SetupResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SetupResponse {
+    return new SetupResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SetupResponse | PlainMessage<SetupResponse> | undefined, b: SetupResponse | PlainMessage<SetupResponse> | undefined): boolean {
+    return proto3.util.equals(SetupResponse, a, b);
+  }
+}
+
+/**
  * @generated from message haven.Message
  */
 export class Message extends Message$1<Message> {

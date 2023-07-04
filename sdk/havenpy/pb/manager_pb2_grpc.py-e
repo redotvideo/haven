@@ -17,7 +17,7 @@ class HavenStub(object):
         self.Setup = channel.unary_unary(
                 '/haven.Haven/Setup',
                 request_serializer=manager__pb2.SetupRequest.SerializeToString,
-                response_deserializer=manager__pb2.Empty.FromString,
+                response_deserializer=manager__pb2.SetupResponse.FromString,
                 )
         self.ChatCompletion = channel.unary_stream(
                 '/haven.Haven/ChatCompletion',
@@ -118,7 +118,7 @@ def add_HavenServicer_to_server(servicer, server):
             'Setup': grpc.unary_unary_rpc_method_handler(
                     servicer.Setup,
                     request_deserializer=manager__pb2.SetupRequest.FromString,
-                    response_serializer=manager__pb2.Empty.SerializeToString,
+                    response_serializer=manager__pb2.SetupResponse.SerializeToString,
             ),
             'ChatCompletion': grpc.unary_stream_rpc_method_handler(
                     servicer.ChatCompletion,
@@ -178,7 +178,7 @@ class Haven(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/haven.Haven/Setup',
             manager__pb2.SetupRequest.SerializeToString,
-            manager__pb2.Empty.FromString,
+            manager__pb2.SetupResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
