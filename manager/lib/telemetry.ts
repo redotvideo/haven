@@ -95,7 +95,6 @@ async function healthCheck() {
 		}
 	}
 
-	// Report to PostHog
 	sendEvent(EventName.PING, {A100s, A100_80GBs, T4s});
 }
 
