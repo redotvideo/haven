@@ -2,9 +2,9 @@ from typing import List
 from .vllm_causal import VllmCausalModel
 
 
-class GPTNeoX13B(VllmCausalModel):
+class GPTNeoX12B(VllmCausalModel):
 
-    architecture_name = "gpt_neox_13b"
+    architecture_name = "gpt_neox_12b"
 
     def __init__(self, config):
         super().__init__(config)
