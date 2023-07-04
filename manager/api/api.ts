@@ -7,6 +7,7 @@ import {
 	ChatCompletionResponse,
 	CreateInferenceWorkerRequest,
 	Empty,
+	GpuType,
 	InferenceWorker,
 	ListModelsResponse,
 	ListWorkersResponse,
@@ -139,7 +140,7 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	};
 
 	const workerName = await createInferenceWorkerController(modelName, requestedResources, worker, zone);
-	sendEvent(EventName.CREATE_WORKER, {gpuType: req.gpuType, gpuCount: req.gpuCount});
+	sendEvent(EventName.CREATE_WORKER, {gpuType: req.gpuType ? GpuType[req.gpuType] : undefined, gpuCount: req.gpuCount});
 
 	return new InferenceWorker({
 		workerName,
@@ -178,7 +179,7 @@ async function pauseWorker(req: InferenceWorker) {
 	});
 
 	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.PAUSE_WORKER, {gpuType: type, gpuCount: count});
+	sendEvent(EventName.PAUSE_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
 
 	return new InferenceWorker({
 		workerName: worker.name,
@@ -211,7 +212,7 @@ async function resumeWorker(req: InferenceWorker) {
 	});
 
 	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.RESUME_WORKER, {gpuType: type, gpuCount: count});
+	sendEvent(EventName.RESUME_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
 
 	return new InferenceWorker({
 		workerName: worker.name,
@@ -248,7 +249,7 @@ async function deleteWorker(req: InferenceWorker) {
 	});
 
 	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.DELETE_WORKER, {gpuType: type, gpuCount: count});
+	sendEvent(EventName.DELETE_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
 
 	return new InferenceWorker({
 		workerName: worker.name,
