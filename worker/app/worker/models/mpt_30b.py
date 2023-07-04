@@ -2,9 +2,9 @@ from typing import List
 from .vllm_causal import VllmCausalModel
 
 
-class Mpt7B(VllmCausalModel):
+class Müt30B(VllmCausalModel):
 
-    architecture_name = "mpt_7b"
+    architecture_name = "mpt_30b"
 
     def __init__(self, config):
         super().__init__(config)
