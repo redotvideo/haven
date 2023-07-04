@@ -1,0 +1,10 @@
+{
+	"architecture": "mpt_30b",
+	"name": "@huggingface/mosaicml/mpt-30b-chat",
+	"tokenizer": "@huggingface/mosaicml/mpt-30b-chat",
+	"systemPrompt": "",
+	"instructionPrefix": "<|im_start|>user\n",
+	"instructionPostfix": "<|im_end|>",
+	"outputPrefix": "<|im_start|>assistant\n",
+	"outputPostfix": "<|im_end|>"
+}
