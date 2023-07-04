@@ -2,7 +2,7 @@ from typing import List
 from .vllm_causal import VllmCausalModel
 
 
-class Müt30B(VllmCausalModel):
+class Mpt30B(VllmCausalModel):
 
     architecture_name = "mpt_30b"
 
