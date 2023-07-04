@@ -1,9 +1,10 @@
 import transformers
-from transformers import TextIteratorStreamer, StoppingCriteriaList, Trainer, TrainingArguments
+from transformers import TextIteratorStreamer, StoppingCriteriaList, Trainer, TrainingArgument, AutoModelForCausalLM, AutoTokenizer
 from threading import Thread
 from typing import List
 from peft import LoraConfig, prepare_model_for_int8_training, get_peft_model
 import re
+import os
 
 from app.pb import worker_pb2, worker_pb2_grpc
 
@@ -34,6 +35,15 @@ class VllmCausalModel(RegisteredModel):
     ### INFERENCE    #############
     ##############################
     def prepare_for_inference(self):
+
+        if not os.path.exists("local_model/tokenizer.json"): # Download Model before starting server
+
+            model_local = AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], trust_remote_code=True)
+            model_local.save_pretrained("local_model")
+            tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
+            tokenizer.save_pretrained("local_model")
+
+
         if self.model_config["quantization"] == "int8":
             raise NotImplementedError("VLLM Models do not yet support 8bit-quantization.")
 
@@ -85,7 +95,7 @@ class VllmCausalModel(RegisteredModel):
         return prompt
     
 
-    def get_stopword_list(self, input_str):
+    def get_stopword_list(self):
         if all(char.isspace() for char in self.model_config["outputPostfix"]):
             return [self.model_config["instructionPrefix"].strip()]
         else:
