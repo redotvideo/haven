@@ -93,6 +93,7 @@ message CreateInferenceWorkerRequest {
 	optional string worker_name = 3;
 	optional GpuType gpu_type = 4;
 	optional int32 gpu_count = 6;
+	optional string zone = 7;
 }
 
 message InferenceWorker {
