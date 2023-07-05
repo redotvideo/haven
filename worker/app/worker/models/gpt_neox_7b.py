@@ -1,17 +1,15 @@
 import os
 from typing import List
-from transformers import AutoModelForCausalLM, AutoTokenizer
 from .vllm_causal import VllmCausalModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from vllm.engine.arg_utils import AsyncEngineArgs
 from vllm.engine.async_llm_engine import AsyncLLMEngine
-from vllm.sampling_params import SamplingParams
-from vllm.utils import random_uuid
 
 
-class Llama13B(VllmCausalModel):
+class GPTNeoX7B(VllmCausalModel):
 
-    architecture_name = "llama_13b"
+    architecture_name = "gpt_neox_7b"
 
     def __init__(self, config):
         super().__init__(config)
@@ -31,13 +29,16 @@ class Llama13B(VllmCausalModel):
             del model_local
             del tokenizer
 
-
         if self.model_config["quantization"] == "int8":
             raise NotImplementedError("VLLM Models do not yet support 8bit-quantization.")
 
 
         elif self.model_config["quantization"] == "float16":
-            engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], engine_use_ray=True, tokenizer_mode="slow")
+            if self.model_config["gpuType"] == "T4":
+                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], engine_use_ray=True, gpu_memory_utilization=0.97)
+            else:
+                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], engine_use_ray=True)
+                
             self.model_vllm_engine = AsyncLLMEngine.from_engine_args(engine_args)
 
         else:
