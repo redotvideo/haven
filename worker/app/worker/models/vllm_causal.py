@@ -42,6 +42,8 @@ class VllmCausalModel(RegisteredModel):
             model_local.save_pretrained("local_model")
             tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
             tokenizer.save_pretrained("local_model")
+            del model_local
+            del tokenizer
 
 
         if self.model_config["quantization"] == "int8":
@@ -100,9 +102,9 @@ class VllmCausalModel(RegisteredModel):
 
     def get_stopword_list(self):
         if all(char.isspace() for char in self.model_config["outputPostfix"]):
-            return [self.model_config["instructionPrefix"].strip()]
+            return [self.model_config["instructionPrefix"].strip(), "<|endoftext|>"]
         else:
-            return [self.model_config["outputPostfix"].strip()]
+            return [self.model_config["outputPostfix"].strip(), "<|endoftext|>"]
             
 
     ##############################
