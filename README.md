@@ -27,6 +27,10 @@
 
 <br>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/havenhq/haven/dev/diagram.svg">
+</p>
+
 ## Getting Started 🔥
 
 Setting up an LLM server requires just three steps:
