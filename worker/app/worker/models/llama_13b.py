@@ -1,4 +1,6 @@
+import os
 from typing import List
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from .vllm_causal import VllmCausalModel
 
 from vllm.engine.arg_utils import AsyncEngineArgs
@@ -19,6 +21,15 @@ class Llama13B(VllmCausalModel):
     ### INFERENCE    #############
     ##############################
     def prepare_for_inference(self):
+
+        if not os.path.exists("local_model/tokenizer.json"): # Download Model before starting server
+
+            model_local = AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], trust_remote_code=True)
+            model_local.save_pretrained("local_model")
+            tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
+            tokenizer.save_pretrained("local_model")
+
+
         if self.model_config["quantization"] == "int8":
             raise NotImplementedError("VLLM Models do not yet support 8bit-quantization.")
 

@@ -74,8 +74,11 @@ class VllmCausalModel(RegisteredModel):
         async for request_output in results_generator:
             text = request_output.outputs[0].text
             text = text.replace(prev_text, "")
-            prev_text += text
-            yield text
+            if not text in prev_text:
+                yield text
+                prev_text = request_output.outputs[0].text
+            else:
+                yield ""
 
 
     def create_prompt_from_messages(self, messages):
