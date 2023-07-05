@@ -7,10 +7,12 @@ import {
 	ChatCompletionResponse,
 	CreateInferenceWorkerRequest,
 	Empty,
+	GpuType,
 	InferenceWorker,
 	ListModelsResponse,
 	ListWorkersResponse,
 	SetupRequest,
+	SetupResponse,
 } from "./pb/manager_pb";
 
 import {config} from "../lib/config";
@@ -24,7 +26,7 @@ import {createInferenceWorkerController} from "../controller/createInferenceWork
 import {getWorkerIP} from "../lib/workers";
 import {validate} from "./validate";
 import {listWorkersController} from "../controller/workers";
-import {EventName, sendEvent} from "../lib/telemetry";
+import {EventName, checkForNewVersion, sendEvent} from "../lib/telemetry";
 
 /////////////////////
 // Setup
@@ -36,10 +38,13 @@ const setupInputValid = typia.createAssertEquals<SetupRequest>();
  * Set up the manager by providing the Google Cloud key.
  */
 async function setupHandler(req: SetupRequest) {
+	// Check if there is a new version available and pass a warning to the client if there is.
+	const warning = await checkForNewVersion();
+
 	if (config.setupDone) {
 		// Endpoint is being called as "ping" to check if the setup is done.
 		// It is, so we return.
-		return;
+		return new SetupResponse({message: warning});
 	}
 
 	const file = req.keyFile;
@@ -51,7 +56,8 @@ async function setupHandler(req: SetupRequest) {
 	}
 
 	// Now we can assume that the setup is not done and the user wants to finish it.
-	return setupController(file);
+	await setupController(file);
+	return new SetupResponse({message: warning});
 }
 
 /////////////////////
@@ -120,13 +126,12 @@ interface CreateInferenceWorkerRequestExtended extends CreateInferenceWorkerRequ
 	workerName?: `haven-w-${string}`;
 }
 
-const createInferenceWorkerInputValid = typia.createAssertEquals<CreateInferenceWorkerRequest>();
+const createInferenceWorkerInputValid = typia.createAssertEquals<CreateInferenceWorkerRequestExtended>();
 
 async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	const modelName = req.modelName;
-	let worker = req.workerName;
-	console.log("workerName", worker);
-
+	const worker = req.workerName;
+	const zone = req.zone;
 
 	const requestedResources = {
 		quantization: req.quantization,
@@ -134,9 +139,8 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 		gpuCount: req.gpuCount,
 	};
 
-	const workerName = await createInferenceWorkerController(modelName, requestedResources, worker);
-	console.log("workerName", workerName);
-	sendEvent(EventName.CREATE_WORKER, {gpuType: req.gpuType, gpuCount: req.gpuCount});
+	const workerName = await createInferenceWorkerController(modelName, requestedResources, worker, zone);
+	sendEvent(EventName.CREATE_WORKER, {gpuType: req.gpuType ? GpuType[req.gpuType] : undefined, gpuCount: req.gpuCount});
 
 	return new InferenceWorker({
 		workerName,
@@ -175,7 +179,7 @@ async function pauseWorker(req: InferenceWorker) {
 	});
 
 	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.PAUSE_WORKER, {gpuType: type, gpuCount: count});
+	sendEvent(EventName.PAUSE_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
 
 	return new InferenceWorker({
 		workerName: worker.name,
@@ -208,7 +212,7 @@ async function resumeWorker(req: InferenceWorker) {
 	});
 
 	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.RESUME_WORKER, {gpuType: type, gpuCount: count});
+	sendEvent(EventName.RESUME_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
 
 	return new InferenceWorker({
 		workerName: worker.name,
@@ -245,7 +249,7 @@ async function deleteWorker(req: InferenceWorker) {
 	});
 
 	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.DELETE_WORKER, {gpuType: type, gpuCount: count});
+	sendEvent(EventName.DELETE_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
 
 	return new InferenceWorker({
 		workerName: worker.name,

@@ -97,6 +97,24 @@ class SetupRequest(google.protobuf.message.Message):
 global___SetupRequest = SetupRequest
 
 @typing_extensions.final
+class SetupResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MESSAGE_FIELD_NUMBER: builtins.int
+    message: builtins.str
+    """Used for warnings when running on an outdated version."""
+    def __init__(
+        self,
+        *,
+        message: builtins.str | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_message", b"_message", "message", b"message"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_message", b"_message", "message", b"message"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_message", b"_message"]) -> typing_extensions.Literal["message"] | None: ...
+
+global___SetupResponse = SetupResponse
+
+@typing_extensions.final
 class Message(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -243,11 +261,13 @@ class CreateInferenceWorkerRequest(google.protobuf.message.Message):
     WORKER_NAME_FIELD_NUMBER: builtins.int
     GPU_TYPE_FIELD_NUMBER: builtins.int
     GPU_COUNT_FIELD_NUMBER: builtins.int
+    ZONE_FIELD_NUMBER: builtins.int
     model_name: builtins.str
     quantization: builtins.str
     worker_name: builtins.str
     gpu_type: global___GpuType.ValueType
     gpu_count: builtins.int
+    zone: builtins.str
     def __init__(
         self,
         *,
@@ -256,15 +276,18 @@ class CreateInferenceWorkerRequest(google.protobuf.message.Message):
         worker_name: builtins.str | None = ...,
         gpu_type: global___GpuType.ValueType | None = ...,
         gpu_count: builtins.int | None = ...,
+        zone: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "worker_name", b"worker_name"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "model_name", b"model_name", "quantization", b"quantization", "worker_name", b"worker_name"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "_zone", b"_zone", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "worker_name", b"worker_name", "zone", b"zone"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "_zone", b"_zone", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "model_name", b"model_name", "quantization", b"quantization", "worker_name", b"worker_name", "zone", b"zone"]) -> None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_gpu_count", b"_gpu_count"]) -> typing_extensions.Literal["gpu_count"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_gpu_type", b"_gpu_type"]) -> typing_extensions.Literal["gpu_type"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_worker_name", b"_worker_name"]) -> typing_extensions.Literal["worker_name"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_zone", b"_zone"]) -> typing_extensions.Literal["zone"] | None: ...
 
 global___CreateInferenceWorkerRequest = CreateInferenceWorkerRequest
 
