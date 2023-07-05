@@ -5,4 +5,4 @@ generate-proto:
 	cd sdk && ./proto.sh
 
 build-docker:
-	docker buildx build --platform=linux/amd64 -t havenhq/haven:latest . 
+	docker buildx build --platform=linux/amd64,linux/arm64 -t havenhq/haven:latest --push .
