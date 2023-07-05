@@ -1,7 +1,0 @@
-{
-	"quantization": "float16",
-	"gpuType": "T4",
-	"gpuCount": 1,
-	"cpuMachineType": "n1-standard-8",
-	"contextSize": 2048
-}

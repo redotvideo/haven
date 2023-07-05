@@ -28,6 +28,8 @@ class Llama13B(VllmCausalModel):
             model_local.save_pretrained("local_model")
             tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
             tokenizer.save_pretrained("local_model")
+            del model_local
+            del tokenizer
 
 
         if self.model_config["quantization"] == "int8":
