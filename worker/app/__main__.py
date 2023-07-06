@@ -60,6 +60,29 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
         except Exception as e:
             print(e)
 
+    
+    async def Completion(self, request: worker_pb2.ChatCompletionRequest, context):
+        prompt = list(request.prompt)
+
+        """
+                max_tokens = request.max_tokens
+                top_p = request.top_p
+                top_k = request.top_k
+                temperature = request.temperature
+                """
+        
+        inference_params = get_inference_parameter_dict(dict(max_tokens=request.max_tokens, top_p=request.top_p, top_k=request.top_k, temperature=request.temperature))
+        streamer = inference_client.complete(prompt=prompt, inference_params=inference_params)
+
+        if isinstance(streamer, TextIteratorStreamer):
+            for text in streamer:
+                yield worker_pb2.ChatCompletionResponse(text=text)
+
+        else:
+            async for text in streamer:                
+                yield worker_pb2.ChatCompletionResponse(text=potential_stop_string+text)
+
+
 
 async def serve():
     server = grpc.aio.server()
