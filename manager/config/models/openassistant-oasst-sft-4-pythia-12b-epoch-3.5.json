@@ -1,5 +1,5 @@
 {
-	"architecture": "gpt_neox_13b",
+	"architecture": "gpt_neox_12b",
 	"name": "@huggingface/OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5",
 	"tokenizer": "@huggingface/OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5",
 	"systemPrompt": "",

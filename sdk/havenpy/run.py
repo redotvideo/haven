@@ -20,7 +20,7 @@ class Haven:
 		request = manager_pb2.SetupRequest(key_file=key_file)
 		response: manager_pb2.SetupResponse = self.client.Setup(request)
 
-		if hasattr(response, "message"):
+		if hasattr(response, "message") and response.message != "":
 			print(response.message)
 
 	def chat_completion(self, worker_name: str, messages: List[manager_pb2.Message], stream: bool = False, max_tokens: int = -1, top_p: float = -1, top_k: int = -1, temperature: float = -1) -> manager_pb2.ChatCompletionResponse or str:

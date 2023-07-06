@@ -1,8 +1,10 @@
 import transformers
-from transformers import TextIteratorStreamer, StoppingCriteriaList, Trainer, TrainingArguments
+from transformers import TextIteratorStreamer, StoppingCriteriaList, Trainer, TrainingArguments, AutoModelForCausalLM, AutoTokenizer
 from threading import Thread
 from typing import List
 from peft import LoraConfig, prepare_model_for_int8_training, get_peft_model
+import re
+import os
 
 from app.pb import worker_pb2, worker_pb2_grpc
 
@@ -33,17 +35,28 @@ class VllmCausalModel(RegisteredModel):
     ### INFERENCE    #############
     ##############################
     def prepare_for_inference(self):
+
+        if not os.path.exists("local_model/tokenizer.json"): # Download Model before starting server
+
+            model_local = AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], trust_remote_code=True)
+            model_local.save_pretrained("local_model")
+            tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
+            tokenizer.save_pretrained("local_model")
+            del model_local
+            del tokenizer
+
+
         if self.model_config["quantization"] == "int8":
             raise NotImplementedError("VLLM Models do not yet support 8bit-quantization.")
 
 
         elif self.model_config["quantization"] == "float16":
             engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], engine_use_ray=True)
+
             self.model_vllm_engine = AsyncLLMEngine.from_engine_args(engine_args)
 
         else:
             raise NotImplementedError(f"{self.model_config['quantization']} is not a valid quantization config")
-
 
 
     async def generate_stream(self, messages: List, max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
@@ -51,9 +64,9 @@ class VllmCausalModel(RegisteredModel):
 
         sampling_params = SamplingParams(
                 max_tokens=max_tokens if max_tokens < self.model_config["contextSize"] else self.model_config["contextSize"],
-                top_p=top_p, 
+                top_p=1 if temperature==0 else top_p, 
                 temperature=temperature, 
-                stop=[self.model_config["outputPostfix"]+self.model_config["instructionPrefix"]]
+                stop=self.get_stopword_list()
             )
         
         id = random_uuid()
@@ -63,10 +76,11 @@ class VllmCausalModel(RegisteredModel):
         async for request_output in results_generator:
             text = request_output.outputs[0].text
             text = text.replace(prev_text, "")
-            prev_text += text
-            yield text
-
-
+            if not text in prev_text:
+                yield text
+                prev_text = request_output.outputs[0].text
+            else:
+                yield ""
 
 
     def create_prompt_from_messages(self, messages):
@@ -84,6 +98,14 @@ class VllmCausalModel(RegisteredModel):
         prompt += self.model_config["outputPrefix"]
 
         return prompt
+    
+
+    def get_stopword_list(self):
+        if all(char.isspace() for char in self.model_config["outputPostfix"]):
+            return [self.model_config["instructionPrefix"].strip(), "<|endoftext|>"]
+        else:
+            return [self.model_config["outputPostfix"].strip(), "<|endoftext|>"]
+            
 
     ##############################
     ### FINETUNING   #############

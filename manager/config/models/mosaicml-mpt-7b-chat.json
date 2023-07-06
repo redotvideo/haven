@@ -1,5 +1,5 @@
 {
-	"architecture": "mpt",
+	"architecture": "mpt_7b",
 	"name": "@huggingface/mosaicml/mpt-7b-chat",
 	"tokenizer": "@huggingface/mosaicml/mpt-7b-chat",
 	"systemPrompt": "",

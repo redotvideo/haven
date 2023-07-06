@@ -7,6 +7,7 @@ import {
 	ChatCompletionResponse,
 	CreateInferenceWorkerRequest,
 	Empty,
+	GpuType,
 	InferenceWorker,
 	ListModelsResponse,
 	ListWorkersResponse,
@@ -40,22 +41,13 @@ async function setupHandler(req: SetupRequest) {
 	// Check if there is a new version available and pass a warning to the client if there is.
 	const warning = await checkForNewVersion();
 
-	if (config.setupDone) {
-		// Endpoint is being called as "ping" to check if the setup is done.
-		// It is, so we return.
+	if (config.setupDone || req.keyFile === undefined) {
+		// Endpoint is being called as "ping". We just return a version warning if there is one.
 		return new SetupResponse({message: warning});
 	}
 
-	const file = req.keyFile;
-
-	if (file === undefined) {
-		// Endpoint is being called as "ping" to check if the setup is done.
-		// It's not, but we also can't do the setup now, so we throw an error.
-		throw new ConnectError("Setup not complete.", Code.FailedPrecondition);
-	}
-
 	// Now we can assume that the setup is not done and the user wants to finish it.
-	await setupController(file);
+	await setupController(req.keyFile);
 	return new SetupResponse({message: warning});
 }
 
@@ -139,7 +131,7 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	};
 
 	const workerName = await createInferenceWorkerController(modelName, requestedResources, worker, zone);
-	sendEvent(EventName.CREATE_WORKER, {gpuType: req.gpuType, gpuCount: req.gpuCount});
+	sendEvent(EventName.CREATE_WORKER, {gpuType: req.gpuType ? GpuType[req.gpuType] : undefined, gpuCount: req.gpuCount});
 
 	return new InferenceWorker({
 		workerName,
@@ -178,7 +170,7 @@ async function pauseWorker(req: InferenceWorker) {
 	});
 
 	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.PAUSE_WORKER, {gpuType: type, gpuCount: count});
+	sendEvent(EventName.PAUSE_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
 
 	return new InferenceWorker({
 		workerName: worker.name,
@@ -211,7 +203,7 @@ async function resumeWorker(req: InferenceWorker) {
 	});
 
 	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.RESUME_WORKER, {gpuType: type, gpuCount: count});
+	sendEvent(EventName.RESUME_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
 
 	return new InferenceWorker({
 		workerName: worker.name,
@@ -248,7 +240,7 @@ async function deleteWorker(req: InferenceWorker) {
 	});
 
 	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.DELETE_WORKER, {gpuType: type, gpuCount: count});
+	sendEvent(EventName.DELETE_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
 
 	return new InferenceWorker({
 		workerName: worker.name,

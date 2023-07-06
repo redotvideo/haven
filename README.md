@@ -13,6 +13,8 @@
 [💻 Quickstart](https://docs.haven.run/)
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 [📄 Docs](https://docs.haven.run/)
+<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+[💬 Discord](https://discord.gg/JDjbfp6q2G)
 <br>
 
 <p align="center">
@@ -24,6 +26,10 @@
 </div>
 
 <br>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/havenhq/haven/dev/diagram.svg">
+</p>
 
 ## Getting Started 🔥
 
