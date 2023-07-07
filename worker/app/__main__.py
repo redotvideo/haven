@@ -46,12 +46,12 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
                             potential_stop_string += text
                             continue
                 
-                yield worker_pb2.ChatCompletionResponse(text=potential_stop_string+text)
+                yield worker_pb2.CompletionResponse(text=potential_stop_string+text)
                 potential_stop_string = ""
 
 
     
-    async def Completion(self, request: worker_pb2.ChatCompletionRequest, context):
+    async def Completion(self, request: worker_pb2.CompletionRequest, context):
         prompt = list(request.prompt)
         
         inference_params = get_inference_parameter_dict(dict(max_tokens=request.max_tokens, top_p=request.top_p, top_k=request.top_k, temperature=request.temperature))
@@ -59,11 +59,11 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 
         if isinstance(streamer, TextIteratorStreamer):
             for text in streamer:
-                yield worker_pb2.ChatCompletionResponse(text=text)
+                yield worker_pb2.CompletionResponse(text=text)
 
         else:
             async for text in streamer:                
-                yield worker_pb2.ChatCompletionResponse(text=text)
+                yield worker_pb2.CompletionResponse(text=text)
 
 
 
