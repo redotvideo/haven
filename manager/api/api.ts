@@ -4,7 +4,8 @@ import typia from "typia";
 import {Haven} from "./pb/manager_connect";
 import {
 	ChatCompletionRequest,
-	ChatCompletionResponse,
+	CompletionRequest,
+	CompletionResponse,
 	CreateInferenceWorkerRequest,
 	Empty,
 	GpuType,
@@ -21,7 +22,7 @@ import {getTransport} from "../lib/client";
 import {catchErrors, enforceSetup, auth} from "./middleware";
 import {getAllModels} from "../lib/models";
 import {setupController} from "../controller/setup";
-import {generateController} from "../controller/generate";
+import {chatCompletionController, completionController} from "../controller/generate";
 import {createInferenceWorkerController} from "../controller/createInferenceWorker";
 import {getWorkerIP} from "../lib/workers";
 import {validate} from "./validate";
@@ -56,7 +57,7 @@ async function setupHandler(req: SetupRequest) {
 /////////////////////
 
 /**
- * Generate text from a prompt.
+ * Generate text from a chat history.
  */
 async function* chatCompletion(req: ChatCompletionRequest) {
 	const workerName = req.workerName;
@@ -64,10 +65,26 @@ async function* chatCompletion(req: ChatCompletionRequest) {
 
 	const {maxTokens, topP, topK, temperature} = req;
 
-	const stream = await generateController(workerName, messages, {maxTokens, topP, topK, temperature});
+	const stream = await chatCompletionController(workerName, messages, {maxTokens, topP, topK, temperature});
 
 	for await (const data of stream) {
-		yield new ChatCompletionResponse({text: data.text});
+		yield new CompletionResponse({text: data.text});
+	}
+}
+
+/**
+ * Generate text from a prompt.
+ */
+async function* completion(req: CompletionRequest) {
+	const workerName = req.workerName;
+	const prompt = req.prompt;
+
+	const {maxTokens, topP, topK, temperature} = req;
+
+	const stream = await completionController(workerName, prompt, {maxTokens, topP, topK, temperature});
+
+	for await (const data of stream) {
+		yield new CompletionResponse({text: data.text});
 	}
 }
 
@@ -252,6 +269,7 @@ export const haven = (router: ConnectRouter) =>
 		setup: catchErrors(validate(setupInputValid, auth(setupHandler))),
 
 		chatCompletion: auth(enforceSetup(chatCompletion)),
+		completion: auth(enforceSetup(completion)),
 
 		listModels: catchErrors(validate(listModelsInputValid, auth(enforceSetup(listModels)))),
 		listWorkers: catchErrors(validate(listWorkersInputValid, auth(enforceSetup(listWorkers)))),

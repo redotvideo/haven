@@ -151,7 +151,43 @@ class ChatCompletionRequest(google.protobuf.message.Message):
 global___ChatCompletionRequest = ChatCompletionRequest
 
 @typing_extensions.final
-class ChatCompletionResponse(google.protobuf.message.Message):
+class CompletionRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    PROMPT_FIELD_NUMBER: builtins.int
+    MAX_TOKENS_FIELD_NUMBER: builtins.int
+    TOP_P_FIELD_NUMBER: builtins.int
+    TOP_K_FIELD_NUMBER: builtins.int
+    TEMPERATURE_FIELD_NUMBER: builtins.int
+    prompt: builtins.str
+    max_tokens: builtins.int
+    top_p: builtins.float
+    top_k: builtins.int
+    temperature: builtins.float
+    def __init__(
+        self,
+        *,
+        prompt: builtins.str = ...,
+        max_tokens: builtins.int | None = ...,
+        top_p: builtins.float | None = ...,
+        top_k: builtins.int | None = ...,
+        temperature: builtins.float | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_max_tokens", b"_max_tokens", "_temperature", b"_temperature", "_top_k", b"_top_k", "_top_p", b"_top_p", "max_tokens", b"max_tokens", "temperature", b"temperature", "top_k", b"top_k", "top_p", b"top_p"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_max_tokens", b"_max_tokens", "_temperature", b"_temperature", "_top_k", b"_top_k", "_top_p", b"_top_p", "max_tokens", b"max_tokens", "prompt", b"prompt", "temperature", b"temperature", "top_k", b"top_k", "top_p", b"top_p"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_max_tokens", b"_max_tokens"]) -> typing_extensions.Literal["max_tokens"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_temperature", b"_temperature"]) -> typing_extensions.Literal["temperature"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_top_k", b"_top_k"]) -> typing_extensions.Literal["top_k"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_top_p", b"_top_p"]) -> typing_extensions.Literal["top_p"] | None: ...
+
+global___CompletionRequest = CompletionRequest
+
+@typing_extensions.final
+class CompletionResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     TEXT_FIELD_NUMBER: builtins.int
@@ -163,4 +199,4 @@ class ChatCompletionResponse(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["text", b"text"]) -> None: ...
 
-global___ChatCompletionResponse = ChatCompletionResponse
+global___CompletionResponse = CompletionResponse

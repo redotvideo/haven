@@ -9,8 +9,11 @@ service WorkerService {
 	// Shutdown the worker.
 	rpc Shutdown(ShutdownRequest) returns (ShutdownResponse) {}
 
-	// Generate text from a prompt. Only valid if worker is in inference mode.
-	rpc ChatCompletion(ChatCompletionRequest) returns (stream ChatCompletionResponse) {}
+	// Generate text from chat history.
+	rpc ChatCompletion(ChatCompletionRequest) returns (stream CompletionResponse) {}
+
+	// Generate text from a prompt.
+	rpc Completion(CompletionRequest) returns (stream CompletionResponse) {}
 }
 
 enum WorkerStatus {
@@ -48,6 +51,15 @@ message ChatCompletionRequest {
 	optional float temperature = 5;
 }
 
-message ChatCompletionResponse {
+message CompletionRequest {
+	string prompt = 1;
+
+	optional int32 max_tokens = 2;
+	optional float top_p = 3;
+	optional int32 top_k = 4;
+	optional float temperature = 5;
+}
+
+message CompletionResponse {
 	string text = 1;
 }
