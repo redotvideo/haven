@@ -104,4 +104,4 @@ export async function healthCheck() {
 }
 
 // Run every 30 minutes
-setInterval(() => healthCheck().catch(() => {}), 1000 * 60 * 30);
+export const telemetryInterval = setInterval(() => healthCheck().catch(() => {}), 1000 * 60 * 30);
