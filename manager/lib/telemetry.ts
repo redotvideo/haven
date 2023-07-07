@@ -91,6 +91,11 @@ export async function healthCheck() {
 			continue;
 		}
 
+		// Only count workers whose name starts with "haven-w-"
+		if (!worker.name || !worker.name.startsWith("haven-w-")) {
+			continue;
+		}
+
 		if (type === GpuType.A100) {
 			A100s += count;
 		} else if (type === GpuType.A100_80GB) {
