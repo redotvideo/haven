@@ -33,13 +33,54 @@
 
 ## Getting Started 🔥
 
-Setting up an LLM server requires just three steps:
+Setting up an LLM server requires just three steps. We documented them in detail [here (https://docs.haven.run)](https://docs.haven.run/), but here's a quick overview:
 
-1. Get an API key for a Google Cloud service account
-2. Deploy Haven's manager container on a Google Cloud instance
-3. Spin up a model worker using the Python SDK
+1. Deploy Haven's manager container [docker.io/havenhq/haven](https://hub.docker.com/r/havenhq/haven) anywhere you like (could be your own machine), expose ports 50051 and 50052
+2. Download a Google Cloud service account file that can create VMs in your project. You can do this via the Google Cloud website or through the CLI. Commands you can just copy and paste for this.
+3. `pip install havenpy`. Spin up a model worker using the Python SDK. Examples below:
 
-A description of these steps can be found in our [documentation](https://docs.haven.run/).
+### Example code
+
+```python
+from havenpy import Haven
+
+# Default bearer token is the string "insecure"
+client = Haven("<ip-adress-of-your-vm>:50051", "<your-bearer-token>")
+
+# Now you can add your google cloud service account file to the deployment
+with open("key.json", "r") as f:
+	client.setup(key_file=f.read())
+
+worker_id = client.create_inference_worker(
+	model_name="@huggingface/mosaicml/mpt-7b-chat",
+	quantization="float16", gpu_type="A100", gpu_count=1)
+
+print(worker_id)
+```
+
+Congrats! A worker is now starting on your Google Cloud. You can check the status like this:
+
+```python
+print(client.list_workers())
+```
+
+Once the worker is running, you can send it requests like this:
+
+```python
+streaming = client.chat_completion(worker_id, messages=[{
+	"content": "Write a newspaper article about how easy it is to set up Haven.",
+	"role": "USER"
+}], stream=True)
+
+for r in streaming:
+	print(r.text)
+
+# Or without streaming:
+print(client.chat_completion(worker_id, messages=[{
+  "content": "Are you sentient?",
+  "role": "USER"
+}], stream=False))
+```
 
 <br>
 
