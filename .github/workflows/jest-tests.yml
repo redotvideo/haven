@@ -15,7 +15,7 @@ jobs:
           node-version: "16"
 
       - name: Change working directory
-        run: cd manager
+        run: cd ./manager
 
       # Print everything in the current directory
       - name: List files
