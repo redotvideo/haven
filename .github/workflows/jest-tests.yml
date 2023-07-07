@@ -5,6 +5,9 @@ on: [push, pull_request]
 jobs:
   jest:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: manager
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -13,9 +16,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "16"
-
-      - name: Change working directory
-        run: cd ./manager
 
       # Print everything in the current directory
       - name: List files
