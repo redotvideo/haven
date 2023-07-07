@@ -52,8 +52,17 @@ async function checkWorkerNameOrGenerate(api: compute_v1.Compute, modelName: str
 			);
 		});
 
+		/**
+		 * If it's already taken, we assume that the worker is being created as part of setup script.
+		 * In that case, we don't want to throw an error, but instead just return an empty string.
+		 *
+		 * TODO: we could also check if
+		 * - the worker is running
+		 * - the worker has the same specs as the requested worker
+		 */
 		if (result?.name !== undefined) {
-			throw new ConnectError(`Worker name ${workerName} is already taken.`, Code.AlreadyExists);
+			console.log(`Worker ${workerName} already exsits so we do nothing.`);
+			return "";
 		}
 
 		return workerName;
@@ -125,6 +134,9 @@ export async function createInferenceWorkerController(
 
 	// If a worker name was provided, check if it's already taken
 	const finalName = await checkWorkerNameOrGenerate(api, modelName, workerName);
+	if (finalName === "") {
+		return workerName!;
+	}
 
 	// Get zone to deploy to
 	const zone = await checkViableZoneToDeploy(api, validConfiguration, requestedZone);
