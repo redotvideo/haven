@@ -14,6 +14,8 @@ service Haven {
 
 	// Get the list of models and their descriptions.
 	rpc ListModels(Empty) returns (ListModelsResponse) {}
+	rpc AddModel(Model) returns (Empty) {}
+	rpc RemoveModel(ModelName) returns (Empty) {}
 
 	// Get the list of workers and their statuses.
 	rpc ListWorkers(Empty) returns (ListWorkersResponse) {}
@@ -25,6 +27,8 @@ service Haven {
 	rpc DeleteInferenceWorker(InferenceWorker) returns (InferenceWorker) {}
 }
 
+// Setup
+
 message SetupRequest {
 	optional string key_file = 1;
 }
@@ -33,6 +37,8 @@ message SetupResponse {
 	// Used for warnings when running on an outdated version.
 	optional string message = 1;
 }
+
+// Completion
 
 enum Role {
 	ASSISTANT = 0;
@@ -68,19 +74,35 @@ message CompletionResponse {
 	string text = 1;
 }
 
-enum Status {
-	ONLINE = 0;
-	UNREACHABLE = 1;
-	PAUSED = 2;
-	ERROR = 3;
-}
+// Models
 
 message Model {
+	string architecture = 2;
+	string name = 1;
+	string tokenizer = 3;
+
+	optional string system_prompt = 4;
+	optional string instruction_prefix = 5;
+	optional string instruction_postfix = 6;
+	optional string output_prefix = 7;
+	optional string output_postfix = 8;
+}
+
+message ModelName {
 	string name = 1;
 }
 
 message ListModelsResponse {
 	repeated Model models = 1;
+}
+
+// Workers
+
+enum Status {
+	ONLINE = 0;
+	UNREACHABLE = 1;
+	PAUSED = 2;
+	ERROR = 3;
 }
 
 message Worker {
