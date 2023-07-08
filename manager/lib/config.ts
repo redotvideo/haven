@@ -10,7 +10,7 @@ const config = {
 		clientId: "", // Set during setup
 	},
 	worker: {
-		dockerImage: "docker.io/havenhq/worker:v0.1",
+		dockerImage: "docker.io/justusmattern/vllm-integration:t4-test",
 		startupScript: "./config/gcp/startup-script.sh",
 	},
 	telemetry: process.env.DISABLE_TELEMETRY !== "true",
