@@ -48,3 +48,16 @@ export function enforceSetup<T, U>(func: (req: T, context: HandlerContext) => U)
 		return func(req, context);
 	};
 }
+
+/**
+ * Check that admin endpoints are enabled and throw an error if not.
+ */
+export function admin<T, U>(func: (req: T, context: HandlerContext) => U) {
+	return (req: T, context: HandlerContext): U => {
+		if (config.server.disableAdmin) {
+			throw new ConnectError("Admin endpoints not enabled for this manager", Code.PermissionDenied);
+		}
+
+		return func(req, context);
+	};
+}

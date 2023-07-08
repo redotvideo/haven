@@ -19,7 +19,7 @@ import {
 import {config} from "../lib/config";
 import {createComputeAPI, instanceToGpuTypeAndCount, list, pause, remove, start} from "../gcp/resources";
 import {getTransport} from "../lib/client";
-import {catchErrors, enforceSetup, auth} from "./middleware";
+import {catchErrors, enforceSetup, auth, admin} from "./middleware";
 import {getAllModels} from "../lib/models";
 import {setupController} from "../controller/setup";
 import {chatCompletionController, completionController} from "../controller/generate";
@@ -275,9 +275,9 @@ export const haven = (router: ConnectRouter) =>
 		listWorkers: catchErrors(validate(listWorkersInputValid, auth(enforceSetup(listWorkers)))),
 
 		createInferenceWorker: catchErrors(
-			validate(createInferenceWorkerInputValid, auth(enforceSetup(createInferenceWorker))),
+			admin(validate(createInferenceWorkerInputValid, auth(enforceSetup(createInferenceWorker)))),
 		),
-		pauseInferenceWorker: catchErrors(validate(inferenceWorkerValid, auth(enforceSetup(pauseWorker)))),
-		resumeInferenceWorker: catchErrors(validate(inferenceWorkerValid, auth(enforceSetup(resumeWorker)))),
-		deleteInferenceWorker: catchErrors(validate(inferenceWorkerValid, auth(enforceSetup(deleteWorker)))),
+		pauseInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(enforceSetup(pauseWorker))))),
+		resumeInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(enforceSetup(resumeWorker))))),
+		deleteInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(enforceSetup(deleteWorker))))),
 	});
