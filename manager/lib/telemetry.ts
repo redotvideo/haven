@@ -4,7 +4,6 @@ import typia from "typia";
 
 import {PostHog} from "posthog-node";
 import {config} from "./config";
-import {listWorkersController} from "../controller/workers";
 import {createComputeAPI, instanceToGpuTypeAndCount, list} from "../gcp/resources";
 import {GpuType} from "../api/pb/manager_pb";
 

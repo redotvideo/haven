@@ -27,7 +27,12 @@ class WorkerServiceStub(object):
         self.ChatCompletion = channel.unary_stream(
                 '/worker.WorkerService/ChatCompletion',
                 request_serializer=worker__pb2.ChatCompletionRequest.SerializeToString,
-                response_deserializer=worker__pb2.ChatCompletionResponse.FromString,
+                response_deserializer=worker__pb2.CompletionResponse.FromString,
+                )
+        self.Completion = channel.unary_stream(
+                '/worker.WorkerService/Completion',
+                request_serializer=worker__pb2.CompletionRequest.SerializeToString,
+                response_deserializer=worker__pb2.CompletionResponse.FromString,
                 )
 
 
@@ -49,7 +54,14 @@ class WorkerServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def ChatCompletion(self, request, context):
-        """Generate text from a prompt. Only valid if worker is in inference mode.
+        """Generate text from chat history.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Completion(self, request, context):
+        """Generate text from a prompt.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -71,7 +83,12 @@ def add_WorkerServiceServicer_to_server(servicer, server):
             'ChatCompletion': grpc.unary_stream_rpc_method_handler(
                     servicer.ChatCompletion,
                     request_deserializer=worker__pb2.ChatCompletionRequest.FromString,
-                    response_serializer=worker__pb2.ChatCompletionResponse.SerializeToString,
+                    response_serializer=worker__pb2.CompletionResponse.SerializeToString,
+            ),
+            'Completion': grpc.unary_stream_rpc_method_handler(
+                    servicer.Completion,
+                    request_deserializer=worker__pb2.CompletionRequest.FromString,
+                    response_serializer=worker__pb2.CompletionResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -130,6 +147,23 @@ class WorkerService(object):
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/worker.WorkerService/ChatCompletion',
             worker__pb2.ChatCompletionRequest.SerializeToString,
-            worker__pb2.ChatCompletionResponse.FromString,
+            worker__pb2.CompletionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Completion(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/worker.WorkerService/Completion',
+            worker__pb2.CompletionRequest.SerializeToString,
+            worker__pb2.CompletionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

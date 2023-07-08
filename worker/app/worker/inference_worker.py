@@ -19,6 +19,10 @@ class InferenceClient:
         self.model_engine.prepare_for_inference()
 
     def complete_chat(self, messages, inference_params):
-        return self.model_engine.generate_stream(messages, **inference_params)
+        prompt = self.model_engine.generate_stream(messages)
+        return self.model_engine.generate_stream(prompt, **inference_params)
+    
+    def complete(self, prompt, inference_params):
+        return self.model_engine.generate_stream(prompt, **inference_params)
 
     

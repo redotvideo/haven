@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ChatCompletionRequest, ChatCompletionResponse, HealthRequest, HealthResponse, ShutdownRequest, ShutdownResponse } from "./worker_pb.js";
+import { ChatCompletionRequest, CompletionRequest, CompletionResponse, HealthRequest, HealthResponse, ShutdownRequest, ShutdownResponse } from "./worker_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -35,14 +35,25 @@ export const WorkerService = {
       kind: MethodKind.Unary,
     },
     /**
-     * Generate text from a prompt. Only valid if worker is in inference mode.
+     * Generate text from chat history.
      *
      * @generated from rpc worker.WorkerService.ChatCompletion
      */
     chatCompletion: {
       name: "ChatCompletion",
       I: ChatCompletionRequest,
-      O: ChatCompletionResponse,
+      O: CompletionResponse,
+      kind: MethodKind.ServerStreaming,
+    },
+    /**
+     * Generate text from a prompt.
+     *
+     * @generated from rpc worker.WorkerService.Completion
+     */
+    completion: {
+      name: "Completion",
+      I: CompletionRequest,
+      O: CompletionResponse,
       kind: MethodKind.ServerStreaming,
     },
   }
