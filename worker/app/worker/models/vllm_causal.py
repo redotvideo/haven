@@ -51,7 +51,7 @@ class VllmCausalModel(RegisteredModel):
 
 
         elif self.model_config["quantization"] == "float16":
-            engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], engine_use_ray=True, tensor_parallel_size=self.model_config["gpuCount"], trust_remote_code=True, tensor_parallel_size=self.model_config["gpuCount"])
+            engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], tensor_parallel_size=self.model_config["gpuCount"], trust_remote_code=True)
 
             self.model_vllm_engine = AsyncLLMEngine.from_engine_args(engine_args)
 
