@@ -37,8 +37,6 @@ export async function setup() {
 	console.log("Setup done.");
 	config.setupDone = true;
 
-	await healthCheck().catch(() => {});
-
 	// Create folder for custom models
 	await fs.mkdir("./config/models/custom").catch(() => {});
 }
