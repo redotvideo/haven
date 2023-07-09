@@ -104,8 +104,8 @@ export async function healthCheck() {
 		}
 	}
 
-	sendEvent(EventName.PING, {A100s, A100_80GBs, T4s});
+	sendEvent(EventName.PING, {A100s, A100_80GBs, T4s, version: config.version});
 }
 
-// Run every 30 minutes
-export const telemetryInterval = setInterval(() => healthCheck().catch(() => {}), 1000 * 60 * 30);
+// Run every hour
+export const telemetryInterval = setInterval(() => healthCheck().catch(() => {}), 1000 * 60 * 60);
