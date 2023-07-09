@@ -2,8 +2,6 @@ import * as fs from "fs/promises";
 import typia from "typia";
 import {Model} from "../api/pb/manager_pb";
 
-// TODO(now): add stop tokens to generate call
-
 type RequiredFieldsOnly<T> = {
 	[K in keyof T as T[K] extends Required<T>[K] ? K : never]: T[K];
 };
@@ -36,12 +34,12 @@ export async function getAllModels(): Promise<Model[]> {
 	return Promise.all([...havenModels, ...customModels]);
 }
 
+/**
+ * Finds the model file for the given model name.
+ */
 async function findModelFile(model: string) {
-	const files = await fs.readdir("./config/models");
-
-	// Slow...
-	for (const file of files) {
-		const text = await fs.readFile(`./config/models/${file}`, "utf-8");
+	async function checkFile(file: string) {
+		const text = await fs.readFile(file, "utf-8");
 
 		const configValid = typia.createAssertEquals<Model>();
 		const parsed = configValid(JSON.parse(text));
@@ -49,6 +47,34 @@ async function findModelFile(model: string) {
 		if (parsed.name === model) {
 			return parsed;
 		}
+	}
+
+	// Check Haven models
+	const files = await fs.readdir("./config/models");
+	const filtered = files.filter((file) => file.includes("."));
+
+	const results = await Promise.all(filtered.map((file) => checkFile(`./config/models/${file}`)));
+	const found = results.find((result) => result !== undefined);
+
+	if (found) {
+		return found;
+	}
+
+	// Check custom models
+	const custom = await fs.readdir("./config/models/custom");
+
+	for (const file of custom) {
+		const result = await checkFile(`./config/models/custom/${file}`);
+		if (result) {
+			return result;
+		}
+	}
+
+	const customResults = await Promise.all(custom.map((file) => checkFile(`./config/models/custom/${file}`)));
+	const customFound = customResults.find((result) => result !== undefined);
+
+	if (customFound) {
+		return customFound;
 	}
 }
 
