@@ -36,9 +36,9 @@ export enum Status {
   ONLINE = 0,
 
   /**
-   * @generated from enum value: UNREACHABLE = 1;
+   * @generated from enum value: LOADING = 1;
    */
-  UNREACHABLE = 1,
+  LOADING = 1,
 
   /**
    * @generated from enum value: PAUSED = 2;
@@ -53,7 +53,7 @@ export enum Status {
 // Retrieve enum metadata with: proto3.getEnumType(Status)
 proto3.util.setEnumType(Status, "haven.Status", [
   { no: 0, name: "ONLINE" },
-  { no: 1, name: "UNREACHABLE" },
+  { no: 1, name: "LOADING" },
   { no: 2, name: "PAUSED" },
   { no: 3, name: "ERROR" },
 ]);

@@ -100,7 +100,7 @@ message ListModelsResponse {
 
 enum Status {
 	ONLINE = 0;
-	UNREACHABLE = 1;
+	LOADING = 1;
 	PAUSED = 2;
 	ERROR = 3;
 }
