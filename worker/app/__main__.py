@@ -66,7 +66,6 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
                 yield worker_pb2.CompletionResponse(text=text)
 
 
-
 async def serve():
     server = grpc.aio.server()
     worker_pb2_grpc.add_WorkerServiceServicer_to_server(

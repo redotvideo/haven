@@ -34,11 +34,12 @@ class Llama7B(VllmCausalModel):
 
 
         elif self.model_config["quantization"] == "float16":
-            if self.model_config["gpuType"] == "T4":
-                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], engine_use_ray=True, gpu_memory_utilization=0.97, tokenizer_mode="slow")
-            else:
-                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], engine_use_ray=True, tokenizer_mode="slow")
-                
+            if self.model_config["gpuCount"] == "T4":
+                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tokenizer_mode="slow", tensor_parallel_size=self.model_config["gpuCount"], dtype="float16")
+
+            elif self.model_config["gpuCount"] == "A100":
+                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tokenizer_mode="slow", tensor_parallel_size=self.model_config["gpuCount"])
+            
             self.model_vllm_engine = AsyncLLMEngine.from_engine_args(engine_args)
 
         else:

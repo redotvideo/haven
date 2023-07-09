@@ -40,7 +40,7 @@ class VllmCausalModel(RegisteredModel):
 
             model_local = AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], trust_remote_code=True)
             model_local.save_pretrained("local_model")
-            tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
+            tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"], trust_remote_code=True)
             tokenizer.save_pretrained("local_model")
             del model_local
             del tokenizer
@@ -51,8 +51,12 @@ class VllmCausalModel(RegisteredModel):
 
 
         elif self.model_config["quantization"] == "float16":
-            engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], engine_use_ray=True)
+            if self.model_config["gpuCount"] == "T4":
+                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tensor_parallel_size=self.model_config["gpuCount"], dtype="float16")
 
+            elif self.model_config["gpuCount"] == "A100":
+                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tensor_parallel_size=self.model_config["gpuCount"])
+            
             self.model_vllm_engine = AsyncLLMEngine.from_engine_args(engine_args)
 
         else:
@@ -135,7 +139,6 @@ class VllmCausalModel(RegisteredModel):
 
 
     def train(self):
-
 
         training_args = TrainingArguments(learning_rate=self.model_config["learning_rate"], per_device_train_batch_size=self.model_config["batch_size"], per_device_eval_batch_size=self.model_config["batch_size"], output_dir="out")
 
