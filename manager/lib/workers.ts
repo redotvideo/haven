@@ -36,18 +36,18 @@ export function mapStatus(serviceStatus: WorkerStatus, vmStatus: string | undefi
 	}
 
 	if (serviceStatus === WorkerStatus.STOPPING) {
-		return Status.UNREACHABLE;
+		return Status.LOADING;
 	}
 
 	const map = {
 		/**
 		 * We default to unreachable for all of these
 		 */
-		PROVISIONING: Status.UNREACHABLE,
-		STAGING: Status.UNREACHABLE,
-		RUNNING: Status.UNREACHABLE,
-		STOPPING: Status.UNREACHABLE,
-		SUSPENDING: Status.UNREACHABLE,
+		PROVISIONING: Status.LOADING,
+		STAGING: Status.LOADING,
+		RUNNING: Status.LOADING,
+		STOPPING: Status.LOADING,
+		SUSPENDING: Status.LOADING,
 
 		SUSPENDED: Status.PAUSED,
 		TERMINATED: Status.PAUSED,

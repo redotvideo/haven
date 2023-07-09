@@ -41,7 +41,7 @@ class _Status:
 class _StatusEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Status.ValueType], builtins.type):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
     ONLINE: _Status.ValueType  # 0
-    UNREACHABLE: _Status.ValueType  # 1
+    LOADING: _Status.ValueType  # 1
     PAUSED: _Status.ValueType  # 2
     ERROR: _Status.ValueType  # 3
 
@@ -49,7 +49,7 @@ class Status(_Status, metaclass=_StatusEnumTypeWrapper):
     """Workers"""
 
 ONLINE: Status.ValueType  # 0
-UNREACHABLE: Status.ValueType  # 1
+LOADING: Status.ValueType  # 1
 PAUSED: Status.ValueType  # 2
 ERROR: Status.ValueType  # 3
 global___Status = Status
