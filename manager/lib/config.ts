@@ -11,7 +11,7 @@ const config = {
 		clientId: "", // Set during setup
 	},
 	worker: {
-		dockerImage: "docker.io/justusmattern/havenhq/worker:v0.1",
+		dockerImage: "docker.io/havenhq/worker:v0.1",
 		startupScript: "./config/gcp/startup-script.sh",
 	},
 	telemetry: process.env.DISABLE_TELEMETRY !== "true",
