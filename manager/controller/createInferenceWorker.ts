@@ -12,6 +12,7 @@ import {
 import {createStartupScript, generateName} from "../lib/workers";
 import {compute_v1} from "googleapis";
 import {config} from "../lib/config";
+import {Model} from "../api/pb/manager_pb";
 
 /**
  * Takes in a model name and returns the name of the corresponding config/architectures folder.
@@ -125,7 +126,12 @@ export async function createInferenceWorkerController(
 ) {
 	// Get architecture
 	const modelFile = await checkForModelFile(modelName);
-	const architecture = modelFile.architecture;
+	const architecture = modelFile.model.architecture;
+
+	// TODO: enable non-chat models
+	if ("insturctionPostfix" in modelFile.model) {
+		throw new ConnectError("Currently, only chat models are supported. This will be fixed soon.", Code.Unimplemented);
+	}
 
 	// Validate requested configuration with architecture
 	const validConfiguration = await checkArchitectureSupportsRequestedResources(architecture, requestedResources);
@@ -155,7 +161,7 @@ export async function createInferenceWorkerController(
 	// Create instance from template
 	const workerStartupScript = config.worker.startupScript;
 	const workerImageUrl = config.worker.dockerImage;
-	const workerConfig = createWorkerConfig(modelFile, validConfiguration);
+	const workerConfig = createWorkerConfig(modelFile.model, validConfiguration);
 
 	const startupScript = await createStartupScript(workerStartupScript, workerImageUrl, workerConfig);
 

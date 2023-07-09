@@ -410,9 +410,44 @@ export class CompletionResponse extends Message$1<CompletionResponse> {
  */
 export class Model extends Message$1<Model> {
   /**
+   * @generated from field: string architecture = 2;
+   */
+  architecture = "";
+
+  /**
    * @generated from field: string name = 1;
    */
   name = "";
+
+  /**
+   * @generated from field: string tokenizer = 3;
+   */
+  tokenizer = "";
+
+  /**
+   * @generated from field: optional string system_prompt = 4;
+   */
+  systemPrompt?: string;
+
+  /**
+   * @generated from field: optional string instruction_prefix = 5;
+   */
+  instructionPrefix?: string;
+
+  /**
+   * @generated from field: optional string instruction_postfix = 6;
+   */
+  instructionPostfix?: string;
+
+  /**
+   * @generated from field: optional string output_prefix = 7;
+   */
+  outputPrefix?: string;
+
+  /**
+   * @generated from field: optional string output_postfix = 8;
+   */
+  outputPostfix?: string;
 
   constructor(data?: PartialMessage<Model>) {
     super();
@@ -422,7 +457,14 @@ export class Model extends Message$1<Model> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "haven.Model";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 2, name: "architecture", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "tokenizer", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "system_prompt", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 5, name: "instruction_prefix", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 6, name: "instruction_postfix", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 7, name: "output_prefix", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 8, name: "output_postfix", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Model {
@@ -439,6 +481,43 @@ export class Model extends Message$1<Model> {
 
   static equals(a: Model | PlainMessage<Model> | undefined, b: Model | PlainMessage<Model> | undefined): boolean {
     return proto3.util.equals(Model, a, b);
+  }
+}
+
+/**
+ * @generated from message haven.ModelName
+ */
+export class ModelName extends Message$1<ModelName> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name = "";
+
+  constructor(data?: PartialMessage<ModelName>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "haven.ModelName";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ModelName {
+    return new ModelName().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ModelName {
+    return new ModelName().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ModelName {
+    return new ModelName().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ModelName | PlainMessage<ModelName> | undefined, b: ModelName | PlainMessage<ModelName> | undefined): boolean {
+    return proto3.util.equals(ModelName, a, b);
   }
 }
 

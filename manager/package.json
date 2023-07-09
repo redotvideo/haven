@@ -3,9 +3,9 @@
     "proto": "buf generate --template buf.manager.gen.yaml ../proto/manager.proto && buf generate --template buf.worker.gen.yaml ../proto/worker.proto",
     "build": "tsc",
     "dev": "tsc && node dist/cmd/index.js",
-    "nodemon": "nodemon --exec \"npm run dev\" --ignore ./build --verbose  --ext ts .",
+    "nodemon": "nodemon --exec \"npm run dev\" --ignore ./build --verbose --ext ts .",
     "prepare": "ts-patch install",
-    "test": "jest --coverage -i --detectOpenHandles"
+    "test": "rm -r dist || true && jest --coverage -i --detectOpenHandles"
   },
   "devDependencies": {
     "@bufbuild/buf": "^1.15.0-1",

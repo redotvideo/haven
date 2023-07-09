@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ChatCompletionRequest, CompletionRequest, CompletionResponse, CreateInferenceWorkerRequest, Empty, InferenceWorker, ListModelsResponse, ListWorkersResponse, SetupRequest, SetupResponse } from "./manager_pb.js";
+import { ChatCompletionRequest, CompletionRequest, CompletionResponse, CreateInferenceWorkerRequest, Empty, InferenceWorker, ListModelsResponse, ListWorkersResponse, Model, ModelName, SetupRequest, SetupResponse } from "./manager_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -52,6 +52,24 @@ export const Haven = {
       name: "ListModels",
       I: Empty,
       O: ListModelsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc haven.Haven.AddModel
+     */
+    addModel: {
+      name: "AddModel",
+      I: Model,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc haven.Haven.RemoveModel
+     */
+    removeModel: {
+      name: "RemoveModel",
+      I: ModelName,
+      O: Empty,
       kind: MethodKind.Unary,
     },
     /**
