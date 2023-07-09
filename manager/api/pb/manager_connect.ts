@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ChatCompletionRequest, ChatCompletionResponse, CreateInferenceWorkerRequest, Empty, InferenceWorker, ListModelsResponse, ListWorkersResponse, SetupRequest, SetupResponse } from "./manager_pb.js";
+import { ChatCompletionRequest, CompletionRequest, CompletionResponse, CreateInferenceWorkerRequest, Empty, InferenceWorker, ListModelsResponse, ListWorkersResponse, SetupRequest, SetupResponse } from "./manager_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -24,14 +24,23 @@ export const Haven = {
       kind: MethodKind.Unary,
     },
     /**
-     * Generate text from a prompt.
+     * Generate text.
      *
      * @generated from rpc haven.Haven.ChatCompletion
      */
     chatCompletion: {
       name: "ChatCompletion",
       I: ChatCompletionRequest,
-      O: ChatCompletionResponse,
+      O: CompletionResponse,
+      kind: MethodKind.ServerStreaming,
+    },
+    /**
+     * @generated from rpc haven.Haven.Completion
+     */
+    completion: {
+      name: "Completion",
+      I: CompletionRequest,
+      O: CompletionResponse,
       kind: MethodKind.ServerStreaming,
     },
     /**

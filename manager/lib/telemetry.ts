@@ -4,7 +4,6 @@ import typia from "typia";
 
 import {PostHog} from "posthog-node";
 import {config} from "./config";
-import {listWorkersController} from "../controller/workers";
 import {createComputeAPI, instanceToGpuTypeAndCount, list} from "../gcp/resources";
 import {GpuType} from "../api/pb/manager_pb";
 
@@ -91,6 +90,11 @@ export async function healthCheck() {
 			continue;
 		}
 
+		// Only count workers whose name starts with "haven-w-"
+		if (!worker.name || !worker.name.startsWith("haven-w-")) {
+			continue;
+		}
+
 		if (type === GpuType.A100) {
 			A100s += count;
 		} else if (type === GpuType.A100_80GB) {
@@ -104,4 +108,4 @@ export async function healthCheck() {
 }
 
 // Run every 30 minutes
-setInterval(() => healthCheck().catch(() => {}), 1000 * 60 * 30);
+export const telemetryInterval = setInterval(() => healthCheck().catch(() => {}), 1000 * 60 * 30);

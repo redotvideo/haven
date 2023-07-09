@@ -5,6 +5,13 @@ from .pb import manager_pb2_grpc, manager_pb2
 
 from typing import List
 
+def stream_to_string(stream: manager_pb2.CompletionResponse) -> str:
+	res: str = ""
+	for response in stream:
+		res += response.text
+
+	return res
+
 class Haven:
 	client: manager_pb2_grpc.HavenStub
 
@@ -23,18 +30,23 @@ class Haven:
 		if hasattr(response, "message") and response.message != "":
 			print(response.message)
 
-	def chat_completion(self, worker_name: str, messages: List[manager_pb2.Message], stream: bool = False, max_tokens: int = -1, top_p: float = -1, top_k: int = -1, temperature: float = -1) -> manager_pb2.ChatCompletionResponse or str:
+	def chat_completion(self, worker_name: str, messages: List[manager_pb2.Message], stream: bool = False, max_tokens: int = -1, top_p: float = -1, top_k: int = -1, temperature: float = -1) -> manager_pb2.CompletionResponse or str:
 		request = manager_pb2.ChatCompletionRequest(worker_name=worker_name, messages=messages, max_tokens=max_tokens, top_p=top_p, top_k=top_k, temperature=temperature)
-		responseStream: manager_pb2.ChatCompletionResponse = self.client.ChatCompletion(request)
+		responseStream: manager_pb2.CompletionResponse = self.client.ChatCompletion(request)
 
 		if stream:
 			return responseStream
 		
-		res: str = ""
-		for response in responseStream:
-			res += response.text
+		return stream_to_string(responseStream)
+	
+	def completion(self, worker_name: str, prompt: str, stream: bool = False, max_tokens: int = -1, top_p: float = -1, top_k: int = -1, temperature: float = -1) -> manager_pb2.CompletionResponse or str:
+		request = manager_pb2.CompletionRequest(worker_name=worker_name, prompt=prompt, max_tokens=max_tokens, top_p=top_p, top_k=top_k, temperature=temperature)
+		responseStream: manager_pb2.CompletionResponse = self.client.Completion(request)
 
-		return res
+		if stream:
+			return responseStream
+		
+		return stream_to_string(responseStream)
 	
 	def list_models(self) -> manager_pb2.ListModelsResponse:
 		request = manager_pb2.Empty()

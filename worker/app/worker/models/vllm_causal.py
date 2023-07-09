@@ -63,9 +63,7 @@ class VllmCausalModel(RegisteredModel):
             raise NotImplementedError(f"{self.model_config['quantization']} is not a valid quantization config")
 
 
-    async def generate_stream(self, messages: List, max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
-        prompt = self.create_prompt_from_messages(messages)
-
+    async def generate_stream(self, prompt: str, max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
         sampling_params = SamplingParams(
                 max_tokens=max_tokens if max_tokens < self.model_config["contextSize"] else self.model_config["contextSize"],
                 top_p=1 if temperature==0 else top_p, 

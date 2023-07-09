@@ -22,7 +22,12 @@ class HavenStub(object):
         self.ChatCompletion = channel.unary_stream(
                 '/haven.Haven/ChatCompletion',
                 request_serializer=manager__pb2.ChatCompletionRequest.SerializeToString,
-                response_deserializer=manager__pb2.ChatCompletionResponse.FromString,
+                response_deserializer=manager__pb2.CompletionResponse.FromString,
+                )
+        self.Completion = channel.unary_stream(
+                '/haven.Haven/Completion',
+                request_serializer=manager__pb2.CompletionRequest.SerializeToString,
+                response_deserializer=manager__pb2.CompletionResponse.FromString,
                 )
         self.ListModels = channel.unary_unary(
                 '/haven.Haven/ListModels',
@@ -67,8 +72,14 @@ class HavenServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def ChatCompletion(self, request, context):
-        """Generate text from a prompt.
+        """Generate text.
         """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Completion(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -123,7 +134,12 @@ def add_HavenServicer_to_server(servicer, server):
             'ChatCompletion': grpc.unary_stream_rpc_method_handler(
                     servicer.ChatCompletion,
                     request_deserializer=manager__pb2.ChatCompletionRequest.FromString,
-                    response_serializer=manager__pb2.ChatCompletionResponse.SerializeToString,
+                    response_serializer=manager__pb2.CompletionResponse.SerializeToString,
+            ),
+            'Completion': grpc.unary_stream_rpc_method_handler(
+                    servicer.Completion,
+                    request_deserializer=manager__pb2.CompletionRequest.FromString,
+                    response_serializer=manager__pb2.CompletionResponse.SerializeToString,
             ),
             'ListModels': grpc.unary_unary_rpc_method_handler(
                     servicer.ListModels,
@@ -195,7 +211,24 @@ class Haven(object):
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/haven.Haven/ChatCompletion',
             manager__pb2.ChatCompletionRequest.SerializeToString,
-            manager__pb2.ChatCompletionResponse.FromString,
+            manager__pb2.CompletionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Completion(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/haven.Haven/Completion',
+            manager__pb2.CompletionRequest.SerializeToString,
+            manager__pb2.CompletionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

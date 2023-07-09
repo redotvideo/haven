@@ -8,8 +8,9 @@ service Haven {
 	// Setup (first time starting the manager)
 	rpc Setup(SetupRequest) returns (SetupResponse) {}
 
-	// Generate text from a prompt.
-	rpc ChatCompletion(ChatCompletionRequest) returns (stream ChatCompletionResponse) {}
+	// Generate text.
+	rpc ChatCompletion(ChatCompletionRequest) returns (stream CompletionResponse) {}
+	rpc Completion(CompletionRequest) returns (stream CompletionResponse) {}
 
 	// Get the list of models and their descriptions.
 	rpc ListModels(Empty) returns (ListModelsResponse) {}
@@ -53,7 +54,17 @@ message ChatCompletionRequest {
 	optional float temperature = 6;
 }
 
-message ChatCompletionResponse {
+message CompletionRequest {
+	string worker_name = 1;
+	string prompt = 2;
+
+	optional int32 max_tokens = 3;
+	optional float top_p = 4;
+	optional int32 top_k = 5;
+	optional float temperature = 6;
+}
+
+message CompletionResponse {
 	string text = 1;
 }
 

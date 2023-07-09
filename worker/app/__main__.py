@@ -26,13 +26,12 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
         running = False
         return worker_pb2.ShutdownResponse()
 
+
     async def ChatCompletion(self, request: worker_pb2.ChatCompletionRequest, context):
         messages = list(request.messages)
 
-        inference_params = get_inference_parameter_dict(dict(
-            max_tokens=request.max_tokens, top_p=request.top_p, top_k=request.top_k, temperature=request.temperature))
-        streamer = inference_client.complete_chat(
-            messages=messages, inference_params=inference_params)
+        inference_params = get_inference_parameter_dict(dict(max_tokens=request.max_tokens, top_p=request.top_p, top_k=request.top_k, temperature=request.temperature))
+        streamer = inference_client.complete_chat(messages=messages, inference_params=inference_params)
 
         if isinstance(streamer, TextIteratorStreamer):
             for text in streamer:
@@ -47,8 +46,24 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
                             potential_stop_string += text
                             continue
                 
-                yield worker_pb2.ChatCompletionResponse(text=potential_stop_string+text)
+                yield worker_pb2.CompletionResponse(text=potential_stop_string+text)
                 potential_stop_string = ""
+
+
+    
+    async def Completion(self, request: worker_pb2.CompletionRequest, context):
+        prompt = list(request.prompt)
+        
+        inference_params = get_inference_parameter_dict(dict(max_tokens=request.max_tokens, top_p=request.top_p, top_k=request.top_k, temperature=request.temperature))
+        streamer = inference_client.complete(prompt=prompt, inference_params=inference_params)
+
+        if isinstance(streamer, TextIteratorStreamer):
+            for text in streamer:
+                yield worker_pb2.CompletionResponse(text=text)
+
+        else:
+            async for text in streamer:                
+                yield worker_pb2.CompletionResponse(text=text)
 
 
 async def serve():

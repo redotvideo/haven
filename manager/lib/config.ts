@@ -3,6 +3,7 @@ const config = {
 	setupDone: false, // Tells us if the manager is in a working state
 	server: {
 		bearerToken: process.env.BEARER_TOKEN || "insecure",
+		disableAdmin: process.env.DISABLE_ADMIN === "true", // Disable admin endpoints
 	},
 	gcloud: {
 		projectId: "", // Set during setup
