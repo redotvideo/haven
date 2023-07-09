@@ -65,6 +65,27 @@ describe("Models", () => {
 			});
 	});
 
+	test("delete model", async () => {
+		const initialModels = await client.listModels({});
+		const modelCount = initialModels.models.length;
+
+		expect(modelCount).toBeGreaterThan(1);
+
+		await client.addModel({
+			architecture: "mpt_7b",
+			name: "@huggingface/test-3",
+			tokenizer: "wrong",
+		});
+
+		const models = await client.listModels({});
+		expect(models.models.length).toBe(modelCount + 1);
+
+		await client.removeModel({name: "@huggingface/test-3"});
+
+		const models2 = await client.listModels({});
+		expect(models2.models.length).toBe(modelCount);
+	});
+
 	afterAll(async () => {
 		await close();
 		clearInterval(telemetryInterval);

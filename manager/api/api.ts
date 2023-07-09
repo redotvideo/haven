@@ -15,6 +15,7 @@ import {
 	ListModelsResponse,
 	ListWorkersResponse,
 	Model,
+	ModelName,
 	SetupRequest,
 	SetupResponse,
 } from "./pb/manager_pb";
@@ -23,7 +24,7 @@ import {config} from "../lib/config";
 import {createComputeAPI, instanceToGpuTypeAndCount, list, pause, remove, start} from "../gcp/resources";
 import {getTransport} from "../lib/client";
 import {catchErrors, enforceSetup, auth, admin} from "./middleware";
-import {ModelFile, getAllModels} from "../lib/models";
+import {ModelFile, getAllModels, getModelFile} from "../lib/models";
 import {setupController} from "../controller/setup";
 import {chatCompletionController, completionController} from "../controller/generate";
 import {createInferenceWorkerController} from "../controller/createInferenceWorker";
@@ -152,6 +153,26 @@ async function addModel(req: ModelExtended) {
 	// Write model to file
 	const fileName = `${req.name.split("/")[1]}-${req.name.split("/")[2]}.json`;
 	await fs.writeFile(`./config/models/custom/${fileName}`, JSON.stringify(req));
+}
+
+/////////////////////
+// Remove model
+/////////////////////
+
+const removeModelInputValid = typia.createAssertEquals<ModelName>();
+
+/**
+ * Remove a model from the list of custom models
+ * This will not remove the model from a running worker.
+ */
+async function removeModel(req: ModelName) {
+	const model = await getModelFile(req.name, true);
+
+	if (!model) {
+		throw new ConnectError(`Custom model ${req.name} does not exist.`, Code.NotFound);
+	}
+
+	await fs.unlink(model.path);
 }
 
 /////////////////////
@@ -321,6 +342,7 @@ export const haven = (router: ConnectRouter) =>
 
 		listModels: catchErrors(validate(listModelsInputValid, auth(enforceSetup(listModels)))),
 		addModel: catchErrors(validate(addModelInputValid, auth(enforceSetup(addModel)))),
+		removeModel: catchErrors(validate(removeModelInputValid, auth(enforceSetup(removeModel)))),
 
 		listWorkers: catchErrors(validate(listWorkersInputValid, auth(enforceSetup(listWorkers)))),
 

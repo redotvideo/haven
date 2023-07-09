@@ -1,5 +1,5 @@
 import {Code, ConnectError} from "@bufbuild/connect";
-import {getModelFile} from "../lib/models";
+import {ModelFile, getModelFile} from "../lib/models";
 import {ArchitectureConfiguration, matchArchitectureAndConfiguration} from "../lib/architecture";
 import {
 	createComputeAPI,
@@ -109,7 +109,7 @@ async function checkViableZoneToDeploy(
 	return possibleZones[0]!;
 }
 
-function createWorkerConfig(modelFile: Model, architectureFile: Required<ArchitectureConfiguration>) {
+function createWorkerConfig(modelFile: ModelFile, architectureFile: Required<ArchitectureConfiguration>) {
 	const workerConfig = {
 		...modelFile,
 		...architectureFile,
@@ -126,10 +126,10 @@ export async function createInferenceWorkerController(
 ) {
 	// Get architecture
 	const modelFile = await checkForModelFile(modelName);
-	const architecture = modelFile.architecture;
+	const architecture = modelFile.model.architecture;
 
 	// TODO: enable non-chat models
-	if (modelFile.instructionPrefix === undefined) {
+	if ("insturctionPostfix" in modelFile.model) {
 		throw new ConnectError("Currently, only chat models are supported. This will be fixed soon.", Code.Unimplemented);
 	}
 
@@ -161,7 +161,7 @@ export async function createInferenceWorkerController(
 	// Create instance from template
 	const workerStartupScript = config.worker.startupScript;
 	const workerImageUrl = config.worker.dockerImage;
-	const workerConfig = createWorkerConfig(modelFile, validConfiguration);
+	const workerConfig = createWorkerConfig(modelFile.model, validConfiguration);
 
 	const startupScript = await createStartupScript(workerStartupScript, workerImageUrl, workerConfig);
 
