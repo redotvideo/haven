@@ -46,3 +46,7 @@ export async function matchArchitectureAndConfiguration(
 
 	throw new Error(`The requested configuration is not supported by the model architecture.`);
 }
+
+export function getAllArchitectures() {
+	return fs.readdir("./config/architectures");
+}

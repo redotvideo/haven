@@ -1,3 +1,5 @@
+import * as fs from "fs/promises";
+
 import {ConnectError, Code, ConnectRouter} from "@bufbuild/connect";
 import typia from "typia";
 
@@ -12,6 +14,7 @@ import {
 	InferenceWorker,
 	ListModelsResponse,
 	ListWorkersResponse,
+	Model,
 	SetupRequest,
 	SetupResponse,
 } from "./pb/manager_pb";
@@ -20,7 +23,7 @@ import {config} from "../lib/config";
 import {createComputeAPI, instanceToGpuTypeAndCount, list, pause, remove, start} from "../gcp/resources";
 import {getTransport} from "../lib/client";
 import {catchErrors, enforceSetup, auth, admin} from "./middleware";
-import {getAllModels} from "../lib/models";
+import {ModelFile, getAllModels} from "../lib/models";
 import {setupController} from "../controller/setup";
 import {chatCompletionController, completionController} from "../controller/generate";
 import {createInferenceWorkerController} from "../controller/createInferenceWorker";
@@ -28,6 +31,7 @@ import {getWorkerIP} from "../lib/workers";
 import {validate} from "./validate";
 import {listWorkersController} from "../controller/workers";
 import {EventName, checkForNewVersion, sendEvent} from "../lib/telemetry";
+import {getAllArchitectures} from "../lib/architecture";
 
 /////////////////////
 // Setup
@@ -99,11 +103,55 @@ const listModelsInputValid = typia.createAssertEquals<Empty>();
  */
 async function listModels(req: Empty) {
 	return getAllModels()
-		.then((names) => names.map((name) => ({name})))
 		.then((models) => new ListModelsResponse({models}))
 		.catch((e) => {
 			throw new ConnectError(e.message, Code.Internal);
 		});
+}
+
+/////////////////////
+// Add model
+/////////////////////
+
+interface ModelExtended extends Model {
+	/**
+	 * Name of a model always needs to start with `@huggingface/.
+	 */
+	name: `@huggingface/${string}`;
+}
+
+const addModelInputValid = typia.createAssertEquals<ModelExtended>();
+
+/**
+ * Add a model to the list of available models.
+ * This will not create a worker for the model.
+ */
+async function addModel(req: ModelExtended) {
+	// Check that either all optional parameters are set or none of them.
+	try {
+		typia.assert<ModelFile>(req);
+	} catch (e) {
+		throw new ConnectError("You need to provide either all optional parameters or none of them.", Code.InvalidArgument);
+	}
+
+	// Check that the architecture exists
+	const architectures = await getAllArchitectures();
+	if (!architectures.includes(req.architecture)) {
+		throw new ConnectError(`Architecture ${req.architecture} does not exist.`, Code.InvalidArgument);
+	}
+
+	// Check if file with model name already exists
+	const models = await getAllModels();
+	if (models.find((model) => model.name === req.name)) {
+		throw new ConnectError(`Model with name ${req.name} already exists.`, Code.AlreadyExists);
+	}
+
+	// Check that ./config/models/custom exists, if not create it
+	await fs.mkdir("./config/models/custom", {recursive: true}).catch(() => {});
+
+	// Write model to file
+	const fileName = `${req.name.split("/")[1]}-${req.name.split("/")[2]}.json`;
+	await fs.writeFile(`./config/models/custom/${fileName}`, JSON.stringify(req));
 }
 
 /////////////////////
@@ -272,6 +320,8 @@ export const haven = (router: ConnectRouter) =>
 		completion: auth(enforceSetup(completion)),
 
 		listModels: catchErrors(validate(listModelsInputValid, auth(enforceSetup(listModels)))),
+		addModel: catchErrors(validate(addModelInputValid, auth(enforceSetup(addModel)))),
+
 		listWorkers: catchErrors(validate(listWorkersInputValid, auth(enforceSetup(listWorkers)))),
 
 		createInferenceWorker: catchErrors(

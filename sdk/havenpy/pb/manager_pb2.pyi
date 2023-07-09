@@ -27,7 +27,8 @@ class _RoleEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeW
     ASSISTANT: _Role.ValueType  # 0
     USER: _Role.ValueType  # 1
 
-class Role(_Role, metaclass=_RoleEnumTypeWrapper): ...
+class Role(_Role, metaclass=_RoleEnumTypeWrapper):
+    """Completion"""
 
 ASSISTANT: Role.ValueType  # 0
 USER: Role.ValueType  # 1
@@ -44,7 +45,8 @@ class _StatusEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTyp
     PAUSED: _Status.ValueType  # 2
     ERROR: _Status.ValueType  # 3
 
-class Status(_Status, metaclass=_StatusEnumTypeWrapper): ...
+class Status(_Status, metaclass=_StatusEnumTypeWrapper):
+    """Workers"""
 
 ONLINE: Status.ValueType  # 0
 UNREACHABLE: Status.ValueType  # 1
@@ -81,6 +83,8 @@ global___Empty = Empty
 
 @typing_extensions.final
 class SetupRequest(google.protobuf.message.Message):
+    """Setup"""
+
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     KEY_FILE_FIELD_NUMBER: builtins.int
@@ -228,6 +232,55 @@ global___CompletionResponse = CompletionResponse
 
 @typing_extensions.final
 class Model(google.protobuf.message.Message):
+    """Models"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    ARCHITECTURE_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
+    TOKENIZER_FIELD_NUMBER: builtins.int
+    SYSTEM_PROMPT_FIELD_NUMBER: builtins.int
+    INSTRUCTION_PREFIX_FIELD_NUMBER: builtins.int
+    INSTRUCTION_POSTFIX_FIELD_NUMBER: builtins.int
+    OUTPUT_PREFIX_FIELD_NUMBER: builtins.int
+    OUTPUT_POSTFIX_FIELD_NUMBER: builtins.int
+    architecture: builtins.str
+    name: builtins.str
+    tokenizer: builtins.str
+    system_prompt: builtins.str
+    instruction_prefix: builtins.str
+    instruction_postfix: builtins.str
+    output_prefix: builtins.str
+    output_postfix: builtins.str
+    def __init__(
+        self,
+        *,
+        architecture: builtins.str = ...,
+        name: builtins.str = ...,
+        tokenizer: builtins.str = ...,
+        system_prompt: builtins.str | None = ...,
+        instruction_prefix: builtins.str | None = ...,
+        instruction_postfix: builtins.str | None = ...,
+        output_prefix: builtins.str | None = ...,
+        output_postfix: builtins.str | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_instruction_postfix", b"_instruction_postfix", "_instruction_prefix", b"_instruction_prefix", "_output_postfix", b"_output_postfix", "_output_prefix", b"_output_prefix", "_system_prompt", b"_system_prompt", "instruction_postfix", b"instruction_postfix", "instruction_prefix", b"instruction_prefix", "output_postfix", b"output_postfix", "output_prefix", b"output_prefix", "system_prompt", b"system_prompt"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_instruction_postfix", b"_instruction_postfix", "_instruction_prefix", b"_instruction_prefix", "_output_postfix", b"_output_postfix", "_output_prefix", b"_output_prefix", "_system_prompt", b"_system_prompt", "architecture", b"architecture", "instruction_postfix", b"instruction_postfix", "instruction_prefix", b"instruction_prefix", "name", b"name", "output_postfix", b"output_postfix", "output_prefix", b"output_prefix", "system_prompt", b"system_prompt", "tokenizer", b"tokenizer"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_instruction_postfix", b"_instruction_postfix"]) -> typing_extensions.Literal["instruction_postfix"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_instruction_prefix", b"_instruction_prefix"]) -> typing_extensions.Literal["instruction_prefix"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_output_postfix", b"_output_postfix"]) -> typing_extensions.Literal["output_postfix"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_output_prefix", b"_output_prefix"]) -> typing_extensions.Literal["output_prefix"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_system_prompt", b"_system_prompt"]) -> typing_extensions.Literal["system_prompt"] | None: ...
+
+global___Model = Model
+
+@typing_extensions.final
+class ModelName(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     NAME_FIELD_NUMBER: builtins.int
@@ -239,7 +292,7 @@ class Model(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["name", b"name"]) -> None: ...
 
-global___Model = Model
+global___ModelName = ModelName
 
 @typing_extensions.final
 class ListModelsResponse(google.protobuf.message.Message):

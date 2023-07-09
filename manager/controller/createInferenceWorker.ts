@@ -1,5 +1,5 @@
 import {Code, ConnectError} from "@bufbuild/connect";
-import {ModelFile, getModelFile} from "../lib/models";
+import {getModelFile} from "../lib/models";
 import {ArchitectureConfiguration, matchArchitectureAndConfiguration} from "../lib/architecture";
 import {
 	createComputeAPI,
@@ -12,6 +12,7 @@ import {
 import {createStartupScript, generateName} from "../lib/workers";
 import {compute_v1} from "googleapis";
 import {config} from "../lib/config";
+import {Model} from "../api/pb/manager_pb";
 
 /**
  * Takes in a model name and returns the name of the corresponding config/architectures folder.
@@ -108,7 +109,7 @@ async function checkViableZoneToDeploy(
 	return possibleZones[0]!;
 }
 
-function createWorkerConfig(modelFile: ModelFile, architectureFile: Required<ArchitectureConfiguration>) {
+function createWorkerConfig(modelFile: Model, architectureFile: Required<ArchitectureConfiguration>) {
 	const workerConfig = {
 		...modelFile,
 		...architectureFile,
