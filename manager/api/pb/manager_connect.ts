@@ -64,10 +64,10 @@ export const Haven = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc haven.Haven.RemoveModel
+     * @generated from rpc haven.Haven.DeleteModel
      */
-    removeModel: {
-      name: "RemoveModel",
+    deleteModel: {
+      name: "DeleteModel",
       I: ModelName,
       O: Empty,
       kind: MethodKind.Unary,

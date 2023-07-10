@@ -47,6 +47,8 @@ async function findModelFile(
 		const configValid = typia.createAssertEquals<Model>();
 		const parsed = configValid(JSON.parse(text));
 
+		console.log(parsed.name, model);
+
 		if (parsed.name === model) {
 			return {path: file, model: parsed};
 		}
@@ -57,6 +59,8 @@ async function findModelFile(
 
 	const customResults = await Promise.all(custom.map((file) => checkFile(`./config/models/custom/${file}`)));
 	const customFound = customResults.find((result) => result !== undefined);
+
+	console.log(customResults);
 
 	if (customFound) {
 		return {path: customFound.path, model: customFound.model};
@@ -88,7 +92,7 @@ export async function getModelFile(model: string, customOnly: boolean = false) {
 
 	if (!file) {
 		throw new Error(
-			`Model ${model} not supported. Check the docs at https://docs.haven.run to see how to add a new one.`,
+			`Model ${model} not supported. Check the docs at https://docs.haven.run to see how to add a new model.`,
 		);
 	}
 

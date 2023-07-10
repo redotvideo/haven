@@ -15,7 +15,7 @@ service Haven {
 	// Get the list of models and their descriptions.
 	rpc ListModels(Empty) returns (ListModelsResponse) {}
 	rpc AddModel(Model) returns (Empty) {}
-	rpc RemoveModel(ModelName) returns (Empty) {}
+	rpc DeleteModel(ModelName) returns (Empty) {}
 
 	// Get the list of workers and their statuses.
 	rpc ListWorkers(Empty) returns (ListWorkersResponse) {}

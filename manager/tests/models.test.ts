@@ -80,7 +80,7 @@ describe("Models", () => {
 		const models = await client.listModels({});
 		expect(models.models.length).toBe(modelCount + 1);
 
-		await client.removeModel({name: "@huggingface/test-3"});
+		await client.deleteModel({name: "@huggingface/test-3"});
 
 		const models2 = await client.listModels({});
 		expect(models2.models.length).toBe(modelCount);

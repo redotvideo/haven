@@ -160,13 +160,13 @@ async function addModel(req: ModelExtended) {
 // Remove model
 /////////////////////
 
-const removeModelInputValid = typia.createAssertEquals<ModelName>();
+const deleteModelInputValid = typia.createAssertEquals<ModelName>();
 
 /**
  * Remove a model from the list of custom models
  * This will not remove the model from a running worker.
  */
-async function removeModel(req: ModelName) {
+async function deleteModel(req: ModelName) {
 	const model = await getModelFile(req.name, true);
 
 	if (!model) {
@@ -343,7 +343,7 @@ export const haven = (router: ConnectRouter) =>
 
 		listModels: catchErrors(validate(listModelsInputValid, auth(enforceSetup(listModels)))),
 		addModel: catchErrors(validate(addModelInputValid, auth(enforceSetup(addModel)))),
-		removeModel: catchErrors(validate(removeModelInputValid, auth(enforceSetup(removeModel)))),
+		deleteModel: catchErrors(validate(deleteModelInputValid, auth(enforceSetup(deleteModel)))),
 
 		listWorkers: catchErrors(validate(listWorkersInputValid, auth(enforceSetup(listWorkers)))),
 

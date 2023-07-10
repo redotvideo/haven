@@ -52,6 +52,14 @@ class Haven:
 		request = manager_pb2.Empty()
 		return self.client.ListModels(request)
 	
+	def add_model(self, architecture: str, name: str, tokenizer: str, system_prompt: str = None, instruction_prefix: str = None, instruction_postfix: str = None, output_prefix: str = None, output_postfix: str = None) -> manager_pb2.Empty:
+		request = manager_pb2.Model(architecture=architecture, name=name, tokenizer=tokenizer, system_prompt=system_prompt, instruction_prefix=instruction_prefix, instruction_postfix=instruction_postfix, output_prefix=output_prefix, output_postfix=output_postfix)
+		return self.client.AddModel(request)
+	
+	def delete_model(self, name: str) -> manager_pb2.Empty:
+		request = manager_pb2.ModelName(name=name)
+		return self.client.DeleteModel(request)
+	
 	def list_workers(self) -> manager_pb2.ListWorkersResponse:
 		request = manager_pb2.Empty()
 		return self.client.ListWorkers(request)
