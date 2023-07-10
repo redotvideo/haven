@@ -83,10 +83,11 @@ async function* chatCompletion(req: ChatCompletionRequest) {
 async function* completion(req: CompletionRequest) {
 	const workerName = req.workerName;
 	const prompt = req.prompt;
+	const stopTokens = req.stopTokens;
 
 	const {maxTokens, topP, topK, temperature} = req;
 
-	const stream = await completionController(workerName, prompt, {maxTokens, topP, topK, temperature});
+	const stream = await completionController(workerName, prompt, stopTokens, {maxTokens, topP, topK, temperature});
 
 	for await (const data of stream) {
 		yield new CompletionResponse({text: data.text});

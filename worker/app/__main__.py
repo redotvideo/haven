@@ -1,4 +1,5 @@
 import os
+import json
 
 import asyncio
 import grpc
@@ -9,10 +10,11 @@ from app.worker.inference_worker import InferenceClient
 from app.worker.models.inference_utils.parameter_passing import get_inference_parameter_dict
 
 ABSOLUTE_PATH = os.path.dirname(__file__)
-inference_client = InferenceClient(
-    config=os.path.join(ABSOLUTE_PATH, "../config.json"))
-running = True
+path_to_config =os.path.join(ABSOLUTE_PATH, "../config.json")
+config = json.load(open(path_to_config, "r"))
 
+inference_client = InferenceClient(config=config)
+running = True
 
 class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 
@@ -26,8 +28,15 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
         running = False
         return worker_pb2.ShutdownResponse()
 
-
     async def ChatCompletion(self, request: worker_pb2.ChatCompletionRequest, context):
+        """
+            Haven supports chat-models and non-chat models. We can distinguish between the two 
+            by checking if the instructionPrefix is part of the config that is passed to the worker.
+        """
+        if config["instructionPrefix"] not in request.messages:
+            context.abort(grpc.StatusCode.FAILED_PRECONDITION, "This worker only supports non-chat completion requests. Refer to the documentation if you are unsure what this means.")
+
+        # Now we can handle the request
         messages = list(request.messages)
 
         inference_params = get_inference_parameter_dict(dict(max_tokens=request.max_tokens, top_p=request.top_p, top_k=request.top_k, temperature=request.temperature))
@@ -49,8 +58,6 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
                 yield worker_pb2.CompletionResponse(text=potential_stop_string+text)
                 potential_stop_string = ""
 
-
-    
     async def Completion(self, request: worker_pb2.CompletionRequest, context):
         prompt = list(request.prompt)
         
@@ -64,7 +71,6 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
         else:
             async for text in streamer:                
                 yield worker_pb2.CompletionResponse(text=text)
-
 
 async def serve():
     server = grpc.aio.server()

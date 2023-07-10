@@ -296,6 +296,11 @@ export class CompletionRequest extends Message$1<CompletionRequest> {
   prompt = "";
 
   /**
+   * @generated from field: repeated string stop_tokens = 6;
+   */
+  stopTokens: string[] = [];
+
+  /**
    * @generated from field: optional int32 max_tokens = 2;
    */
   maxTokens?: number;
@@ -324,6 +329,7 @@ export class CompletionRequest extends Message$1<CompletionRequest> {
   static readonly typeName = "worker.CompletionRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "prompt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "stop_tokens", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 2, name: "max_tokens", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
     { no: 3, name: "top_p", kind: "scalar", T: 2 /* ScalarType.FLOAT */, opt: true },
     { no: 4, name: "top_k", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },

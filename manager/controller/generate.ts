@@ -49,13 +49,18 @@ export async function chatCompletionController(workerName: string, messages: Mes
 		});
 }
 
-export async function completionController(workerName: string, prompt: string, settings: Settings) {
+export async function completionController(
+	workerName: string,
+	prompt: string,
+	stopTokens: string[],
+	settings: Settings,
+) {
 	const ip = await isWorkerAvailable(workerName);
 
 	// TODO: check status and throw if the worker can't be reached.
 
 	return Promise.resolve()
-		.then(() => getTransport(ip).completion({prompt, ...settings}))
+		.then(() => getTransport(ip).completion({prompt, stopTokens, ...settings}))
 		.catch((e) => {
 			console.error(e);
 			throw new ConnectError(`Failed to establish a connection.: ${e.message}`, Code.Internal);

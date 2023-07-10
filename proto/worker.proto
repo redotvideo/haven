@@ -53,6 +53,7 @@ message ChatCompletionRequest {
 
 message CompletionRequest {
 	string prompt = 1;
+	repeated string stop_tokens = 6;
 
 	optional int32 max_tokens = 2;
 	optional float top_p = 3;
