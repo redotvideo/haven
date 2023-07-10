@@ -60,9 +60,10 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
 
     async def Completion(self, request: worker_pb2.CompletionRequest, context):
         prompt = list(request.prompt)
+        stop_tokens = list(request.stop_tokens)
         
         inference_params = get_inference_parameter_dict(dict(max_tokens=request.max_tokens, top_p=request.top_p, top_k=request.top_k, temperature=request.temperature))
-        streamer = inference_client.complete(prompt=prompt, inference_params=inference_params)
+        streamer = inference_client.complete(prompt=prompt, stop_tokens=stop_tokens, inference_params=inference_params)
 
         if isinstance(streamer, TextIteratorStreamer):
             for text in streamer:
