@@ -20,15 +20,6 @@ class Llama7B(VllmCausalModel):
     ##############################
     def prepare_for_inference(self):
 
-        if not os.path.exists("local_model/tokenizer.json"): # Download Model before starting server
-
-            model_local = AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], trust_remote_code=True)
-            model_local.save_pretrained("local_model")
-            tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
-            tokenizer.save_pretrained("local_model")
-            del model_local
-            del tokenizer
-
         if self.model_config["quantization"] == "int8":
             raise NotImplementedError("VLLM Models do not yet support 8bit-quantization.")
 
