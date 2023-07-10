@@ -41,10 +41,19 @@ class VllmCausalModel(RegisteredModel):
 
 
         elif self.model_config["quantization"] == "float16":
-            if self.model_config["gpuCount"] == "T4":
-                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tensor_parallel_size=self.model_config["gpuCount"], dtype="float16")
+            """
+                The GPU types are
+                0: A100
+                1: A100 80GB
+                2: T4
 
-            elif self.model_config["gpuCount"] == "A100":
+                TODO: We're not covering A100 80GB yet
+            """
+
+            if self.model_config["gpuType"] == 2:
+                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tensor_parallel_size=self.model_config["gpuCount"], dtype="float16", swap_space=1)
+
+            elif self.model_config["gpuType"] == 0:
                 engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tensor_parallel_size=self.model_config["gpuCount"])
             
             self.model_vllm_engine = AsyncLLMEngine.from_engine_args(engine_args)
