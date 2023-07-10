@@ -10,6 +10,6 @@ class InferenceClient:
         prompt = self.model_engine.generate_stream(messages)
         return self.model_engine.generate_stream(prompt, **inference_params)
     
-    def complete(self, prompt, inference_params):
-        return self.model_engine.generate_stream(prompt, **inference_params)
+    def complete(self, prompt, stop_tokens, inference_params):
+        return self.model_engine.generate_stream(prompt, stop_tokens=stop_tokens, **inference_params)
     

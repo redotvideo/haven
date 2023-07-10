@@ -36,8 +36,8 @@ class Falcon7BModel(AutoCausalModel):
         self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, [self.model_config["instructionPrefix"]]+[self.tokenizer.eos_token])])
 
         
-    def generate_stream(self, prompt: str, max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
-        return super().generate_stream(prompt, max_tokens=max_tokens, top_p=top_p, top_k=top_k, temperature=temperature)
+    def generate_stream(self, prompt: str, stop_tokens = [], max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
+        return super().generate_stream(prompt, stop_tokens=[], max_tokens=max_tokens, top_p=top_p, top_k=top_k, temperature=temperature)
 
 
     ##############################
