@@ -32,11 +32,11 @@ export async function matchArchitectureAndConfiguration(
 		const json = configValid(parsed);
 
 		if (json.quantization === config.quantization) {
-			if (config.gpuType && json.gpuType !== config.gpuType) {
+			if (config.gpuType !== undefined && json.gpuType !== config.gpuType) {
 				continue;
 			}
 
-			if (config.gpuCount && json.gpuCount !== config.gpuCount) {
+			if (config.gpuCount !== undefined && json.gpuCount !== config.gpuCount) {
 				continue;
 			}
 
