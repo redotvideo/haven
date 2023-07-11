@@ -33,7 +33,11 @@
 
 ## Welcome 💜
 
-Welcome to Haven's repository! We are trying to make it as easy as possible to deploy LLMs in production. After setting Haven up, deploying an LLM takes just a few lines of code:
+Welcome to Haven's repository! Our goal is to make the deployment of LLMs in production as easy as possible. 
+
+**Try the Haven API:** Check out our [demo on Google Colab](https://colab.research.google.com/drive/1eGGSisS9Du5-_KcaejY5y9vk9v7EIfba?usp=sharing) to chat with MPT-7B-Chat deployed using Haven!
+
+If you want to deploy LLMs yourself, this is what the API looks like:
 
 ```python
 from havenpy import Haven
