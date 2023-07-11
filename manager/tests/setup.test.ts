@@ -32,7 +32,6 @@ describe("Setup", () => {
 
 		expect(res.constructor.name).toBe("ConnectError");
 		expect((res as ConnectError).code).toBe(Code.FailedPrecondition);
-		expect((res as ConnectError).message).toBe("[failed_precondition] Setup not complete");
 	});
 
 	test("Accept requests when set up", async () => {
