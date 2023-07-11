@@ -33,7 +33,7 @@
 
 ## Welcome 💜
 
-Welcome to Haven's repository! We are trying to make it as easy as possible to deploy LLMs in production. After setting Haven up, deploying an takes just a few lines of code:
+Welcome to Haven's repository! We are trying to make it as easy as possible to deploy LLMs in production. After setting Haven up, deploying an LLM takes just a few lines of code:
 
 ```python
 from havenpy import Haven
