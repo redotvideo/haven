@@ -72,8 +72,12 @@ async function* chatCompletion(req: ChatCompletionRequest) {
 
 	const stream = await chatCompletionController(workerName, messages, {maxTokens, topP, topK, temperature});
 
-	for await (const data of stream) {
-		yield new CompletionResponse({text: data.text});
+	try {
+		for await (const data of stream) {
+			yield new CompletionResponse({text: data.text});
+		}
+	} catch (e) {
+		throw new ConnectError(e.message, Code.Aborted);
 	}
 }
 
@@ -83,13 +87,18 @@ async function* chatCompletion(req: ChatCompletionRequest) {
 async function* completion(req: CompletionRequest) {
 	const workerName = req.workerName;
 	const prompt = req.prompt;
+	const stopTokens = req.stopTokens;
 
 	const {maxTokens, topP, topK, temperature} = req;
 
-	const stream = await completionController(workerName, prompt, {maxTokens, topP, topK, temperature});
+	const stream = await completionController(workerName, prompt, stopTokens, {maxTokens, topP, topK, temperature});
 
-	for await (const data of stream) {
-		yield new CompletionResponse({text: data.text});
+	try {
+		for await (const data of stream) {
+			yield new CompletionResponse({text: data.text});
+		}
+	} catch (e) {
+		throw new ConnectError(e.message, Code.Aborted);
 	}
 }
 
@@ -159,13 +168,13 @@ async function addModel(req: ModelExtended) {
 // Remove model
 /////////////////////
 
-const removeModelInputValid = typia.createAssertEquals<ModelName>();
+const deleteModelInputValid = typia.createAssertEquals<ModelName>();
 
 /**
  * Remove a model from the list of custom models
  * This will not remove the model from a running worker.
  */
-async function removeModel(req: ModelName) {
+async function deleteModel(req: ModelName) {
 	const model = await getModelFile(req.name, true);
 
 	if (!model) {
@@ -342,7 +351,7 @@ export const haven = (router: ConnectRouter) =>
 
 		listModels: catchErrors(validate(listModelsInputValid, auth(enforceSetup(listModels)))),
 		addModel: catchErrors(validate(addModelInputValid, auth(enforceSetup(addModel)))),
-		removeModel: catchErrors(validate(removeModelInputValid, auth(enforceSetup(removeModel)))),
+		deleteModel: catchErrors(validate(deleteModelInputValid, auth(enforceSetup(deleteModel)))),
 
 		listWorkers: catchErrors(validate(listWorkersInputValid, auth(enforceSetup(listWorkers)))),
 

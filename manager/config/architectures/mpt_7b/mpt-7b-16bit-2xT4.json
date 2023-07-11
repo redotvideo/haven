@@ -2,6 +2,6 @@
 	"quantization": "float16",
 	"gpuType": "T4",
 	"gpuCount": 2,
-	"cpuMachineType": "n1-standard-8",
+	"cpuMachineType": "n1-highmem-8",
 	"contextSize": 28000
 }

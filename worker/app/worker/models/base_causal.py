@@ -42,7 +42,7 @@ class AutoCausalModel(RegisteredModel):
         self.stopping_criteria = StoppingCriteriaList([StopOnTokens(self.tokenizer, [self.model_config["instructionPrefix"]]+[self.tokenizer.eos_token])])
 
 
-    def generate_stream(self, prompt: str, max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
+    def generate_stream(self, prompt: str, stop_tokens=[], max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
         input_tokenized = self.tokenizer([prompt], return_tensors='pt').input_ids.to('cuda')
 
         streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True)

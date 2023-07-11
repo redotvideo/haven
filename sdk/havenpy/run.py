@@ -39,8 +39,8 @@ class Haven:
 		
 		return stream_to_string(responseStream)
 	
-	def completion(self, worker_name: str, prompt: str, stream: bool = False, max_tokens: int = -1, top_p: float = -1, top_k: int = -1, temperature: float = -1) -> manager_pb2.CompletionResponse or str:
-		request = manager_pb2.CompletionRequest(worker_name=worker_name, prompt=prompt, max_tokens=max_tokens, top_p=top_p, top_k=top_k, temperature=temperature)
+	def completion(self, worker_name: str, prompt: str, stop_tokens: List[str], stream: bool = False, max_tokens: int = -1, top_p: float = -1, top_k: int = -1, temperature: float = -1) -> manager_pb2.CompletionResponse or str:
+		request = manager_pb2.CompletionRequest(worker_name=worker_name, prompt=prompt, stop_tokens=stop_tokens, max_tokens=max_tokens, top_p=top_p, top_k=top_k, temperature=temperature)
 		responseStream: manager_pb2.CompletionResponse = self.client.Completion(request)
 
 		if stream:
@@ -51,6 +51,14 @@ class Haven:
 	def list_models(self) -> manager_pb2.ListModelsResponse:
 		request = manager_pb2.Empty()
 		return self.client.ListModels(request)
+	
+	def add_model(self, architecture: str, name: str, tokenizer: str, system_prompt: str = None, instruction_prefix: str = None, instruction_postfix: str = None, output_prefix: str = None, output_postfix: str = None) -> manager_pb2.Empty:
+		request = manager_pb2.Model(architecture=architecture, name=name, tokenizer=tokenizer, system_prompt=system_prompt, instruction_prefix=instruction_prefix, instruction_postfix=instruction_postfix, output_prefix=output_prefix, output_postfix=output_postfix)
+		return self.client.AddModel(request)
+	
+	def delete_model(self, name: str) -> manager_pb2.Empty:
+		request = manager_pb2.ModelName(name=name)
+		return self.client.DeleteModel(request)
 	
 	def list_workers(self) -> manager_pb2.ListWorkersResponse:
 		request = manager_pb2.Empty()

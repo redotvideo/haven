@@ -127,11 +127,6 @@ export async function createInferenceWorkerController(
 	const modelFile = await checkForModelFile(modelName);
 	const architecture = modelFile.model.architecture;
 
-	// TODO: enable non-chat models
-	if ("insturctionPostfix" in modelFile.model) {
-		throw new ConnectError("Currently, only chat models are supported. This will be fixed soon.", Code.Unimplemented);
-	}
-
 	// Validate requested configuration with architecture
 	const validConfiguration = await checkArchitectureSupportsRequestedResources(architecture, requestedResources);
 

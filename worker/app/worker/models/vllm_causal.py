@@ -36,25 +36,24 @@ class VllmCausalModel(RegisteredModel):
     ##############################
     def prepare_for_inference(self):
 
-        if not os.path.exists("local_model/tokenizer.json"): # Download Model before starting server
-
-            model_local = AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], trust_remote_code=True)
-            model_local.save_pretrained("local_model")
-            tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"], trust_remote_code=True)
-            tokenizer.save_pretrained("local_model")
-            del model_local
-            del tokenizer
-
-
         if self.model_config["quantization"] == "int8":
             raise NotImplementedError("VLLM Models do not yet support 8bit-quantization.")
 
 
         elif self.model_config["quantization"] == "float16":
-            if self.model_config["gpuCount"] == "T4":
-                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tensor_parallel_size=self.model_config["gpuCount"], dtype="float16")
+            """
+                The GPU types are
+                0: A100
+                1: A100 80GB
+                2: T4
 
-            elif self.model_config["gpuCount"] == "A100":
+                TODO: We're not covering A100 80GB yet
+            """
+
+            if self.model_config["gpuType"] == 2:
+                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tensor_parallel_size=self.model_config["gpuCount"], dtype="float16", swap_space=1)
+
+            elif self.model_config["gpuType"] == 0:
                 engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tensor_parallel_size=self.model_config["gpuCount"])
             
             self.model_vllm_engine = AsyncLLMEngine.from_engine_args(engine_args)
@@ -63,12 +62,12 @@ class VllmCausalModel(RegisteredModel):
             raise NotImplementedError(f"{self.model_config['quantization']} is not a valid quantization config")
 
 
-    async def generate_stream(self, prompt: str, max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
+    async def generate_stream(self, prompt: str, stop_tokens = [], max_tokens: int = 2048, top_p=0.8, top_k=500, temperature=0.9):
         sampling_params = SamplingParams(
                 max_tokens=max_tokens if max_tokens < self.model_config["contextSize"] else self.model_config["contextSize"],
                 top_p=1 if temperature==0 else top_p, 
                 temperature=temperature, 
-                stop=self.get_stopword_list()
+                stop=self.get_stopword_list() + stop_tokens
             )
         
         id = random_uuid()
@@ -103,6 +102,8 @@ class VllmCausalModel(RegisteredModel):
     
 
     def get_stopword_list(self):
+        if not "outputPostfix" in self.model_config:
+            return ["<|endoftext|>"]
         if all(char.isspace() for char in self.model_config["outputPostfix"]):
             return [self.model_config["instructionPrefix"].strip(), "<|endoftext|>"]
         else:
