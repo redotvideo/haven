@@ -59,8 +59,7 @@ for s in stream:
 	print(s.text)
 ```
 
-
-
+<br>
 ## Getting Started 🔥
 
 Spinning up your first LLM server with Haven requires just four steps:
@@ -168,6 +167,7 @@ for r in res:
 
 Congrats! You are now using open-source LLMs in your own cloud.
 
+<br>
 
 ## Roadmap 🚀
 
