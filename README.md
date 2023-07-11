@@ -174,9 +174,9 @@ Congrats! You are now using open-source LLMs in your own cloud.
 
 We're constantly building new features and would love your feedback! Here's what we are currently looking to integrate into our platform:
 
-- [x] Inference Workers
+- [x] Inference
 - [x] Google Cloud Support
-- [ ] Fine-Tuning Workers
+- [ ] Fine-Tuning
 - [ ] AWS Support
 
 <br>
