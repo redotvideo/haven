@@ -39,8 +39,9 @@ class Haven:
 		
 		return stream_to_string(responseStream)
 	
-	def completion(self, worker_name: str, prompt: str, stop_tokens: List[str], stream: bool = False, max_tokens: int = -1, top_p: float = -1, top_k: int = -1, temperature: float = -1) -> manager_pb2.CompletionResponse or str:
-		request = manager_pb2.CompletionRequest(worker_name=worker_name, prompt=prompt, stop_tokens=stop_tokens, max_tokens=max_tokens, top_p=top_p, top_k=top_k, temperature=temperature)
+	def completion(self, worker_name: str, prompt: str, stream: bool = False, max_tokens: int = -1, top_p: float = -1, top_k: int = -1, temperature: float = -1) -> manager_pb2.CompletionResponse or str:
+		# TODO: we're currently not using stop_tokens
+		request = manager_pb2.CompletionRequest(worker_name=worker_name, prompt=prompt, stop_tokens=[], max_tokens=max_tokens, top_p=top_p, top_k=top_k, temperature=temperature)
 		responseStream: manager_pb2.CompletionResponse = self.client.Completion(request)
 
 		if stream:

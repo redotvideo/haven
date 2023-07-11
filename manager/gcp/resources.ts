@@ -156,6 +156,29 @@ export async function createFromTemplate(
 	};
 
 	await api.instances.insert(request);
+
+	/**
+	 * Google sometimes returns a 200 but the VM does not get created.
+	 *
+	 * That is because some GPU resources are sometimes not available
+	 * in a certain zone. Google won't tell you this. Instead it will
+	 * just quietly fail.
+	 *
+	 * This is why we wait for 5 seconds and then check if the VM is
+	 * actually created.
+	 */
+
+	await sleep(7000);
+
+	const vm = await get(api, name);
+
+	if (!vm || !["STAGING", "RUNNING"].includes(vm.status ?? "")) {
+		throw new Error(
+			"Google Cloud VM creation failed on Google's side. This sometimes " +
+				"happens when resources are unavailable in a certain zone. You can " +
+				"try a different zone or try again.",
+		);
+	}
 }
 
 /**
