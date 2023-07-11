@@ -33,7 +33,10 @@ export function sendEvent(eventName: EventName, eventProperties: object = {}) {
 			client.capture({
 				distinctId: sha256(config.gcloud.clientId),
 				event: eventName,
-				properties: eventProperties,
+				properties: {
+					...eventProperties,
+					version: config.version,
+				},
 			});
 		} catch (e) {
 			console.error(e);
@@ -104,7 +107,7 @@ export async function healthCheck() {
 		}
 	}
 
-	sendEvent(EventName.PING, {A100s, A100_80GBs, T4s, version: config.version});
+	sendEvent(EventName.PING, {A100s, A100_80GBs, T4s});
 }
 
 // Run every hour
