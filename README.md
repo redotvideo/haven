@@ -35,7 +35,7 @@
 
 Welcome to Haven's repository! Our goal is to make the deployment of LLMs in production as easy as possible. 
 
-**Try the Haven API:** Check out our [demo on Google Colab](https://colab.research.google.com/drive/1eGGSisS9Du5-_KcaejY5y9vk9v7EIfba?usp=sharing) to chat with MPT-7B-Chat deployed using Haven!
+**Try the Haven API:** Check out our [demo on Google Colab](https://colab.research.google.com/drive/1eGGSisS9Du5-_KcaejY5y9vk9v7EIfba?usp=sharing) to chat with MPT-7B-Chat!
 
 If you want to deploy LLMs yourself, this is what the API looks like:
 
@@ -157,7 +157,7 @@ When checking `gcloud compute instances list`, you'll now be able to see your VM
 print(client.list_workers())
 ```
 
-If the server is still getting set up, it will show `STATUS: LOADING`. If it is running, no status will be shown and you're ready to make your first call! Here is how you can do it:
+If the server is still getting set up, it will show `STATUS: LOADING`. If it is running, the status will be `ONLINE` and you're ready to make your first call! Here is how you can do it:
 
 
 ```python copy
