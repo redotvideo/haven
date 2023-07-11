@@ -60,6 +60,7 @@ for s in stream:
 ```
 
 <br>
+
 ## Getting Started 🔥
 
 Spinning up your first LLM server with Haven requires just four steps:
