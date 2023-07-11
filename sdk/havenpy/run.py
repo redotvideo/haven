@@ -82,7 +82,8 @@ class Haven:
 	
 	def create_inference_worker(self, model_name: str, quantization: str, worker_name: str = None, gpu_type: manager_pb2.GpuType = None, gpu_count: int = None, zone: str = None) -> manager_pb2.InferenceWorker:
 		request = manager_pb2.CreateInferenceWorkerRequest(model_name=model_name, quantization=quantization, worker_name=worker_name, gpu_type=gpu_type, gpu_count=gpu_count, zone=zone)
-		return self.client.CreateInferenceWorker(request)
+		response = self.client.CreateInferenceWorker(request)
+		return response.worker_name
 	
 	def pause_inference_worker(self, worker_name: str) -> manager_pb2.InferenceWorker:
 		request = manager_pb2.InferenceWorker(worker_name=worker_name)
