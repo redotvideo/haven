@@ -33,8 +33,9 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
             Haven supports chat-models and non-chat models. We can distinguish between the two 
             by checking if the instructionPrefix is part of the config that is passed to the worker.
         """
-        if config["instructionPrefix"] not in request.messages:
-            context.abort(grpc.StatusCode.FAILED_PRECONDITION, "This worker only supports non-chat completion requests. Refer to the documentation if you are unsure what this means.")
+        if "instructionPrefix" not in config:
+            await context.abort(grpc.StatusCode.FAILED_PRECONDITION, "This worker only supports non-chat completion requests. Refer to the documentation if you are unsure what this means.")
+            return
 
         # Now we can handle the request
         messages = list(request.messages)
@@ -59,7 +60,7 @@ class WorkerService(worker_pb2_grpc.WorkerServiceServicer):
                 potential_stop_string = ""
 
     async def Completion(self, request: worker_pb2.CompletionRequest, context):
-        prompt = list(request.prompt)
+        prompt = request.prompt
         stop_tokens = list(request.stop_tokens)
         
         inference_params = get_inference_parameter_dict(dict(max_tokens=request.max_tokens, top_p=request.top_p, top_k=request.top_k, temperature=request.temperature))

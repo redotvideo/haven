@@ -72,8 +72,12 @@ async function* chatCompletion(req: ChatCompletionRequest) {
 
 	const stream = await chatCompletionController(workerName, messages, {maxTokens, topP, topK, temperature});
 
-	for await (const data of stream) {
-		yield new CompletionResponse({text: data.text});
+	try {
+		for await (const data of stream) {
+			yield new CompletionResponse({text: data.text});
+		}
+	} catch (e) {
+		throw new ConnectError(e.message, Code.Aborted);
 	}
 }
 
@@ -89,8 +93,12 @@ async function* completion(req: CompletionRequest) {
 
 	const stream = await completionController(workerName, prompt, stopTokens, {maxTokens, topP, topK, temperature});
 
-	for await (const data of stream) {
-		yield new CompletionResponse({text: data.text});
+	try {
+		for await (const data of stream) {
+			yield new CompletionResponse({text: data.text});
+		}
+	} catch (e) {
+		throw new ConnectError(e.message, Code.Aborted);
 	}
 }
 

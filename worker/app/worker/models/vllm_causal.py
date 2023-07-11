@@ -102,6 +102,8 @@ class VllmCausalModel(RegisteredModel):
     
 
     def get_stopword_list(self):
+        if not "outputPostfix" in self.model_config:
+            return ["<|endoftext|>"]
         if all(char.isspace() for char in self.model_config["outputPostfix"]):
             return [self.model_config["instructionPrefix"].strip(), "<|endoftext|>"]
         else:
