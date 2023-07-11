@@ -33,7 +33,7 @@
 
 ## Welcome 💜
 
-Welcome to Haven's repository! We are trying to make it as easy as possible to deploy LLMs in production. As of now, deploying an LLM using Haven takes just a few lines of code. After setting Haven up, this is how you can deploy a model on a VM instance:
+Welcome to Haven's repository! We are trying to make it as easy as possible to deploy LLMs in production. After setting Haven up, deploying an takes just a few lines of code:
 
 ```python
 from havenpy import Haven
