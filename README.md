@@ -31,25 +31,14 @@
   <img src="https://raw.githubusercontent.com/havenhq/haven/dev/diagram.svg">
 </p>
 
-## Getting Started 🔥
+## Welcome 💜
 
-Setting up an LLM server requires just three steps. We documented them in detail [here (https://docs.haven.run)](https://docs.haven.run/), but here's a quick overview:
-
-1. Deploy Haven's manager container [docker.io/havenhq/haven](https://hub.docker.com/r/havenhq/haven) anywhere you like (could be your own machine), expose ports 50051 and 50052
-2. Download a Google Cloud service account file that can create VMs in your project. You can do this via the Google Cloud website or through the CLI. Commands you can just copy and paste for this.
-3. `pip install havenpy`. Spin up a model worker using the Python SDK. Examples below:
-
-### Example code
+Welcome to Haven's repository! We are trying to make it as easy as possible to deploy LLMs in production. After setting Haven up, deploying an LLM takes just a few lines of code:
 
 ```python
 from havenpy import Haven
 
-# Default bearer token is the string "insecure"
 client = Haven("<ip-adress-of-your-vm>:50051", "<your-bearer-token>")
-
-# Now you can add your google cloud service account file to the deployment
-with open("key.json", "r") as f:
-	client.setup(key_file=f.read())
 
 worker_id = client.create_inference_worker(
 	model_name="@huggingface/mosaicml/mpt-7b-chat",
@@ -58,29 +47,126 @@ worker_id = client.create_inference_worker(
 print(worker_id)
 ```
 
-Congrats! A worker is now starting on your Google Cloud. You can check the status like this:
+Now, the VM will be set up and the model will be downloaded. When this is done, you can query your LLM server as follows:
 
 ```python
-print(client.list_workers())
-```
-
-Once the worker is running, you can send it requests like this:
-
-```python
-streaming = client.chat_completion(worker_id, messages=[{
+stream = client.chat_completion(worker_id, messages=[{
 	"content": "Write a newspaper article about how easy it is to set up Haven.",
 	"role": "USER"
 }], stream=True)
 
-for r in streaming:
-	print(r.text)
-
-# Or without streaming:
-print(client.chat_completion(worker_id, messages=[{
-  "content": "Are you sentient?",
-  "role": "USER"
-}], stream=False))
+for s in stream:
+	print(s.text)
 ```
+
+<br>
+
+## Getting Started 🔥
+
+Spinning up your first LLM server with Haven requires just four steps:
+
+1. Deploy Haven's manager container on Google Cloud
+2. Create a Google Cloud service account
+3. Upload your service account credentials to the manager
+4. Spin up your first model
+
+#### 1. Deploy Haven's manager on Google Cloud
+
+You can deploy Haven's manager from its docker image using the gcloud CLI ([Installation instructions](https://cloud.google.com/sdk/docs/install?hl=en#deb)). You can optionally choose a `BEARER_TOKEN` to authenticate users sending requests to your LLM server.
+
+```bash copy
+gcloud compute instances create-with-container haven-manager \
+  --container-image havenhq/haven \
+  --machine-type e2-micro \
+  --tags=https-server,http-server \
+  --container-env BEARER_TOKEN=<some-bearer-token>
+```
+
+To communicate with Haven's manager, you need to expose port 50051 and 50052:
+
+```bash copy
+gcloud compute firewall-rules create allow-50051 --allow tcp:50051 --target-tags http-server
+gcloud compute firewall-rules create allow-50052 --allow tcp:50052 --target-tags http-server
+```
+
+
+#### 2. Create a Google Cloud Service Account
+
+To give Haven's manager the permission to spin up resources for you, you need to create a service account whose credentials can be passed to the manager. You also need to specify a project id for the service account (you can find all project ids using `gcloud projects list`).
+
+```bash copy
+gcloud iam service-accounts create haven-service-account --project=<your-project-id>
+```
+
+Now, assign the service account the role of an editor:
+
+```bash copy
+gcloud projects add-iam-policy-binding <your-project-id> \
+  --role="roles/editor" \
+  --member="serviceAccount:haven-service-account@<your-project-id>.iam.gserviceaccount.com"
+```
+
+Finally, download the service account key file:
+
+```bash copy
+gcloud iam service-accounts keys create ./key.json \
+  --iam-account=haven-service-account@<your-project-id>.iam.gserviceaccount.com
+```
+
+
+#### 3. Upload your key file to the manager
+
+Almost done! You now need to upload your service account key file to the manager. You can do so using Haven's sdk. First, install the sdk:
+
+```bash copy
+pip install havenpy
+```
+
+Now, connect to your manager and upload your key file:
+
+```python copy
+from havenpy import Haven
+client = Haven("<ip-adress-of-your-vm>:50051", "<your-bearer-token>")
+
+# Now you can add your google cloud service account file to the deployment
+with open("key.json", "r") as f:
+	client.setup(key_file=f.read())
+```
+
+
+#### 4. Spin up your first LLM server
+
+Awesome, you're set up! Now, you can easily spin up your first LLM server with just a single line of code:
+
+```python filename="python" copy
+# Create a worker running the mpt-7b-chat model from Huggingface
+worker_id = client.create_inference_worker(
+	model_name="@huggingface/mosaicml/mpt-7b-chat",
+	quantization="float16", gpu_type="T4", gpu_count=2)
+
+print(worker_id)
+```
+
+When checking `gcloud compute instances list`, you'll now be able to see your VM instance starting. After starting, it will set up a docker container and download the model weights. This usually takes around 5-20 minutes, depending on the model size. To check whether your model is ready to be called, you can read the worker's status:
+
+```python copy
+print(client.list_workers())
+```
+
+If the server is still getting set up, it will show `STATUS: LOADING`. If it is running, no status will be shown and you're ready to make your first call! Here is how you can do it:
+
+
+```python copy
+res = client.chat_completion(worker_id, messages=[{
+	"content": "Write a newspaper article about Marc Zuckerberg.",
+	"role": "USER"
+}], stream=True)
+
+for r in res:
+	print(r.text, flush=True, end="")
+```
+
+Congrats! You are now using open-source LLMs in your own cloud.
 
 <br>
 
