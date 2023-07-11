@@ -33,7 +33,7 @@
 
 ## Welcome 💜
 
-Welcome to Haven's repository! Many developers have told us that they do not want to rely on third party LLM APIs, but don't know enough about implementing and deploying machine learning models to integrate self-hosted open source LLMs into their applications. We are trying to bridge this gap and make it as easy as possible to use LLMs in production. As of now, deploying an LLM using Haven takes just a few lines of code. After setting Haven up, this is how you can deploy a model on a VM instance:
+Welcome to Haven's repository! We are trying to make it as easy as possible to deploy LLMs in production. As of now, deploying an LLM using Haven takes just a few lines of code. After setting Haven up, this is how you can deploy a model on a VM instance:
 
 ```python
 from havenpy import Haven
