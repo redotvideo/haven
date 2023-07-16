@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import {compute_v1, google} from "googleapis";
 
-import {config} from "../lib/config";
-import {GpuType} from "../api/pb/manager_pb";
+import {config} from "../../lib/config";
+import {GpuType} from "../../api/pb/manager_pb";
 
 export function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));

@@ -8,7 +8,7 @@ import {
 	get,
 	getZonesToCreateVM,
 	gpuTypeToGcloudName,
-} from "../gcp/resources";
+} from "../cloud/gcp/resources";
 import {createStartupScript, generateName} from "../lib/workers";
 import {compute_v1} from "googleapis";
 import {config} from "../lib/config";

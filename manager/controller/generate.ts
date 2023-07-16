@@ -1,5 +1,5 @@
 import {Code, ConnectError} from "@bufbuild/connect";
-import {createComputeAPI, list} from "../gcp/resources";
+import {createComputeAPI, list} from "../cloud/gcp/resources";
 import {getTransport} from "../lib/client";
 import {getWorkerIP} from "../lib/workers";
 import {Message} from "../api/pb/manager_pb";

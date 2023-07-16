@@ -1,6 +1,6 @@
 import {Code, ConnectError} from "@bufbuild/connect";
 import {Status, Worker} from "../api/pb/manager_pb";
-import {createComputeAPI, list} from "../gcp/resources";
+import {createComputeAPI, list} from "../cloud/gcp/resources";
 import {getStatus} from "../lib/client";
 import {getWorkerIP, mapStatus} from "../lib/workers";
 

@@ -4,7 +4,7 @@ import typia from "typia";
 
 import {PostHog} from "posthog-node";
 import {config} from "./config";
-import {createComputeAPI, instanceToGpuTypeAndCount, list} from "../gcp/resources";
+import {createComputeAPI, instanceToGpuTypeAndCount, list} from "../cloud/gcp/resources";
 import {GpuType} from "../api/pb/manager_pb";
 
 const client = new PostHog("phc_YpKoFD7smPe4SXRtVyMW766uP9AjUwnuRJ8hh2EJcVv", {host: "https://eu.posthog.com"});
