@@ -54,6 +54,21 @@ PAUSED: Status.ValueType  # 2
 ERROR: Status.ValueType  # 3
 global___Status = Status
 
+class _Cloud:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _CloudEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Cloud.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    GCP: _Cloud.ValueType  # 0
+    AWS: _Cloud.ValueType  # 1
+
+class Cloud(_Cloud, metaclass=_CloudEnumTypeWrapper): ...
+
+GCP: Cloud.ValueType  # 0
+AWS: Cloud.ValueType  # 1
+global___Cloud = Cloud
+
 class _GpuType:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
@@ -355,12 +370,14 @@ class CreateInferenceWorkerRequest(google.protobuf.message.Message):
     MODEL_NAME_FIELD_NUMBER: builtins.int
     QUANTIZATION_FIELD_NUMBER: builtins.int
     WORKER_NAME_FIELD_NUMBER: builtins.int
+    CLOUD_FIELD_NUMBER: builtins.int
     GPU_TYPE_FIELD_NUMBER: builtins.int
     GPU_COUNT_FIELD_NUMBER: builtins.int
     ZONE_FIELD_NUMBER: builtins.int
     model_name: builtins.str
     quantization: builtins.str
     worker_name: builtins.str
+    cloud: global___Cloud.ValueType
     gpu_type: global___GpuType.ValueType
     gpu_count: builtins.int
     zone: builtins.str
@@ -370,12 +387,15 @@ class CreateInferenceWorkerRequest(google.protobuf.message.Message):
         model_name: builtins.str = ...,
         quantization: builtins.str = ...,
         worker_name: builtins.str | None = ...,
+        cloud: global___Cloud.ValueType | None = ...,
         gpu_type: global___GpuType.ValueType | None = ...,
         gpu_count: builtins.int | None = ...,
         zone: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "_zone", b"_zone", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "worker_name", b"worker_name", "zone", b"zone"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "_zone", b"_zone", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "model_name", b"model_name", "quantization", b"quantization", "worker_name", b"worker_name", "zone", b"zone"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_cloud", b"_cloud", "_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "_zone", b"_zone", "cloud", b"cloud", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "worker_name", b"worker_name", "zone", b"zone"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_cloud", b"_cloud", "_gpu_count", b"_gpu_count", "_gpu_type", b"_gpu_type", "_worker_name", b"_worker_name", "_zone", b"_zone", "cloud", b"cloud", "gpu_count", b"gpu_count", "gpu_type", b"gpu_type", "model_name", b"model_name", "quantization", b"quantization", "worker_name", b"worker_name", "zone", b"zone"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_cloud", b"_cloud"]) -> typing_extensions.Literal["cloud"] | None: ...
     @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_gpu_count", b"_gpu_count"]) -> typing_extensions.Literal["gpu_count"] | None: ...
     @typing.overload

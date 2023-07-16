@@ -115,6 +115,11 @@ message ListWorkersResponse {
 	repeated Worker workers = 1;
 }
 
+enum Cloud {
+	GCP = 0;
+	AWS = 1;
+}
+
 enum GpuType {
 	A100 = 0;
 	A100_80GB = 1;
@@ -124,7 +129,9 @@ enum GpuType {
 message CreateInferenceWorkerRequest {
 	string model_name = 1;
 	string quantization = 2;
+
 	optional string worker_name = 3;
+	optional Cloud cloud = 8;
 	optional GpuType gpu_type = 4;
 	optional int32 gpu_count = 6;
 	optional string zone = 7;

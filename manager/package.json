@@ -22,6 +22,8 @@
     "typescript": "^5.1.3"
   },
   "dependencies": {
+    "@aws-sdk/client-ec2": "^3.370.0",
+    "@aws-sdk/credential-provider-ini": "^3.370.0",
     "@bufbuild/connect": "^0.8.6",
     "@bufbuild/connect-fastify": "^0.8.6",
     "@bufbuild/connect-node": "^0.9.1",

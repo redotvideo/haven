@@ -59,6 +59,26 @@ proto3.util.setEnumType(Status, "haven.Status", [
 ]);
 
 /**
+ * @generated from enum haven.Cloud
+ */
+export enum Cloud {
+  /**
+   * @generated from enum value: GCP = 0;
+   */
+  GCP = 0,
+
+  /**
+   * @generated from enum value: AWS = 1;
+   */
+  AWS = 1,
+}
+// Retrieve enum metadata with: proto3.getEnumType(Cloud)
+proto3.util.setEnumType(Cloud, "haven.Cloud", [
+  { no: 0, name: "GCP" },
+  { no: 1, name: "AWS" },
+]);
+
+/**
  * @generated from enum haven.GpuType
  */
 export enum GpuType {
@@ -664,6 +684,11 @@ export class CreateInferenceWorkerRequest extends Message$1<CreateInferenceWorke
   workerName?: string;
 
   /**
+   * @generated from field: optional haven.Cloud cloud = 8;
+   */
+  cloud?: Cloud;
+
+  /**
    * @generated from field: optional haven.GpuType gpu_type = 4;
    */
   gpuType?: GpuType;
@@ -689,6 +714,7 @@ export class CreateInferenceWorkerRequest extends Message$1<CreateInferenceWorke
     { no: 1, name: "model_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "quantization", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "worker_name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 8, name: "cloud", kind: "enum", T: proto3.getEnumType(Cloud), opt: true },
     { no: 4, name: "gpu_type", kind: "enum", T: proto3.getEnumType(GpuType), opt: true },
     { no: 6, name: "gpu_count", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
     { no: 7, name: "zone", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
