@@ -7,6 +7,26 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message as Message$1, proto3 } from "@bufbuild/protobuf";
 
 /**
+ * @generated from enum haven.Cloud
+ */
+export enum Cloud {
+  /**
+   * @generated from enum value: GCP = 0;
+   */
+  GCP = 0,
+
+  /**
+   * @generated from enum value: AWS = 1;
+   */
+  AWS = 1,
+}
+// Retrieve enum metadata with: proto3.getEnumType(Cloud)
+proto3.util.setEnumType(Cloud, "haven.Cloud", [
+  { no: 0, name: "GCP" },
+  { no: 1, name: "AWS" },
+]);
+
+/**
  * @generated from enum haven.Role
  */
 export enum Role {
@@ -56,26 +76,6 @@ proto3.util.setEnumType(Status, "haven.Status", [
   { no: 1, name: "LOADING" },
   { no: 2, name: "PAUSED" },
   { no: 3, name: "ERROR" },
-]);
-
-/**
- * @generated from enum haven.Cloud
- */
-export enum Cloud {
-  /**
-   * @generated from enum value: GCP = 0;
-   */
-  GCP = 0,
-
-  /**
-   * @generated from enum value: AWS = 1;
-   */
-  AWS = 1,
-}
-// Retrieve enum metadata with: proto3.getEnumType(Cloud)
-proto3.util.setEnumType(Cloud, "haven.Cloud", [
-  { no: 0, name: "GCP" },
-  { no: 1, name: "AWS" },
 ]);
 
 /**
@@ -144,6 +144,11 @@ export class SetupRequest extends Message$1<SetupRequest> {
    */
   keyFile?: string;
 
+  /**
+   * @generated from field: optional haven.Cloud cloud = 2;
+   */
+  cloud?: Cloud;
+
   constructor(data?: PartialMessage<SetupRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -153,6 +158,7 @@ export class SetupRequest extends Message$1<SetupRequest> {
   static readonly typeName = "haven.SetupRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "key_file", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 2, name: "cloud", kind: "enum", T: proto3.getEnumType(Cloud), opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SetupRequest {

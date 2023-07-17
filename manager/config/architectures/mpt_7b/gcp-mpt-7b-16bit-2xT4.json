@@ -1,4 +1,5 @@
 {
+	"cloud": "gcp",
 	"quantization": "float16",
 	"gpuType": "T4",
 	"gpuCount": 2,

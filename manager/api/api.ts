@@ -20,12 +20,10 @@ import {
 	SetupResponse,
 } from "./pb/manager_pb";
 
-import {config} from "../lib/config";
-import {createComputeAPI, instanceToGpuTypeAndCount, list, pause, remove, start} from "../gcp/resources";
+import {createComputeAPI, instanceToGpuTypeAndCount, list, pause, remove, start} from "../cloud/gcp/resources";
 import {getTransport} from "../lib/client";
 import {catchErrors, enforceSetup, auth, admin} from "./middleware";
 import {ModelFile, getAllModels, getModelFile} from "../lib/models";
-import {setupController} from "../controller/setup";
 import {chatCompletionController, completionController} from "../controller/generate";
 import {createInferenceWorkerController} from "../controller/createInferenceWorker";
 import {getWorkerIP} from "../lib/workers";
@@ -33,6 +31,7 @@ import {validate} from "./validate";
 import {listWorkersController} from "../controller/workers";
 import {EventName, checkForNewVersion, sendEvent} from "../lib/telemetry";
 import {getAllArchitectures} from "../lib/architecture";
+import {cloudManager} from "../cloud";
 
 /////////////////////
 // Setup
@@ -40,20 +39,25 @@ import {getAllArchitectures} from "../lib/architecture";
 
 const setupInputValid = typia.createAssertEquals<SetupRequest>();
 
-/**
- * Set up the manager by providing the Google Cloud key.
- */
 async function setupHandler(req: SetupRequest) {
 	// Check if there is a new version available and pass a warning to the client if there is.
 	const warning = await checkForNewVersion();
 
-	if (config.setupDone || req.keyFile === undefined) {
-		// Endpoint is being called as "ping". We just return a version warning if there is one.
-		return new SetupResponse({message: warning});
+	// If both a keyFile and a cloud provider are provided, we can update the cloud provider.
+	if (req.keyFile !== undefined && req.cloud !== undefined) {
+		await cloudManager.updateCloud(req.cloud, req.keyFile).catch((e) => {
+			throw new ConnectError(e.message, Code.Internal);
+		});
 	}
 
-	// Now we can assume that the setup is not done and the user wants to finish it.
-	await setupController(req.keyFile);
+	// If only one of them is provided, we throw an error.
+	if (req.keyFile !== undefined || req.cloud !== undefined) {
+		throw new ConnectError(
+			"Please provide both a keyFile and a cloud provider to finish the setup.",
+			Code.Unauthenticated,
+		);
+	}
+
 	return new SetupResponse({message: warning});
 }
 
@@ -220,6 +224,7 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	const zone = req.zone;
 
 	const requestedResources = {
+		cloud: req.cloud,
 		quantization: req.quantization,
 		gpuType: req.gpuType,
 		gpuCount: req.gpuCount,

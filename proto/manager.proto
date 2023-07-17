@@ -29,8 +29,14 @@ service Haven {
 
 // Setup
 
+enum Cloud {
+	GCP = 0;
+	AWS = 1;
+}
+
 message SetupRequest {
 	optional string key_file = 1;
+	optional Cloud cloud = 2;
 }
 
 message SetupResponse {
@@ -113,11 +119,6 @@ message Worker {
 
 message ListWorkersResponse {
 	repeated Worker workers = 1;
-}
-
-enum Cloud {
-	GCP = 0;
-	AWS = 1;
 }
 
 enum GpuType {

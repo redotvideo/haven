@@ -1,0 +1,8 @@
+{
+	"cloud": "aws",
+	"quantization": "float16",
+	"gpuType": "A10G",
+	"gpuCount": 1,
+	"cpuMachineType": "g5.4xlarge",
+	"contextSize": 28000
+}

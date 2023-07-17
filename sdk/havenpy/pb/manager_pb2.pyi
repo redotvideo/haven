@@ -18,6 +18,22 @@ else:
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
+class _Cloud:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _CloudEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Cloud.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    GCP: _Cloud.ValueType  # 0
+    AWS: _Cloud.ValueType  # 1
+
+class Cloud(_Cloud, metaclass=_CloudEnumTypeWrapper):
+    """Setup"""
+
+GCP: Cloud.ValueType  # 0
+AWS: Cloud.ValueType  # 1
+global___Cloud = Cloud
+
 class _Role:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
@@ -54,21 +70,6 @@ PAUSED: Status.ValueType  # 2
 ERROR: Status.ValueType  # 3
 global___Status = Status
 
-class _Cloud:
-    ValueType = typing.NewType("ValueType", builtins.int)
-    V: typing_extensions.TypeAlias = ValueType
-
-class _CloudEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Cloud.ValueType], builtins.type):
-    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    GCP: _Cloud.ValueType  # 0
-    AWS: _Cloud.ValueType  # 1
-
-class Cloud(_Cloud, metaclass=_CloudEnumTypeWrapper): ...
-
-GCP: Cloud.ValueType  # 0
-AWS: Cloud.ValueType  # 1
-global___Cloud = Cloud
-
 class _GpuType:
     ValueType = typing.NewType("ValueType", builtins.int)
     V: typing_extensions.TypeAlias = ValueType
@@ -98,19 +99,23 @@ global___Empty = Empty
 
 @typing_extensions.final
 class SetupRequest(google.protobuf.message.Message):
-    """Setup"""
-
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     KEY_FILE_FIELD_NUMBER: builtins.int
+    CLOUD_FIELD_NUMBER: builtins.int
     key_file: builtins.str
+    cloud: global___Cloud.ValueType
     def __init__(
         self,
         *,
         key_file: builtins.str | None = ...,
+        cloud: global___Cloud.ValueType | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["_key_file", b"_key_file", "key_file", b"key_file"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_key_file", b"_key_file", "key_file", b"key_file"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["_cloud", b"_cloud", "_key_file", b"_key_file", "cloud", b"cloud", "key_file", b"key_file"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_cloud", b"_cloud", "_key_file", b"_key_file", "cloud", b"cloud", "key_file", b"key_file"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["_cloud", b"_cloud"]) -> typing_extensions.Literal["cloud"] | None: ...
+    @typing.overload
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_key_file", b"_key_file"]) -> typing_extensions.Literal["key_file"] | None: ...
 
 global___SetupRequest = SetupRequest

@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import {compute_v1, google} from "googleapis";
 
-import {config} from "../../lib/config";
 import {GpuType} from "../../api/pb/manager_pb";
+import {cloudManager} from "..";
 
 export function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -27,7 +27,7 @@ export async function createComputeAPI() {
  */
 export async function list(api: compute_v1.Compute) {
 	const res = await api.instances.aggregatedList({
-		project: config.gcloud.projectId,
+		project: cloudManager.gcp?.projectId,
 	});
 
 	const items = res.data.items || {};
@@ -66,7 +66,7 @@ export async function pause(api: compute_v1.Compute, vmName: string) {
 	const zone = matchingVM.zone?.split("/").pop() ?? "";
 
 	const request = {
-		project: config.gcloud.projectId,
+		project: cloudManager.gcp?.projectId,
 		zone: zone,
 		instance: vmName,
 	};
@@ -91,7 +91,7 @@ export async function start(api: compute_v1.Compute, vmName: string) {
 	const zone = matchingVM.zone?.split("/").pop() ?? "";
 
 	const request = {
-		project: config.gcloud.projectId,
+		project: cloudManager.gcp?.projectId,
 		zone: zone,
 		instance: vmName,
 	};
@@ -116,7 +116,7 @@ export async function remove(api: compute_v1.Compute, vmName: string) {
 	const zone = matchingVM.zone?.split("/").pop() ?? "";
 
 	const request = {
-		project: config.gcloud.projectId,
+		project: cloudManager.gcp?.projectId,
 		zone,
 		instance: vmName,
 	};
@@ -150,7 +150,7 @@ export async function createFromTemplate(
 	};
 
 	const request = {
-		project: config.gcloud.projectId,
+		project: cloudManager.gcp?.projectId,
 		zone: zone,
 		resource: templateParsed,
 	};
@@ -188,7 +188,7 @@ export async function createFromTemplate(
  */
 export async function getAllZones(api: compute_v1.Compute) {
 	const request = {
-		project: config.gcloud.projectId,
+		project: cloudManager.gcp?.projectId,
 	};
 
 	const res = await api.zones.list(request);
@@ -204,7 +204,7 @@ export async function getAllZones(api: compute_v1.Compute) {
  */
 export async function getAllRegions(api: compute_v1.Compute) {
 	const request = {
-		project: config.gcloud.projectId,
+		project: cloudManager.gcp?.projectId,
 	};
 
 	const res = await api.regions.list(request);
@@ -222,7 +222,7 @@ export async function getAllRegions(api: compute_v1.Compute) {
  */
 export async function getAcceleratorsByZone(api: compute_v1.Compute, zone: string) {
 	const request = {
-		project: config.gcloud.projectId,
+		project: cloudManager.gcp?.projectId,
 		zone: zone,
 	};
 
@@ -397,8 +397,8 @@ export async function createInstanceTemplate(
 	templateString = templateString.replace(/{region}/g, zone.split("-").slice(0, -1).join("-"));
 	templateString = templateString.replace(/{diskSizeGb}/g, String(diskSizeGb));
 	templateString = templateString.replace(/{cpuMachineType}/g, cpuMachineType);
-	templateString = templateString.replace(/{projectId}/g, config.gcloud.projectId);
-	templateString = templateString.replace(/{serviceAccount}/g, config.gcloud.serviceAccount);
+	templateString = templateString.replace(/{projectId}/g, cloudManager.gcp?.projectId!);
+	templateString = templateString.replace(/{serviceAccount}/g, cloudManager.gcp?.serviceAccount!);
 
 	return templateString;
 }
