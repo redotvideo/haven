@@ -22,7 +22,7 @@ import {
 
 import {createComputeAPI, instanceToGpuTypeAndCount, list, pause, remove, start} from "../cloud/gcp/resources";
 import {getTransport} from "../lib/client";
-import {catchErrors, enforceSetup, auth, admin} from "./middleware";
+import {catchErrors, auth, admin} from "./middleware";
 import {ModelFile, getAllModels, getModelFile} from "../lib/models";
 import {chatCompletionController, completionController} from "../controller/generate";
 import {createInferenceWorkerController} from "../controller/createInferenceWorker";
@@ -58,7 +58,7 @@ async function setupHandler(req: SetupRequest) {
 		);
 	}
 
-	return new SetupResponse({message: warning});
+	return new SetupResponse({message: warning, cloudStatus: await cloudManager.getCloudStatus()});
 }
 
 /////////////////////
@@ -248,32 +248,31 @@ async function pauseWorker(req: InferenceWorker) {
 	const workerName = req.workerName;
 
 	// Check if worker exists
-	const api = await createComputeAPI();
-	const workers = await list(api);
-	const worker = workers.find((worker) => worker.name === workerName);
-
-	if (!worker || !worker.name) {
+	const cloudProvider = await cloudManager.getCloudByInstanceName(workerName);
+	if (!cloudProvider) {
 		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
-	if (getWorkerIP(worker)) {
-		await getTransport(getWorkerIP(worker)!)
+	const cloud = await cloudManager.get(cloudProvider);
+
+	const ip = await cloud.getInstancePublicIp(workerName);
+	if (ip) {
+		await getTransport(ip)
 			.shutdown({})
 			.catch((e) => {
 				console.error(`Error sending shutdown signal to worker ${workerName}: ${e.message}`);
 			});
 	}
 
-	await pause(api, worker.name).catch((e) => {
+	await cloud.pauseInstance(workerName).catch((e) => {
 		console.error(e);
 		throw new ConnectError(`Failed to pause worker ${workerName}: ${e.message}`, Code.Internal);
 	});
 
-	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.PAUSE_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
+	// TODO: send event
 
 	return new InferenceWorker({
-		workerName: worker.name,
+		workerName,
 	});
 }
 
@@ -285,28 +284,22 @@ async function resumeWorker(req: InferenceWorker) {
 	const workerName = req.workerName;
 
 	// Check if worker exists
-	const api = await createComputeAPI();
-	const workers = await list(api);
-	const worker = workers.find((worker) => worker.name === workerName);
-
-	if (!worker || !worker.name) {
+	const cloudProvider = await cloudManager.getCloudByInstanceName(workerName);
+	if (!cloudProvider) {
 		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
-	if (worker.status !== "TERMINATED") {
-		throw new ConnectError(`Worker ${workerName} is not paused`, Code.FailedPrecondition);
-	}
+	const cloud = await cloudManager.get(cloudProvider);
 
-	await start(api, worker.name).catch((e) => {
+	await cloud.resumeInstance(workerName).catch((e) => {
 		console.error(e);
 		throw new ConnectError(`Failed to resume worker ${workerName}: ${e.message}`, Code.Internal);
 	});
 
-	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.RESUME_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
+	// TODO: send event
 
 	return new InferenceWorker({
-		workerName: worker.name,
+		workerName,
 	});
 }
 
@@ -318,32 +311,31 @@ async function deleteWorker(req: InferenceWorker) {
 	const workerName = req.workerName;
 
 	// Check if worker exists
-	const api = await createComputeAPI();
-	const workers = await list(api);
-	const worker = workers.find((worker) => worker.name === workerName);
-
-	if (!worker || !worker.name) {
+	const cloudProvider = await cloudManager.getCloudByInstanceName(workerName);
+	if (!cloudProvider) {
 		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
-	if (getWorkerIP(worker)) {
-		await getTransport(getWorkerIP(worker)!)
+	const cloud = await cloudManager.get(cloudProvider);
+
+	const ip = await cloud.getInstancePublicIp(workerName);
+	if (ip) {
+		await getTransport(ip)
 			.shutdown({})
 			.catch((e) => {
 				console.error(`Error sending shutdown signal to worker ${workerName}: ${e.message}`);
 			});
 	}
 
-	await remove(api, worker.name).catch((e) => {
+	await cloud.deleteInstance(workerName).catch((e) => {
 		console.error(e);
 		throw new ConnectError(`Failed to delete worker ${workerName}: ${e.message}`, Code.Internal);
 	});
 
-	const {type, count} = instanceToGpuTypeAndCount(worker);
-	sendEvent(EventName.DELETE_WORKER, {gpuType: type ? GpuType[type] : undefined, gpuCount: count});
+	// TODO: send event
 
 	return new InferenceWorker({
-		workerName: worker.name,
+		workerName,
 	});
 }
 
@@ -351,19 +343,17 @@ export const haven = (router: ConnectRouter) =>
 	router.service(Haven, {
 		setup: catchErrors(validate(setupInputValid, auth(setupHandler))),
 
-		chatCompletion: auth(enforceSetup(chatCompletion)),
-		completion: auth(enforceSetup(completion)),
+		// chatCompletion: auth(chatCompletion), // TODO
+		// completion: auth(completion), // TODO
 
-		listModels: catchErrors(validate(listModelsInputValid, auth(enforceSetup(listModels)))),
-		addModel: catchErrors(validate(addModelInputValid, auth(enforceSetup(addModel)))),
-		deleteModel: catchErrors(validate(deleteModelInputValid, auth(enforceSetup(deleteModel)))),
+		listModels: catchErrors(validate(listModelsInputValid, auth(listModels))),
+		addModel: catchErrors(validate(addModelInputValid, auth(addModel))),
+		deleteModel: catchErrors(validate(deleteModelInputValid, auth(deleteModel))),
 
-		listWorkers: catchErrors(validate(listWorkersInputValid, auth(enforceSetup(listWorkers)))),
+		// listWorkers: catchErrors(validate(listWorkersInputValid, auth(listWorkers))), // TODO
 
-		createInferenceWorker: catchErrors(
-			admin(validate(createInferenceWorkerInputValid, auth(enforceSetup(createInferenceWorker)))),
-		),
-		pauseInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(enforceSetup(pauseWorker))))),
-		resumeInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(enforceSetup(resumeWorker))))),
-		deleteInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(enforceSetup(deleteWorker))))),
+		// createInferenceWorker: catchErrors(admin(validate(createInferenceWorkerInputValid, auth(createInferenceWorker)))), // TODO
+		pauseInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(pauseWorker)))),
+		resumeInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(resumeWorker)))),
+		deleteInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(deleteWorker)))),
 	});

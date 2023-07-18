@@ -6,7 +6,8 @@ import {getWorkerIP, mapStatus} from "../lib/workers";
 
 export async function listWorkersController() {
 	const api = await createComputeAPI();
-	const workers = await list(api).catch((e) => {
+	// TODO(now): fix
+	const workers = await list(api, "TODO").catch((e) => {
 		console.error(e);
 		throw new ConnectError(`Failed to get a list of all workers from GCloud: ${e.message}`, Code.Internal);
 	});

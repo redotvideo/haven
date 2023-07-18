@@ -9,6 +9,8 @@ import {Cloud} from "../api/pb/manager_pb";
 export async function setup() {
 	sendEvent(EventName.START_MANAGER);
 
+	fs.mkdir("./credentials").catch(() => {});
+
 	// Check if there are already cloud credentials
 	const doesGcpKeyExist = await fs
 		.access("./credentials/gcp.json")

@@ -1,8 +1,9 @@
 import * as fs from "fs/promises";
-import {GpuType} from "../api/pb/manager_pb";
+import {Cloud, GpuType} from "../api/pb/manager_pb";
 import typia from "typia";
 
 export interface ArchitectureConfiguration {
+	cloud: Cloud;
 	quantization: string;
 	gpuType?: GpuType;
 	gpuCount?: number;
@@ -27,21 +28,33 @@ export async function matchArchitectureAndConfiguration(
 
 		// Convert string to enum numerical value
 		parsed.gpuType = GpuType[parsed.gpuType as keyof typeof GpuType];
+		parsed.cloud = Cloud[parsed.cloud.toUpperCase() as keyof typeof Cloud];
 
 		const configValid = typia.createAssertEquals<Required<ArchitectureConfiguration>>();
 		const json = configValid(parsed);
 
-		if (json.quantization === config.quantization) {
-			if (config.gpuType !== undefined && json.gpuType !== config.gpuType) {
-				continue;
-			}
-
-			if (config.gpuCount !== undefined && json.gpuCount !== config.gpuCount) {
-				continue;
-			}
-
-			return json;
+		// TODO(now): check which clouds are available. For now, only support GCP
+		if (json.cloud !== Cloud.GCP) {
+			continue;
 		}
+
+		if (json.cloud !== parsed.cloud) {
+			continue;
+		}
+
+		if (json.quantization !== config.quantization) {
+			continue;
+		}
+
+		if (config.gpuType !== undefined && json.gpuType !== config.gpuType) {
+			continue;
+		}
+
+		if (config.gpuCount !== undefined && json.gpuCount !== config.gpuCount) {
+			continue;
+		}
+
+		return json;
 	}
 
 	throw new Error(`The requested configuration is not supported by the model architecture.`);

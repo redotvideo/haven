@@ -37,22 +37,6 @@ export function catchErrors<T, U>(func: (req: T, context: HandlerContext) => Pro
 }
 
 /**
- * Checks if the setup is complete and throws an error if not.
- */
-export function enforceSetup<T, U>(func: (req: T, context: HandlerContext) => U) {
-	return (req: T, context: HandlerContext): U => {
-		if (!config.setupDone) {
-			throw new ConnectError(
-				"Setup not complete. Please add your Google Cloud service account first. You can find instructions for this on https://docs.haven.run.",
-				Code.FailedPrecondition,
-			);
-		}
-
-		return func(req, context);
-	};
-}
-
-/**
  * Check that admin endpoints are enabled and throw an error if not.
  */
 export function admin<T, U>(func: (req: T, context: HandlerContext) => U) {

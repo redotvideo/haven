@@ -2,7 +2,6 @@ import * as fs from "fs";
 import {compute_v1, google} from "googleapis";
 
 import {GpuType} from "../../api/pb/manager_pb";
-import {cloudManager} from "..";
 
 export function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -25,9 +24,9 @@ export async function createComputeAPI() {
  * @param api
  * @returns
  */
-export async function list(api: compute_v1.Compute) {
+export async function list(api: compute_v1.Compute, projectId: string) {
 	const res = await api.instances.aggregatedList({
-		project: cloudManager.gcp?.projectId,
+		project: projectId,
 	});
 
 	const items = res.data.items || {};
@@ -44,8 +43,8 @@ export async function list(api: compute_v1.Compute) {
  * @param vmName
  * @returns
  */
-export async function get(api: compute_v1.Compute, vmName: string) {
-	const vms = await list(api);
+export async function get(api: compute_v1.Compute, vmName: string, projectId: string) {
+	const vms = await list(api, projectId);
 	const result = vms.find((vm) => vm.name === vmName);
 	return result;
 }
@@ -55,8 +54,8 @@ export async function get(api: compute_v1.Compute, vmName: string) {
  * @param api
  * @param vmName
  */
-export async function pause(api: compute_v1.Compute, vmName: string) {
-	const vms = await list(api);
+export async function pause(api: compute_v1.Compute, vmName: string, projectId: string) {
+	const vms = await list(api, projectId);
 
 	const matchingVM = vms.find((vm) => vm.name === vmName);
 	if (!matchingVM) {
@@ -66,7 +65,7 @@ export async function pause(api: compute_v1.Compute, vmName: string) {
 	const zone = matchingVM.zone?.split("/").pop() ?? "";
 
 	const request = {
-		project: cloudManager.gcp?.projectId,
+		project: projectId,
 		zone: zone,
 		instance: vmName,
 	};
@@ -80,8 +79,8 @@ export async function pause(api: compute_v1.Compute, vmName: string) {
  * @param vmName
  * @returns
  */
-export async function start(api: compute_v1.Compute, vmName: string) {
-	const vms = await list(api);
+export async function start(api: compute_v1.Compute, vmName: string, projectId: string) {
+	const vms = await list(api, projectId);
 
 	const matchingVM = vms.find((vm) => vm.name === vmName);
 	if (!matchingVM) {
@@ -91,7 +90,7 @@ export async function start(api: compute_v1.Compute, vmName: string) {
 	const zone = matchingVM.zone?.split("/").pop() ?? "";
 
 	const request = {
-		project: cloudManager.gcp?.projectId,
+		project: projectId,
 		zone: zone,
 		instance: vmName,
 	};
@@ -105,8 +104,8 @@ export async function start(api: compute_v1.Compute, vmName: string) {
  * @param vmName
  * @returns
  */
-export async function remove(api: compute_v1.Compute, vmName: string) {
-	const vms = await list(api);
+export async function remove(api: compute_v1.Compute, vmName: string, projectId: string) {
+	const vms = await list(api, projectId);
 
 	const matchingVM = vms.find((vm) => vm.name === vmName);
 	if (!matchingVM) {
@@ -116,7 +115,7 @@ export async function remove(api: compute_v1.Compute, vmName: string) {
 	const zone = matchingVM.zone?.split("/").pop() ?? "";
 
 	const request = {
-		project: cloudManager.gcp?.projectId,
+		project: projectId,
 		zone,
 		instance: vmName,
 	};
@@ -137,6 +136,7 @@ export async function createFromTemplate(
 	template: string,
 	startupScript: string,
 	name: string,
+	projectId: string,
 ) {
 	const templateParsed = JSON.parse(template);
 
@@ -150,7 +150,7 @@ export async function createFromTemplate(
 	};
 
 	const request = {
-		project: cloudManager.gcp?.projectId,
+		project: projectId,
 		zone: zone,
 		resource: templateParsed,
 	};
@@ -170,7 +170,7 @@ export async function createFromTemplate(
 
 	await sleep(7000);
 
-	const vm = await get(api, name);
+	const vm = await get(api, name, projectId);
 
 	if (!vm || !["STAGING", "RUNNING"].includes(vm.status ?? "")) {
 		throw new Error(
@@ -186,9 +186,9 @@ export async function createFromTemplate(
  * @param api
  * @returns
  */
-export async function getAllZones(api: compute_v1.Compute) {
+export async function getAllZones(api: compute_v1.Compute, projectId: string) {
 	const request = {
-		project: cloudManager.gcp?.projectId,
+		project: projectId,
 	};
 
 	const res = await api.zones.list(request);
@@ -202,9 +202,9 @@ export async function getAllZones(api: compute_v1.Compute) {
  * @param api
  * @returns
  */
-export async function getAllRegions(api: compute_v1.Compute) {
+export async function getAllRegions(api: compute_v1.Compute, projectId: string) {
 	const request = {
-		project: cloudManager.gcp?.projectId,
+		project: projectId,
 	};
 
 	const res = await api.regions.list(request);
@@ -220,9 +220,9 @@ export async function getAllRegions(api: compute_v1.Compute) {
  * @param configFilePath
  * @returns
  */
-export async function getAcceleratorsByZone(api: compute_v1.Compute, zone: string) {
+export async function getAcceleratorsByZone(api: compute_v1.Compute, zone: string, projectId: string) {
 	const request = {
-		project: cloudManager.gcp?.projectId,
+		project: projectId,
 		zone: zone,
 	};
 
@@ -308,8 +308,9 @@ export async function findRegionsWithPermissiveGPUQuotas(
 	api: compute_v1.Compute,
 	gpuName: keyof typeof gcpGpuNameToQuota,
 	gpuNum: number,
+	projectId: string,
 ) {
-	const allRegions = await getAllRegions(api);
+	const allRegions = await getAllRegions(api, projectId);
 
 	const res = await Promise.all(
 		allRegions.map(async (region) => {
@@ -339,8 +340,9 @@ export async function getZonesToCreateVM(
 	api: compute_v1.Compute,
 	gpuName: keyof typeof gcpGpuNameToQuota,
 	gpuNum: number,
+	projectId: string,
 ) {
-	const permissibleRegions = await findRegionsWithPermissiveGPUQuotas(api, gpuName, gpuNum);
+	const permissibleRegions = await findRegionsWithPermissiveGPUQuotas(api, gpuName, gpuNum, projectId);
 
 	// TODO(konsti): this return type is super vague. get rid of null and undefined
 	const permissibleZones = permissibleRegions.flatMap((region) => region?.zones);
@@ -353,7 +355,7 @@ export async function getZonesToCreateVM(
 
 			const zoneName = zone.split("/").at(-1);
 			if (zoneName) {
-				const accelerators = await getAcceleratorsByZone(api, zoneName);
+				const accelerators = await getAcceleratorsByZone(api, zoneName, projectId);
 
 				return accelerators.map((acc) => acc.name).includes(gpuName) ? zone : undefined;
 			} else {
@@ -387,6 +389,8 @@ export async function createInstanceTemplate(
 	zone: string,
 	diskSizeGb: number,
 	cpuMachineType: string,
+	projectId: string,
+	serviceAccount: string,
 ) {
 	const file = await fs.promises.readFile(skeletonFilePath);
 	let templateString = file.toString();
@@ -397,8 +401,8 @@ export async function createInstanceTemplate(
 	templateString = templateString.replace(/{region}/g, zone.split("-").slice(0, -1).join("-"));
 	templateString = templateString.replace(/{diskSizeGb}/g, String(diskSizeGb));
 	templateString = templateString.replace(/{cpuMachineType}/g, cpuMachineType);
-	templateString = templateString.replace(/{projectId}/g, cloudManager.gcp?.projectId!);
-	templateString = templateString.replace(/{serviceAccount}/g, cloudManager.gcp?.serviceAccount!);
+	templateString = templateString.replace(/{projectId}/g, projectId);
+	templateString = templateString.replace(/{serviceAccount}/g, serviceAccount);
 
 	return templateString;
 }

@@ -23,12 +23,14 @@ class Haven:
 
 		self.setup()
 
-	def setup(self, key_file: str = None) -> None:
-		request = manager_pb2.SetupRequest(key_file=key_file)
+	def setup(self, key_file: str = None, cloud: manager_pb2.Cloud = None) -> None:
+		request = manager_pb2.SetupRequest(key_file=key_file, cloud=cloud)
 		response: manager_pb2.SetupResponse = self.client.Setup(request)
 
 		if hasattr(response, "message") and response.message != "":
 			print(response.message)
+
+		return response.cloud_status
 
 	def chat_completion(self, worker_name: str, messages: List[manager_pb2.Message], stream: bool = False, max_tokens: int = -1, top_p: float = -1, top_k: int = -1, temperature: float = -1) -> manager_pb2.CompletionResponse or str:
 		request = manager_pb2.ChatCompletionRequest(worker_name=worker_name, messages=messages, max_tokens=max_tokens, top_p=top_p, top_k=top_k, temperature=temperature)
@@ -61,6 +63,7 @@ class Haven:
 		request = manager_pb2.ModelName(name=name)
 		return self.client.DeleteModel(request)
 	
+    # TODO(now)
 	def list_workers(self) -> manager_pb2.ListWorkersResponse:
 		request = manager_pb2.Empty()
 		response = self.client.ListWorkers(request)
@@ -80,6 +83,7 @@ class Haven:
 
 		return workers
 	
+    # TODO(now)
 	def create_inference_worker(self, model_name: str, quantization: str, worker_name: str = None, gpu_type: manager_pb2.GpuType = None, gpu_count: int = None, zone: str = None) -> manager_pb2.InferenceWorker:
 		request = manager_pb2.CreateInferenceWorkerRequest(model_name=model_name, quantization=quantization, worker_name=worker_name, gpu_type=gpu_type, gpu_count=gpu_count, zone=zone)
 		response = self.client.CreateInferenceWorker(request)

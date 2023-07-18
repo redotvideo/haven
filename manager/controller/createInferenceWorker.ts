@@ -44,7 +44,8 @@ async function checkArchitectureSupportsRequestedResources(
 async function checkWorkerNameOrGenerate(api: compute_v1.Compute, modelName: string, workerName?: string) {
 	// If a worker name was provided, check if it is already taken
 	if (workerName) {
-		const result = await get(api, workerName).catch((e) => {
+		// TODO(now): fix
+		const result = await get(api, workerName, "TODO").catch((e) => {
 			console.error(e);
 			throw new ConnectError(
 				`Error while checking if worker name ${workerName} is already taken: ${e.message}`,
@@ -79,7 +80,8 @@ async function checkViableZoneToDeploy(
 ) {
 	// Get possible zones to deploy to
 	const gcpGpuName = gpuTypeToGcloudName[config.gpuType];
-	const possibleZones = await getZonesToCreateVM(api, gcpGpuName, config.gpuCount);
+	// TODO: fix
+	const possibleZones = await getZonesToCreateVM(api, gcpGpuName, config.gpuCount, "TODO");
 
 	// No zone found that supports the requested configuration
 	if (possibleZones.length === 0) {
@@ -150,6 +152,8 @@ export async function createInferenceWorkerController(
 		zone,
 		500,
 		validConfiguration.cpuMachineType,
+		"TODO",
+		"TODO", // TODO(now): fix
 	);
 
 	// Create instance from template
@@ -159,7 +163,8 @@ export async function createInferenceWorkerController(
 
 	const startupScript = await createStartupScript(workerStartupScript, workerImageUrl, workerConfig);
 
-	await createFromTemplate(api, zone, template, startupScript, finalName).catch((e) => {
+	// TODO(now): fix
+	await createFromTemplate(api, zone, template, startupScript, finalName, "TODO").catch((e) => {
 		console.error(e);
 		throw new ConnectError(`Failed to create worker: ${e.message}`, Code.Internal);
 	});

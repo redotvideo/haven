@@ -2,17 +2,13 @@ import crypto from "crypto";
 import axios from "axios";
 import typia from "typia";
 
+import {v4 as uuidv4} from "uuid";
 import {PostHog} from "posthog-node";
 import {config} from "./config";
 import {createComputeAPI, instanceToGpuTypeAndCount, list} from "../cloud/gcp/resources";
 import {GpuType} from "../api/pb/manager_pb";
 
 const client = new PostHog("phc_YpKoFD7smPe4SXRtVyMW766uP9AjUwnuRJ8hh2EJcVv", {host: "https://eu.posthog.com"});
-
-function sha256(str: string) {
-	const hash = crypto.createHash("sha256");
-	return hash.update(str).digest("hex");
-}
 
 export enum EventName {
 	START_MANAGER = "manager-start",
@@ -27,11 +23,13 @@ export enum EventName {
 	ERROR = "error",
 }
 
+const randomId = crypto.createHash("sha256").update(uuidv4()).digest("hex");
+
 export function sendEvent(eventName: EventName, eventProperties: object = {}) {
 	if (config.telemetry) {
 		try {
 			client.capture({
-				distinctId: sha256(config.gcloud.clientId),
+				distinctId: randomId,
 				event: eventName,
 				properties: {
 					...eventProperties,
@@ -66,14 +64,15 @@ export async function checkForNewVersion() {
 	}
 }
 
+// TODO(now): fix
 export async function healthCheck() {
-	if (!config.telemetry || !config.setupDone) {
+	if (!config.telemetry) {
 		return;
 	}
 
 	// Get all workers
 	const api = await createComputeAPI();
-	const workers = await list(api).catch(() => {});
+	const workers = await list(api, "TODO").catch(() => {});
 
 	if (!workers) {
 		sendEvent(EventName.ERROR, {message: "Health check: Could not get workers."});

@@ -179,6 +179,49 @@ export class SetupRequest extends Message$1<SetupRequest> {
 }
 
 /**
+ * @generated from message haven.CloudStatus
+ */
+export class CloudStatus extends Message$1<CloudStatus> {
+  /**
+   * @generated from field: haven.Cloud cloud = 1;
+   */
+  cloud = Cloud.GCP;
+
+  /**
+   * @generated from field: bool enabled = 2;
+   */
+  enabled = false;
+
+  constructor(data?: PartialMessage<CloudStatus>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "haven.CloudStatus";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "cloud", kind: "enum", T: proto3.getEnumType(Cloud) },
+    { no: 2, name: "enabled", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CloudStatus {
+    return new CloudStatus().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CloudStatus {
+    return new CloudStatus().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CloudStatus {
+    return new CloudStatus().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CloudStatus | PlainMessage<CloudStatus> | undefined, b: CloudStatus | PlainMessage<CloudStatus> | undefined): boolean {
+    return proto3.util.equals(CloudStatus, a, b);
+  }
+}
+
+/**
  * @generated from message haven.SetupResponse
  */
 export class SetupResponse extends Message$1<SetupResponse> {
@@ -189,6 +232,11 @@ export class SetupResponse extends Message$1<SetupResponse> {
    */
   message?: string;
 
+  /**
+   * @generated from field: repeated haven.CloudStatus cloud_status = 2;
+   */
+  cloudStatus: CloudStatus[] = [];
+
   constructor(data?: PartialMessage<SetupResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -198,6 +246,7 @@ export class SetupResponse extends Message$1<SetupResponse> {
   static readonly typeName = "haven.SetupResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 2, name: "cloud_status", kind: "message", T: CloudStatus, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SetupResponse {

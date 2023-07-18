@@ -39,9 +39,15 @@ message SetupRequest {
 	optional Cloud cloud = 2;
 }
 
+message CloudStatus {
+	Cloud cloud = 1;
+	bool enabled = 2;
+}
+
 message SetupResponse {
 	// Used for warnings when running on an outdated version.
 	optional string message = 1;
+	repeated CloudStatus cloud_status = 2;
 }
 
 // Completion

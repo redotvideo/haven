@@ -121,19 +121,41 @@ class SetupRequest(google.protobuf.message.Message):
 global___SetupRequest = SetupRequest
 
 @typing_extensions.final
+class CloudStatus(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CLOUD_FIELD_NUMBER: builtins.int
+    ENABLED_FIELD_NUMBER: builtins.int
+    cloud: global___Cloud.ValueType
+    enabled: builtins.bool
+    def __init__(
+        self,
+        *,
+        cloud: global___Cloud.ValueType = ...,
+        enabled: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["cloud", b"cloud", "enabled", b"enabled"]) -> None: ...
+
+global___CloudStatus = CloudStatus
+
+@typing_extensions.final
 class SetupResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     MESSAGE_FIELD_NUMBER: builtins.int
+    CLOUD_STATUS_FIELD_NUMBER: builtins.int
     message: builtins.str
     """Used for warnings when running on an outdated version."""
+    @property
+    def cloud_status(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___CloudStatus]: ...
     def __init__(
         self,
         *,
         message: builtins.str | None = ...,
+        cloud_status: collections.abc.Iterable[global___CloudStatus] | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_message", b"_message", "message", b"message"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["_message", b"_message", "message", b"message"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["_message", b"_message", "cloud_status", b"cloud_status", "message", b"message"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["_message", b"_message"]) -> typing_extensions.Literal["message"] | None: ...
 
 global___SetupResponse = SetupResponse

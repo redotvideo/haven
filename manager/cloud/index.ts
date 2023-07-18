@@ -1,34 +1,33 @@
-import * as fs from "fs";
-import {Cloud} from "../api/pb/manager_pb";
-
-interface GCPInfo {
-	projectId: string;
-	serviceAccount: string;
-	clientId: string;
-}
+import * as fs from "fs/promises";
+import {Cloud, CloudStatus} from "../api/pb/manager_pb";
+import {CloudInterface} from "./interface";
+import {GoogleCloud} from "./gcp/gcp";
 
 class CloudManager {
-	gcp: GCPInfo | null = null;
-	aws = false;
-
-	constructor() {
-		// Create folder for credentials
-		// Sync because it's in the constructor and only runs when the manager starts
-		fs.mkdirSync("./credentials");
-	}
+	gcp: GoogleCloud | null = null;
+	aws: CloudInterface | null = null;
 
 	/**
-	 * Checks if we're already logged into the specified cloud provider.
+	 * @returns The status of all clouds
 	 */
-	public isCloudSetUp(cloud: Cloud) {
-		switch (cloud) {
-			case Cloud.GCP:
-				return this.gcp !== null;
-			case Cloud.AWS:
-				return this.aws;
-			default:
-				throw new Error("[isCloudSetUp] Unknown cloud");
-		}
+	public async getCloudStatus(): Promise<CloudStatus[]> {
+		const res: CloudStatus[] = [];
+
+		res.push(
+			new CloudStatus({
+				cloud: Cloud.GCP,
+				enabled: (await this.gcp?.isAvailable()) ?? false,
+			}),
+		);
+
+		res.push(
+			new CloudStatus({
+				cloud: Cloud.AWS,
+				enabled: (await this.aws?.isAvailable()) ?? false,
+			}),
+		);
+
+		return res;
 	}
 
 	/**
@@ -46,33 +45,47 @@ class CloudManager {
 		}
 
 		// Check if there is already a key file
-		const doesKeyExist = await fs.promises
+		const doesKeyExist = await fs
 			.access("./credentials/gcp.json")
 			.then(() => true)
 			.catch(() => false);
 
 		if (doesKeyExist) {
 			console.log("[updateGcp] Key file already exists. Deleting old key file.");
-			await fs.promises.unlink("./credentials/gcp.json");
+			await fs.unlink("./credentials/gcp.json");
 		}
 
-		await fs.promises.writeFile("./credentials/gcp.json", file);
-
-		this.gcp = {
-			projectId: isValidJson.project_id,
-			serviceAccount: isValidJson.client_email,
-			clientId: isValidJson.client_id,
-		};
+		await fs.writeFile("./credentials/gcp.json", file);
 
 		process.env.GOOGLE_APPLICATION_CREDENTIALS = "./credentials/gcp.json";
+		this.gcp = new GoogleCloud(isValidJson.project_id, isValidJson.client_email, isValidJson.client_id);
 	}
 
-	private async updateAws(file: string) {}
+	/**
+	 * Creates or updates the AWS key file.
+	 *
+	 * @param file The key file as a string
+	 */
+	private async updateAws(file: string) {
+		// Check if there is already a key file
+		const doesKeyExist = await fs
+			.access("./credentials/aws.txt")
+			.then(() => true)
+			.catch(() => false);
+
+		if (doesKeyExist) {
+			console.log("[updateAws] Key file already exists. Deleting old key file.");
+			await fs.unlink("./credentials/aws.txt");
+		}
+
+		// TODO: we're just trusting the file here, should be validated
+		await fs.writeFile("./credentials/aws.txt", file);
+	}
 
 	/**
 	 * Update credentials of the specified cloud provider.
-	 * @param cloud
-	 * @param file
+	 * @param cloud	The cloud provider
+	 * @param file The key file as a string
 	 */
 	public async updateCloud(cloud: Cloud, file: string) {
 		if (cloud === Cloud.GCP) {
@@ -82,6 +95,48 @@ class CloudManager {
 		if (cloud === Cloud.AWS) {
 			await this.updateAws(file);
 		}
+	}
+
+	/**
+	 * Search for a cloud instance by name.
+	 */
+	public async getCloudByInstanceName(name: string): Promise<Cloud | undefined> {
+		// Check GCP
+		const gcpInstances = (await this.gcp?.listInstances()) ?? [];
+		if (gcpInstances.find((instance) => instance.name === name)) {
+			return Cloud.GCP;
+		}
+
+		// Check AWS
+		const awsInstances = (await this.aws?.listInstances()) ?? [];
+		if (awsInstances.find((bucket) => bucket.name === name)) {
+			return Cloud.AWS;
+		}
+
+		return undefined;
+	}
+
+	/**
+	 * Get cloud controller.
+	 */
+	public async get(cloud: Cloud): Promise<CloudInterface> {
+		if (cloud === Cloud.GCP) {
+			if (this.gcp === null) {
+				throw new Error("[get] GCP not initialized");
+			}
+
+			return this.gcp;
+		}
+
+		if (cloud === Cloud.AWS) {
+			if (this.aws === null) {
+				throw new Error("[get] AWS not initialized");
+			}
+
+			return this.aws;
+		}
+
+		throw new Error("[get] Unknown cloud provider");
 	}
 }
 
