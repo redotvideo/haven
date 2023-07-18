@@ -22,7 +22,11 @@ async function createApiServer(server: any, port: number) {
  */
 export async function runServer() {
 	const settings = {
-		logger: true,
+		logger: {
+			transport: {
+				target: "pino-pretty",
+			},
+		},
 
 		// Give each request a unique ID
 		genReqId(req: any) {
