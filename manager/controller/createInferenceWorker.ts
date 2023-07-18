@@ -108,10 +108,15 @@ async function checkViableZoneToDeploy(
 	return possibleZones[0]!;
 }
 
-function createWorkerConfig(modelFile: ModelFile, architectureFile: Required<ArchitectureConfiguration>) {
+function createWorkerConfig(
+	modelFile: ModelFile,
+	architectureFile: Required<ArchitectureConfiguration>,
+	huggingfaceToken: string | undefined,
+) {
 	const workerConfig = {
 		...modelFile,
 		...architectureFile,
+		...(huggingfaceToken && {huggingfaceToken}),
 	};
 
 	return JSON.stringify(workerConfig);
@@ -122,6 +127,7 @@ export async function createInferenceWorkerController(
 	requestedResources: Partial<ArchitectureConfiguration>,
 	workerName?: string,
 	requestedZone?: string,
+	huggingfaceToken?: string,
 ) {
 	// Get architecture
 	const modelFile = await checkForModelFile(modelName);
@@ -155,8 +161,7 @@ export async function createInferenceWorkerController(
 	// Create instance from template
 	const workerStartupScript = config.worker.startupScript;
 	const workerImageUrl = config.worker.dockerImage;
-	const workerConfig = createWorkerConfig(modelFile.model, validConfiguration);
-
+	const workerConfig = createWorkerConfig(modelFile.model, validConfiguration, huggingfaceToken);
 	const startupScript = await createStartupScript(workerStartupScript, workerImageUrl, workerConfig);
 
 	await createFromTemplate(api, zone, template, startupScript, finalName).catch((e) => {

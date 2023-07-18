@@ -219,13 +219,21 @@ async function createInferenceWorker(req: CreateInferenceWorkerRequest) {
 	const worker = req.workerName;
 	const zone = req.zone;
 
+	const huggingfaceToken = req.huggingfaceToken;
+
 	const requestedResources = {
 		quantization: req.quantization,
 		gpuType: req.gpuType,
 		gpuCount: req.gpuCount,
 	};
 
-	const workerName = await createInferenceWorkerController(modelName, requestedResources, worker, zone);
+	const workerName = await createInferenceWorkerController(
+		modelName,
+		requestedResources,
+		worker,
+		zone,
+		huggingfaceToken,
+	);
 	sendEvent(EventName.CREATE_WORKER, {gpuType: req.gpuType ? GpuType[req.gpuType] : undefined, gpuCount: req.gpuCount});
 
 	return new InferenceWorker({

@@ -128,6 +128,7 @@ message CreateInferenceWorkerRequest {
 	optional GpuType gpu_type = 4;
 	optional int32 gpu_count = 6;
 	optional string zone = 7;
+	optional string huggingface_token = 8; // Sometimes needed for access-restricted models.
 }
 
 message InferenceWorker {
