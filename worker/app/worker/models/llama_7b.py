@@ -28,7 +28,7 @@ class Llama7B(VllmCausalModel):
 
             model_local = AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], trust_remote_code=True, use_auth_token=auth_token)
             model_local.save_pretrained("local_model")
-            tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
+            tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"], use_auth_token=auth_token)
             tokenizer.save_pretrained("local_model")
             del model_local
             del tokenizer
