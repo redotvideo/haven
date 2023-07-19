@@ -7,9 +7,9 @@ from vllm.engine.arg_utils import AsyncEngineArgs
 from vllm.engine.async_llm_engine import AsyncLLMEngine
 
 
-class Llama7B(VllmCausalModel):
+class Llama70B(VllmCausalModel):
 
-    architecture_name = "llama_7b"
+    architecture_name = "llama_70b"
 
     def __init__(self, config):
         super().__init__(config)
