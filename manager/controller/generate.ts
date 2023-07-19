@@ -1,8 +1,7 @@
 import {Code, ConnectError} from "@bufbuild/connect";
-import {createComputeAPI, list} from "../cloud/gcp/resources";
 import {getTransport} from "../lib/client";
-import {getWorkerIP} from "../lib/workers";
 import {Message} from "../api/pb/manager_pb";
+import {cloudManager} from "../cloud";
 
 interface Settings {
 	maxTokens?: number;
@@ -17,21 +16,15 @@ interface Settings {
  * @returns the IP of the worker
  */
 async function isWorkerAvailable(workerName: string) {
-	const api = await createComputeAPI();
-	// TODO(now): fix
-	const workers = await list(api, "TODO").catch((e) => {
-		console.error(e);
-		throw new ConnectError(`Failed to get a list of all workers from GCloud: ${e.message}`, Code.Internal);
-	});
-
-	const worker = workers.find((worker) => worker.name === workerName);
-	if (!worker || !worker.name) {
+	const cloudProvider = await cloudManager.getCloudByInstanceName(workerName);
+	if (!cloudProvider) {
 		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
-	const ip = getWorkerIP(worker);
+	const cloud = await cloudManager.get(cloudProvider);
+	const ip = await cloud.getInstancePublicIp(workerName);
 	if (!ip) {
-		throw new ConnectError(`Worker ${workerName} has no public ip.`, Code.FailedPrecondition);
+		throw new ConnectError(`Worker ${workerName} doesn't exist or does not have a public ip.`, Code.Internal);
 	}
 
 	return ip;

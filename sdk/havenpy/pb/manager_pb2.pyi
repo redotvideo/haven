@@ -362,15 +362,18 @@ class Worker(google.protobuf.message.Message):
 
     WORKER_NAME_FIELD_NUMBER: builtins.int
     STATUS_FIELD_NUMBER: builtins.int
+    CLOUD_FIELD_NUMBER: builtins.int
     worker_name: builtins.str
     status: global___Status.ValueType
+    cloud: global___Cloud.ValueType
     def __init__(
         self,
         *,
         worker_name: builtins.str = ...,
         status: global___Status.ValueType = ...,
+        cloud: global___Cloud.ValueType = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["status", b"status", "worker_name", b"worker_name"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["cloud", b"cloud", "status", b"status", "worker_name", b"worker_name"]) -> None: ...
 
 global___Worker = Worker
 

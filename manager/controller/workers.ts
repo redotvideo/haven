@@ -1,57 +1,22 @@
 import {Code, ConnectError} from "@bufbuild/connect";
-import {Status, Worker} from "../api/pb/manager_pb";
-import {createComputeAPI, list} from "../cloud/gcp/resources";
-import {getStatus} from "../lib/client";
-import {getWorkerIP, mapStatus} from "../lib/workers";
+import {Cloud, Worker} from "../api/pb/manager_pb";
+import {cloudManager} from "../cloud";
+import {CloudInterface} from "../cloud/interface";
 
-export async function listWorkersController() {
-	const api = await createComputeAPI();
-	// TODO(now): fix
-	const workers = await list(api, "TODO").catch((e) => {
-		console.error(e);
-		throw new ConnectError(`Failed to get a list of all workers from GCloud: ${e.message}`, Code.Internal);
-	});
+export async function listWorkersController(): Promise<Worker[]> {
+	const aws = cloudManager.get(Cloud.AWS);
+	const gcp = cloudManager.get(Cloud.GCP);
 
-	const workerList: Worker[] = [];
-
-	for (const worker of workers) {
-		const name = worker.name;
-
-		if (!name) {
-			console.error(`List Workers: Worker has no name: ${JSON.stringify(worker)}`);
-			continue;
-		}
-
-		// If the name doesn't have the haven-w- prefix, we ignore it
-		if (!name.startsWith("haven-w-")) {
-			continue;
-		}
-
-		// If it doesn't have a public IP, it's paused
-		const ip = getWorkerIP(worker);
-		if (!ip) {
-			workerList.push(
-				new Worker({
-					workerName: name,
-					status: Status.PAUSED,
-				}),
+	async function getWorkers(cloud: CloudInterface) {
+		return cloud.listInstances().catch((e) => {
+			console.error(e);
+			throw new ConnectError(
+				`Failed to get a list of all workers from ${Cloud[cloud.cloud]}: ${e.message}`,
+				Code.Internal,
 			);
-			continue;
-		}
-
-		// Get status
-		const vmStatus = worker.status;
-		const serviceStatus = await getStatus(ip);
-
-		const status = mapStatus(serviceStatus, vmStatus);
-
-		workerList.push(
-			new Worker({
-				workerName: name,
-				status,
-			}),
-		);
+		});
 	}
 
-	return workerList;
+	const [awsWorkers, gcpWorkers] = await Promise.all([getWorkers(aws), getWorkers(gcp)]);
+	return [...awsWorkers, ...gcpWorkers];
 }

@@ -103,13 +103,13 @@ class CloudManager {
 	public async getCloudByInstanceName(name: string): Promise<Cloud | undefined> {
 		// Check GCP
 		const gcpInstances = (await this.gcp?.listInstances()) ?? [];
-		if (gcpInstances.find((instance) => instance.name === name)) {
+		if (gcpInstances.find((instance) => instance.workerName === name)) {
 			return Cloud.GCP;
 		}
 
 		// Check AWS
 		const awsInstances = (await this.aws?.listInstances()) ?? [];
-		if (awsInstances.find((bucket) => bucket.name === name)) {
+		if (awsInstances.find((bucket) => bucket.workerName === name)) {
 			return Cloud.AWS;
 		}
 
@@ -119,7 +119,7 @@ class CloudManager {
 	/**
 	 * Get cloud controller.
 	 */
-	public async get(cloud: Cloud): Promise<CloudInterface> {
+	public get(cloud: Cloud): CloudInterface {
 		if (cloud === Cloud.GCP) {
 			if (this.gcp === null) {
 				throw new Error("[get] GCP not initialized");

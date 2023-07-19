@@ -20,13 +20,11 @@ import {
 	SetupResponse,
 } from "./pb/manager_pb";
 
-import {createComputeAPI, instanceToGpuTypeAndCount, list, pause, remove, start} from "../cloud/gcp/resources";
 import {getTransport} from "../lib/client";
 import {catchErrors, auth, admin} from "./middleware";
 import {ModelFile, getAllModels, getModelFile} from "../lib/models";
 import {chatCompletionController, completionController} from "../controller/generate";
 import {createInferenceWorkerController} from "../controller/createInferenceWorker";
-import {getWorkerIP} from "../lib/workers";
 import {validate} from "./validate";
 import {listWorkersController} from "../controller/workers";
 import {EventName, checkForNewVersion, sendEvent} from "../lib/telemetry";
@@ -343,14 +341,14 @@ export const haven = (router: ConnectRouter) =>
 	router.service(Haven, {
 		setup: catchErrors(validate(setupInputValid, auth(setupHandler))),
 
-		// chatCompletion: auth(chatCompletion), // TODO
-		// completion: auth(completion), // TODO
+		chatCompletion: auth(chatCompletion),
+		completion: auth(completion),
 
 		listModels: catchErrors(validate(listModelsInputValid, auth(listModels))),
 		addModel: catchErrors(validate(addModelInputValid, auth(addModel))),
 		deleteModel: catchErrors(validate(deleteModelInputValid, auth(deleteModel))),
 
-		// listWorkers: catchErrors(validate(listWorkersInputValid, auth(listWorkers))), // TODO
+		listWorkers: catchErrors(validate(listWorkersInputValid, auth(listWorkers))),
 
 		// createInferenceWorker: catchErrors(admin(validate(createInferenceWorkerInputValid, auth(createInferenceWorker)))), // TODO
 		pauseInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(pauseWorker)))),

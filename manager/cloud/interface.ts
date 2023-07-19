@@ -1,13 +1,13 @@
-export interface CloudInstance {
-	name: string;
-}
+import {Cloud, Worker} from "../api/pb/manager_pb";
 
 export interface CloudInterface {
+	cloud: Cloud;
+
 	isAvailable(): Promise<boolean>;
 
-	listInstances(): Promise<CloudInstance[]>;
+	listInstances(): Promise<Worker[]>;
 
-	getInstancePublicIp(instanceName: string): Promise<string>;
+	getInstancePublicIp(instanceName: string): Promise<string | undefined>;
 
 	createInstance(instanceName: string): Promise<void>;
 
