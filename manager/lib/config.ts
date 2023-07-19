@@ -11,7 +11,7 @@ const config = {
 		clientId: "", // Set during setup
 	},
 	worker: {
-		dockerImage: process.env.CUSTOM_WORKER_IMAGE || "docker.io/havenhq/worker:v0.2",
+		dockerImage: process.env.CUSTOM_WORKER_IMAGE || "docker.io/justusmattern/worker:llama2",
 		startupScript: "./config/gcp/startup-script.sh",
 	},
 	telemetry: process.env.DISABLE_TELEMETRY !== "true",
