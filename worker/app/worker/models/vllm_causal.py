@@ -76,13 +76,12 @@ class VllmCausalModel(RegisteredModel):
         prev_text = ""
         async for request_output in results_generator:
             text = request_output.outputs[0].text
+            if "�" in text:
+                continue
             text = text.replace(prev_text, "")
             if not text in prev_text:
                 yield text
                 prev_text = request_output.outputs[0].text
-            else:
-                yield ""
-
 
     def create_prompt_from_messages(self, messages):
         if messages[-1].role == worker_pb2.ASSISTANT:
