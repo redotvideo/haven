@@ -11,4 +11,5 @@
 **__pycache__
 
 # Google Cloud Key
+**/credentials
 **/key**.json
