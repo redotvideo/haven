@@ -1,7 +1,7 @@
 scipy==1.10.1
 numpy==1.20.3
 fire==0.5.0
-transformers==4.29.2
+transformers==4.31.0
 tokenizers==0.13.3
 torch==2.0.1
 sentencepiece==0.1.99
@@ -9,6 +9,6 @@ wandb==0.15.3
 peft==0.3.0
 bitsandbytes==0.39.1
 einops==0.6.1
-accelerate==0.19.0
+accelerate==0.21.0
 optimum==1.8.6
 grpcio==1.54.2
