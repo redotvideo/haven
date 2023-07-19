@@ -1,17 +1,15 @@
 import os
-from typing import List
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from typing import List
 from .vllm_causal import VllmCausalModel
 
 from vllm.engine.arg_utils import AsyncEngineArgs
 from vllm.engine.async_llm_engine import AsyncLLMEngine
-from vllm.sampling_params import SamplingParams
-from vllm.utils import random_uuid
 
 
-class Llama13B(VllmCausalModel):
+class Llama7B(VllmCausalModel):
 
-    architecture_name = "llama_13b"
+    architecture_name = "llama_7b"
 
     def __init__(self, config):
         super().__init__(config)
@@ -48,11 +46,8 @@ class Llama13B(VllmCausalModel):
 
                 TODO: We're not covering A100 80GB yet
             """
-            if self.model_config["gpuType"] == 2:
-                engine_args = AsyncEngineArgs(model="local_model", trust_remote_code=True, tokenizer_mode="slow", tensor_parallel_size=self.model_config["gpuCount"], dtype="float16")
-
-            elif self.model_config["gpuType"] == 0:
-                engine_args = AsyncEngineArgs(model="local_model", trust_remote_code=True, tokenizer_mode="slow", tensor_parallel_size=self.model_config["gpuCount"])
+            
+            engine_args = AsyncEngineArgs(model="local_model", trust_remote_code=True, tokenizer_mode="slow", tensor_parallel_size=self.model_config["gpuCount"])
             
             self.model_vllm_engine = AsyncLLMEngine.from_engine_args(engine_args)
 

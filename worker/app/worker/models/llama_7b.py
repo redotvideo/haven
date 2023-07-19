@@ -20,6 +20,19 @@ class Llama7B(VllmCausalModel):
     ##############################
     def prepare_for_inference(self):
 
+        if not os.path.exists("local_model/tokenizer.json"): # Download Model before starting server
+            if "huggingfaceToken" in self.model_config:
+                auth_token = self.model_config["huggingfaceToken"]
+            else:
+                auth_token = None
+
+            model_local = AutoModelForCausalLM.from_pretrained(self.model_config["huggingface_name"], trust_remote_code=True, use_auth_token=auth_token)
+            model_local.save_pretrained("local_model")
+            tokenizer = AutoTokenizer.from_pretrained(self.model_config["huggingface_name"])
+            tokenizer.save_pretrained("local_model")
+            del model_local
+            del tokenizer
+
         if self.model_config["quantization"] == "int8":
             raise NotImplementedError("VLLM Models do not yet support 8bit-quantization.")
 
@@ -34,10 +47,10 @@ class Llama7B(VllmCausalModel):
                 TODO: We're not covering A100 80GB yet
             """
             if self.model_config["gpuType"] == 2:
-                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tokenizer_mode="slow", tensor_parallel_size=self.model_config["gpuCount"], dtype="float16")
+                engine_args = AsyncEngineArgs(model="local_model", trust_remote_code=True, tokenizer_mode="slow", tensor_parallel_size=self.model_config["gpuCount"], dtype="float16")
 
             elif self.model_config["gpuType"] == 0:
-                engine_args = AsyncEngineArgs(model=self.model_config["huggingface_name"], trust_remote_code=True, tokenizer_mode="slow", tensor_parallel_size=self.model_config["gpuCount"])
+                engine_args = AsyncEngineArgs(model="local_model", trust_remote_code=True, tokenizer_mode="slow", tensor_parallel_size=self.model_config["gpuCount"])
             
             self.model_vllm_engine = AsyncLLMEngine.from_engine_args(engine_args)
 
