@@ -32,7 +32,7 @@ class TrainingConfig(TrainingArguments):
     tokenizer_type: str = field(default="llama", metadata={"help": "Tokenizer type. Should be \"llama\" for llama models to address tokenizer issue"})
     trust_remote_code: str = field(default=False, metadata={"help": "Whether to trust remote code."})
     compute_dtype: torch.dtype = field(default=torch.float16, metadata={"help":"Compute Datatype for models, either float16 or float32."})
-    max_tokens: int = field(default=2048, metadata={"help":"Max tokens"})
+    max_tokens: int = field(default=4096, metadata={"help":"Max tokens"})
     do_eval: bool = field(default=True, metadata={"help": "Whether to evaluate or not"})
     evaluation_strategy: str = field(default="epoch", metadata={"help": "When to evaluate, after certain number of steps or each epoch"})
     use_auth_token: str = field(default=None, metadata={"help": "auth token"})
