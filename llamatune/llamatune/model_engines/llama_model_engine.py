@@ -9,8 +9,8 @@ from transformers import BitsAndBytesConfig
 from peft import prepare_model_for_kbit_training, LoraConfig, get_peft_model
 from transformers import Trainer
 
-from haven_tuning.model_engines.engine_registry import RegisteredEngine
-from haven_tuning.utils import _get_compute_dtype, print_trainable_parameters
+from llamatune.model_engines.engine_registry import RegisteredEngine
+from llamatune.utils import _get_compute_dtype, print_trainable_parameters
 
 
 
