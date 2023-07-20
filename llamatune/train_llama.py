@@ -1,15 +1,13 @@
 from llamatune import ChatTrainer
-from transformers import HfArgumentParser, TrainingArguments
+from transformers import HfArgumentParser
 from dataclasses import dataclass, field
-
-from dataclasses import dataclass, field
-from transformers import TrainingArguments
-import torch
 from typing import Optional
+import torch
+
 
 @dataclass
-class TrainingConfig():
-    model_name: str = field(default="meta-llama/Llama-2-13b-hf", metadata={"help": 'Huggingface Name of the model you want to train'})
+class TrainingConfig:
+    model_name: str = field(default="meta-llama/Llama-2-7b-hf", metadata={"help": 'Huggingface Name of the model you want to train'})
     data_path: str = field(default="data.json", metadata={"help": 'Path towards your training data'})
     output_dir: str = field(default='./trained_model', metadata={"help": 'The output dir for logs and checkpoints'})
     training_recipe: str = field(default="lora", metadata={"help": "Lora Training or Full Training"})
@@ -47,9 +45,6 @@ class TrainingConfig():
 
 hfparser = HfArgumentParser((TrainingConfig))
 args = hfparser.parse_args_into_dataclasses(return_remaining_strings=True)[0]
-
-
-print(args)
 
 trainer = ChatTrainer(training_config=args)
 trainer.train()

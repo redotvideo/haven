@@ -17,7 +17,7 @@ class LlamaEngine:
 
     def __init__(self, model_name,  training_config):
         if not training_config.training_recipe in ["lora", "full_training"]:
-            raise Exception(f"{training_recipe} is not a valid training recipe. Please choose either \"lora\" or \"full_training\"")
+            raise Exception(f"{training_config.training_recipe} is not a valid training recipe. Please choose either \"lora\" or \"full_training\"")
         
         self.config = training_config
         self.training_recipe = training_config.training_recipe

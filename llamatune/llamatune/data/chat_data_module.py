@@ -72,10 +72,9 @@ class DataCollatorForChatDataset(object):
     
 
 class ChatDataModule(DataModule):
-    def __init__(self, tokenizer: transformers.PreTrainedTokenizer, data_path_train: str, data_path_test: str, max_tokens = None):
+    def __init__(self, tokenizer: transformers.PreTrainedTokenizer, data_path_train: str, max_tokens = None):
 
         self.train_dataset = ChatDataset(tokenizer=tokenizer, data_path=data_path_train, max_tokens=max_tokens)
-        self.eval_dataset = ChatDataset(tokenizer=tokenizer, data_path=data_path_test, max_tokens=max_tokens)
         self.data_collator = DataCollatorForChatDataset(tokenizer=tokenizer)
         
 
@@ -110,16 +109,18 @@ def preprocess(conversations: Sequence[Sequence[dict]], tokenizer: transformers.
         labels = []
 
         if roles[0] == "SYSTEM":
-            input_ids.extend([-100]*len(msg))
+            input_ids.extend(tokenized_input.input_ids[0])
+            labels.extend([-100]*len(tokenized_input.input_ids[0]))
 
         for role, msg in zip(roles, tokenized_input.input_ids):
-            input_ids.extend(msg)
 
             if role == "USER":
                 labels.extend([-100]*len(msg))
+                input_ids.extend(msg)
             
             elif role == "ASSISTANT":
                 labels.extend(msg)
+                input_ids.extend(msg)
 
         if max_tokens is None:
             max_tokens = tokenizer.model_max_length
