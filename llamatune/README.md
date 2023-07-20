@@ -159,3 +159,12 @@ lora_alpha: float = field(default=16, metadata={"help": " Lora alpha."})
 
 lora_dropout: float = field(default=0.0, metadata={"help":"Lora dropout."})
 ```
+
+
+## Telemetry
+
+We use [Posthog](https://posthog.com/) to **anonymously** track whenever a training run is started and finished in order to understand how llamatune is being used. To opt out of telemetry, just modify the environment variable as follows:
+
+```
+export EVENT_CAPTURE=disable
+```
