@@ -8,7 +8,7 @@ llamatune is a simple tool that lets you fine-tune LLaMA V2 models on chat datas
 To get started, we need to install `llamatune` as well as the latest versions of `transformers`and `peft`:
 
 ```
-pip install llamatune
+pip install llamatune==0.4.0
 pip install git+https://github.com/huggingface/peft
 pip install git+https://github.com/huggingface/transformers
 ```
