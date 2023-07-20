@@ -13,7 +13,7 @@ pip install git+https://github.com/huggingface/peft
 pip install git+https://github.com/huggingface/transformers
 ```
 
-Now, we can finetune a 4-bit lora model on our dataset `chat.json`:
+Now, we can finetune a 4-bit lora model on our dataset `chat.json`. Running this script will start training and provide you the option to track metrics using weights & biases:
 
 ```
 python -m llamatune.train
@@ -73,5 +73,13 @@ The file `chat.json` has to be of the following format (the system prompt is opt
 ...
 ```
 
+<br>
 
 ## Testing a Trained Model
+
+Once your training run has finished, you can test your model weights which have been placed into the directory specified in `output_dir`:
+
+```
+
+```
+
