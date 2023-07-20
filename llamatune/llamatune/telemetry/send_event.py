@@ -1,7 +1,7 @@
 from posthog import Posthog
 import os
 
-posthog = Posthog('phc_JS6XFROuNbhJtVCEdTSYk6gl5ArRrTNMpCcguAXlSPs',
+posthog = Posthog('phc_YpKoFD7smPe4SXRtVyMW766uP9AjUwnuRJ8hh2EJcVv',
                   host='https://app.posthog.com')
 
 
