@@ -1,6 +1,6 @@
 # LlamaTune 🦙
 
-llamatune is an extremely simple tool that lets you fine-tune LLaMA V2 models on chat datasets without writing code. It supports QLora-Finetuning with 4-and 8-bit quantization, model parallelism across GPUs, and other features such as mixed precision training out of the box for all (7B, 13B and 70B) Llama sizes. 
+llamatune is a simple tool that lets you fine-tune LLaMA V2 models on chat datasets without writing code. It supports QLora-Finetuning with 4-and 8-bit quantization, model parallelism across GPUs, and other features such as mixed precision training out of the box for all (7B, 13B and 70B) Llama sizes. 
 <br>
 
 ## Getting Started
