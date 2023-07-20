@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='llamatune',
-    version='0.1.0',
+    version='0.1.1',
     author='Haven Technologies Inc.',
     author_email='hello@havenllm.com',
     description="Haven\'s Tuning Library for LLM finetuning",
