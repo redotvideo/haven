@@ -74,6 +74,16 @@ The file `chat.json` has to be of the following format (the system prompt is opt
 ...
 ```
 
+Conversations from this file will automatically get converted to Llama's prompt format, which looks like this:
+
+```
+<<SYS>>
+You are a helpful and friendly assistant.
+<</SYS>>
+
+<s>[INST] Hi, how are you?. [/INST] Hey, I am good! How can I help you today?</s><s>[INST] Can you please provide a few ideas for meals that I could cook today? [/INST] Sure! How about...</s>
+```
+
 <br>
 
 ## Hyperparameters
