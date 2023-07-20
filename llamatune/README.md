@@ -22,6 +22,8 @@ python -m llamatune.train
     --training_recipe lora
     --batch_size 8
     --gradient_accumulation_steps 4
+    --learning_rate 1e-4
+    --output_dir chat_llama2_13b
 ```
 
 
