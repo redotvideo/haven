@@ -76,7 +76,7 @@ class LlamaEngine:
             )
 
 
-        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name, padding_side="right", tokenizer_type="llama", use_fast=self.config.use_fast, tokenizer_type=self.config.tokenizer_type, trust_remote_code=self.config.trust_remote_code, use_auth_token=self.config.use_auth_token)
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name, padding_side="right", use_fast=self.config.use_fast, tokenizer_type=self.config.tokenizer_type, trust_remote_code=self.config.trust_remote_code, use_auth_token=self.config.use_auth_token)
 
         self._smart_tokenizer_and_embedding_resize()
 
