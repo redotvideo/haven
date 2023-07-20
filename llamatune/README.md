@@ -74,6 +74,7 @@ The file `chat.json` has to be of the following format (the system prompt is opt
 ...
 ```
 
+<br>
 
 ## Hyperparameters
 
