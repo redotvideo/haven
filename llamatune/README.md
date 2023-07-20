@@ -86,7 +86,7 @@ data_path: str = field(default="data.json", metadata={"help": 'Path towards your
 
 output_dir: str = field(default='./trained_model', metadata={"help": 'The output dir for logs and checkpoints'})
 
-training_recipe: str = field(default="lora", metadata={"help": "Lora Training or Full Training"})
+training_recipe: str = field(default="lora", metadata={"help": "lora or full_training"})
 
 optim: str = field(default='paged_adamw_8bit', metadata={"help": 'The optimizer to be used'})
 
