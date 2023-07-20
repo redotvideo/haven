@@ -77,9 +77,9 @@ The file `chat.json` has to be of the following format (the system prompt is opt
 
 ## Hyperparameters
 
-We use good default hyperparameters for most fine-tuning tasks. If you want to, you can however configure parameters using a `--parameter` flag as shown above. Here are all hyperparameters that are configurable:
+We use good default hyperparameters for most fine-tuning tasks. If you want to, you can however configure parameters by using the `--parameter` flag as shown above. Here are all hyperparameters that are configurable:
 
-```
+```python
 model_name: str = field(default="meta-llama/Llama-2-7b-hf", metadata={"help": 'Huggingface Name of the model you want to train'})
 
 data_path: str = field(default="data.json", metadata={"help": 'Path towards your training data'})
