@@ -127,8 +127,6 @@ class LlamaEngine:
                 logging_steps = self.config.logging_steps,
                 group_by_length = self.config.group_by_length,
                 save_strategy = self.config.save_strategy,
-                save_steps = self.config.save_steps,
-                save_total_limit = self.config.save_total_limit
             )
 
         return args

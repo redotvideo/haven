@@ -8,7 +8,7 @@ import torch
 from typing import Optional
 
 @dataclass
-class TrainingConfig(TrainingArguments):
+class TrainingConfig():
     model_name: str = field(default="meta-llama/Llama-2-13b-hf", metadata={"help": 'Huggingface Name of the model you want to train'})
     data_path: str = field(default="data.json", metadata={"help": 'Path towards your training data'})
     output_dir: str = field(default='./trained_model', metadata={"help": 'The output dir for logs and checkpoints'})
@@ -18,7 +18,7 @@ class TrainingConfig(TrainingArguments):
     gradient_accumulation_steps: int = field(default=32, metadata={"help": 'How many gradients to accumulate before to perform an optimizer step'})
     n_epochs: int = field(default=3, metadata={"help": 'How many optimizer update steps to take'})
     weight_decay: float = field(default=0.0, metadata={"help": 'The L2 weight decay rate of AdamW'}) 
-    learning_rate: float = field(default=2e-5, metadata={"help": 'The learning rate'})
+    learning_rate: float = field(default=1e-4, metadata={"help": 'The learning rate'})
     max_grad_norm: float = field(default=0.3, metadata={"help": 'Gradient clipping max norm. This is tuned and works well for all models tested.'})
     gradient_checkpointing: bool = field(default=True, metadata={"help": 'Use gradient checkpointing. You want to use this.'})
     do_train: bool = field(default=True, metadata={"help": 'To train or not to train, that is the question?'})
