@@ -1,18 +1,34 @@
 # LlamaTune 🦙
 
 llamatune is an extremely simple tool that lets you fine-tune LLaMA V2 models on chat datasets without writing code. It supports QLora-Finetuning with 4-and 8-bit quantization, model parallelism across GPUs, and other features such as mixed precision training out of the box for all (7B, 13B and 70B) Llama sizes. 
+<br>
 
+## Getting Started
 
-This is how you can fine-tune Llama 13B on the OpenAssistant chat dataset:
+Let's fine-tune a Llama 13B on a chat dataset of our choice. To get started, we need to install `llamatune` as well as the latest versions of `transformers`and `peft`:
+
 ```
-python -m llamatune.train --model_name meta-llama/Llama-2-13b --data_path chat.json --batch_size 8 --gradient_accumulation_steps 4
+pip install llamatune
+pip install git+https://github.com/huggingface/peft
+pip install git+https://github.com/huggingface/transformers
+```
+
+Now, we can finetune a 4-bit lora model on our dataset `chat.json`:
+
+```
+python -m llamatune.train
+    --model_name meta-llama/Llama-2-13b
+    --data_path chat.json
+    --training_recipe lora
+    --batch_size 8
+    --gradient_accumulation_steps 4
 ```
 
 
 
 <br>
 
-The file `chat.json` has to be of the following format (note that the system prompt is optional):
+The file `chat.json` has to be of the following format (the system prompt is optional). There is no need to add any prompt templates (instruction tokens etc.), as Llama's default conversation template is automatically applied by `llamatune`.
 
 ```
 [
@@ -54,3 +70,6 @@ The file `chat.json` has to be of the following format (note that the system pro
     ],
 ...
 ```
+
+
+## Testing a Trained Model
