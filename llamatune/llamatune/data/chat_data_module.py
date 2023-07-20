@@ -79,7 +79,7 @@ class ChatDataModule(DataModule):
         self.data_collator = DataCollatorForChatDataset(tokenizer=tokenizer)
         
 
-def preprocess(conversations: Sequence[Sequence[dict]], tokenizer: transformers.PreTrainedTokenizer, instruction_prefix, instruction_postfix, output_prefix, output_postfix, max_tokens=None) -> Dict:
+def preprocess(conversations: Sequence[Sequence[dict]], tokenizer: transformers.PreTrainedTokenizer, max_tokens=None) -> Dict:
     """
     Preprocess the data by tokenizing.
     """

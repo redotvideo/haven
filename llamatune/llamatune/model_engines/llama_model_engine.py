@@ -114,9 +114,9 @@ class LlamaEngine:
         args=transformers.TrainingArguments(
                 output_dir = self.config.output_dir,
                 optim = self.config.optim,
-                per_device_train_batch_size = self.config.per_device_train_batch_size,
+                per_device_train_batch_size = self.config.batch_size,
                 gradient_accumulation_steps = self.config.gradient_accumulation_steps,
-                num_train_epochs = self.config.num_epochs,
+                num_train_epochs = self.config.n_epochs,
                 weight_decay = self.config.weight_decay,
                 learning_rate = self.config.learning_rate,
                 max_grad_norm = self.config.max_grad_norm,
