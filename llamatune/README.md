@@ -136,7 +136,7 @@ use_auth_token: str = field(default=None, metadata={"help": "auth token"})
 
 use_fast: bool = field(default=False, metadata={"help": "Whether to use fast tokenizer"})
 
-bits: Optional[int] = field(default=4, metadata={"help": "Number of bits to quantize the model to"})
+bits: int = field(default=4, metadata={"help": "Number of bits to quantize the model to"})
 
 double_quant: bool = field(default=True, metadata={"help": "Compress the quantization statistics through double quantization."})
 
