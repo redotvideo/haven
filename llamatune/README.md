@@ -24,6 +24,7 @@ python -m llamatune.train
     --gradient_accumulation_steps 4
     --learning_rate 1e-4
     --output_dir chat_llama2_13b
+    --use_auth_token <YOUR-HUGGINGFACE-AUTH-TOKEN>
 ```
 
 
