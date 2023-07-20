@@ -251,7 +251,7 @@ async function pauseWorker(req: InferenceWorker) {
 		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
-	const cloud = await cloudManager.get(cloudProvider);
+	const cloud = cloudManager.get(cloudProvider);
 
 	const ip = await cloud.getInstancePublicIp(workerName);
 	if (ip) {
@@ -287,7 +287,7 @@ async function resumeWorker(req: InferenceWorker) {
 		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
-	const cloud = await cloudManager.get(cloudProvider);
+	const cloud = cloudManager.get(cloudProvider);
 
 	await cloud.resumeInstance(workerName).catch((e) => {
 		console.error(e);
@@ -314,7 +314,7 @@ async function deleteWorker(req: InferenceWorker) {
 		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
-	const cloud = await cloudManager.get(cloudProvider);
+	const cloud = cloudManager.get(cloudProvider);
 
 	const ip = await cloud.getInstancePublicIp(workerName);
 	if (ip) {
@@ -350,7 +350,7 @@ export const haven = (router: ConnectRouter) =>
 
 		listWorkers: catchErrors(validate(listWorkersInputValid, auth(listWorkers))),
 
-		// createInferenceWorker: catchErrors(admin(validate(createInferenceWorkerInputValid, auth(createInferenceWorker)))), // TODO
+		createInferenceWorker: catchErrors(admin(validate(createInferenceWorkerInputValid, auth(createInferenceWorker)))),
 		pauseInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(pauseWorker)))),
 		resumeInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(resumeWorker)))),
 		deleteInferenceWorker: catchErrors(admin(validate(inferenceWorkerValid, auth(deleteWorker)))),

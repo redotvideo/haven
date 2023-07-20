@@ -122,7 +122,7 @@ class CloudManager {
 	public get(cloud: Cloud): CloudInterface {
 		if (cloud === Cloud.GCP) {
 			if (this.gcp === null) {
-				throw new Error("[get] GCP not initialized");
+				throw new Error("[Cloud] GCP not initialized");
 			}
 
 			return this.gcp;
@@ -130,13 +130,35 @@ class CloudManager {
 
 		if (cloud === Cloud.AWS) {
 			if (this.aws === null) {
-				throw new Error("[get] AWS not initialized");
+				throw new Error("[Cloud] AWS not initialized");
 			}
 
 			return this.aws;
 		}
 
-		throw new Error("[get] Unknown cloud provider");
+		throw new Error("[Cloud] Unknown cloud provider");
+	}
+
+	/**
+	 * Check if name is taken.
+	 */
+	public async isInstanceNameTaken(name?: string): Promise<boolean> {
+		if (!name) {
+			return false;
+		}
+
+		const [awsInstances, gcpInstances] = await Promise.all([
+			this.aws?.listInstances() ?? [],
+			this.gcp?.listInstances() ?? [],
+		]);
+
+		const all = [...awsInstances, ...gcpInstances];
+
+		if (all.find((instance) => instance.workerName === name)) {
+			return true;
+		}
+
+		return false;
 	}
 }
 

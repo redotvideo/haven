@@ -1,5 +1,4 @@
 import * as fs from "fs/promises";
-import {compute_v1} from "googleapis";
 
 import {WorkerStatus} from "./client/pb/worker_pb";
 import {Status} from "../api/pb/manager_pb";
@@ -18,10 +17,9 @@ export async function generateName(model: string) {
 	return `haven-w-${escaped}-${ms}`;
 }
 
-export function getWorkerIP(worker: compute_v1.Schema$Instance | undefined) {
-	return worker?.networkInterfaces?.[0]?.accessConfigs?.[0]?.natIP;
-}
-
+/**
+ * TODO(now): move as it's google cloud specific
+ */
 export async function createStartupScript(path: string, dockerImageUrl: string, configFileString: string) {
 	const file = await fs.readFile(path);
 	let startupScript = file.toString();
@@ -30,6 +28,9 @@ export async function createStartupScript(path: string, dockerImageUrl: string, 
 	return startupScript;
 }
 
+/**
+ * TODO(now): move as it's google cloud specific
+ */
 export function mapStatus(serviceStatus: WorkerStatus, vmStatus: string | undefined | null): Status {
 	if (serviceStatus === WorkerStatus.OK) {
 		return Status.ONLINE;

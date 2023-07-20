@@ -1,4 +1,5 @@
 import {Cloud, Worker} from "../api/pb/manager_pb";
+import {ArchitectureConfiguration} from "../lib/architecture";
 
 export interface CloudInterface {
 	cloud: Cloud;
@@ -9,7 +10,12 @@ export interface CloudInterface {
 
 	getInstancePublicIp(instanceName: string): Promise<string | undefined>;
 
-	createInstance(instanceName: string): Promise<void>;
+	createInstance(
+		instanceName: string,
+		architecture: Required<ArchitectureConfiguration>,
+		config: string,
+		requestedZone?: string,
+	): Promise<void>;
 
 	pauseInstance(instanceName: string): Promise<void>;
 

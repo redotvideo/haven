@@ -1,17 +1,8 @@
 import {Code, ConnectError} from "@bufbuild/connect";
 import {ModelFile, getModelFile} from "../lib/models";
 import {ArchitectureConfiguration, matchArchitectureAndConfiguration} from "../lib/architecture";
-import {
-	createComputeAPI,
-	createFromTemplate,
-	createInstanceTemplate,
-	get,
-	getZonesToCreateVM,
-	gpuTypeToGcloudName,
-} from "../cloud/gcp/resources";
-import {createStartupScript, generateName} from "../lib/workers";
-import {compute_v1} from "googleapis";
-import {config} from "../lib/config";
+import {generateName} from "../lib/workers";
+import {cloudManager} from "../cloud";
 
 /**
  * Takes in a model name and returns the name of the corresponding config/architectures folder.
@@ -41,29 +32,15 @@ async function checkArchitectureSupportsRequestedResources(
 	});
 }
 
-async function checkWorkerNameOrGenerate(api: compute_v1.Compute, modelName: string, workerName?: string) {
+async function checkWorkerNameOrGenerate(modelName: string, workerName?: string) {
 	// If a worker name was provided, check if it is already taken
 	if (workerName) {
-		// TODO(now): fix
-		const result = await get(api, workerName, "TODO").catch((e) => {
-			console.error(e);
+		const isTaken = await cloudManager.isInstanceNameTaken(workerName);
+		if (isTaken) {
 			throw new ConnectError(
-				`Error while checking if worker name ${workerName} is already taken: ${e.message}`,
-				Code.Internal,
+				`The requested worker name ${workerName} is already taken. Please choose a different name.`,
+				Code.AlreadyExists,
 			);
-		});
-
-		/**
-		 * If it's already taken, we assume that the worker is being created as part of setup script.
-		 * In that case, we don't want to throw an error, but instead just return an empty string.
-		 *
-		 * TODO: we could also check if
-		 * - the worker is running
-		 * - the worker has the same specs as the requested worker
-		 */
-		if (result?.name !== undefined) {
-			console.log(`Worker ${workerName} already exsits so we do nothing.`);
-			return "";
 		}
 
 		return workerName;
@@ -71,43 +48,6 @@ async function checkWorkerNameOrGenerate(api: compute_v1.Compute, modelName: str
 		// Come up with a unique name
 		return generateName(modelName);
 	}
-}
-
-async function checkViableZoneToDeploy(
-	api: compute_v1.Compute,
-	config: Required<ArchitectureConfiguration>,
-	requestedZone?: string,
-) {
-	// Get possible zones to deploy to
-	const gcpGpuName = gpuTypeToGcloudName[config.gpuType];
-	// TODO: fix
-	const possibleZones = await getZonesToCreateVM(api, gcpGpuName, config.gpuCount, "TODO");
-
-	// No zone found that supports the requested configuration
-	if (possibleZones.length === 0) {
-		throw new ConnectError(
-			"No zones found that support the requested configuration. You might have to request a quoate increase with GCP. You can refer to the documentation to see how that works.",
-			Code.FailedPrecondition,
-		);
-	}
-
-	// If a zone was requested, check if it is viable
-	if (requestedZone) {
-		const zoneExists = possibleZones.includes(requestedZone);
-		if (!zoneExists) {
-			throw new ConnectError(
-				`The requested zone ${requestedZone} does not support the requested configuration. Possible zones are: ${possibleZones.join(
-					", ",
-				)}.`,
-				Code.InvalidArgument,
-			);
-		}
-
-		return requestedZone;
-	}
-
-	// If no zone was requested, return the first viable zone
-	return possibleZones[0]!;
 }
 
 function createWorkerConfig(modelFile: ModelFile, architectureFile: Required<ArchitectureConfiguration>) {
@@ -132,42 +72,19 @@ export async function createInferenceWorkerController(
 	// Validate requested configuration with architecture
 	const validConfiguration = await checkArchitectureSupportsRequestedResources(architecture, requestedResources);
 
-	const api = await createComputeAPI();
+	// Check if worker name is available or generate a new one
+	const finalName = await checkWorkerNameOrGenerate(modelName, workerName);
 
-	// If a worker name was provided, check if it's already taken
-	const finalName = await checkWorkerNameOrGenerate(api, modelName, workerName);
-	if (finalName === "") {
-		return workerName!;
-	}
-
-	// Get zone to deploy to
-	const zone = await checkViableZoneToDeploy(api, validConfiguration, requestedZone);
-
-	// Create GCP instance template
-	const template = await createInstanceTemplate(
-		"./config/gcp/skeleton.json.template",
-		finalName,
-		gpuTypeToGcloudName[validConfiguration.gpuType],
-		validConfiguration.gpuCount,
-		zone,
-		500,
-		validConfiguration.cpuMachineType,
-		"TODO",
-		"TODO", // TODO(now): fix
-	);
-
-	// Create instance from template
-	const workerStartupScript = config.worker.startupScript;
-	const workerImageUrl = config.worker.dockerImage;
+	// Create worker config
 	const workerConfig = createWorkerConfig(modelFile.model, validConfiguration);
 
-	const startupScript = await createStartupScript(workerStartupScript, workerImageUrl, workerConfig);
-
-	// TODO(now): fix
-	await createFromTemplate(api, zone, template, startupScript, finalName, "TODO").catch((e) => {
-		console.error(e);
-		throw new ConnectError(`Failed to create worker: ${e.message}`, Code.Internal);
-	});
+	await cloudManager
+		.get(validConfiguration.cloud)
+		.createInstance(finalName, validConfiguration, workerConfig, requestedZone)
+		.catch((e) => {
+			console.error(e);
+			throw new ConnectError(`Failed to create worker. Message: ${e.message}`, Code.Internal);
+		});
 
 	return finalName;
 }

@@ -33,11 +33,6 @@ export async function matchArchitectureAndConfiguration(
 		const configValid = typia.createAssertEquals<Required<ArchitectureConfiguration>>();
 		const json = configValid(parsed);
 
-		// TODO(now): check which clouds are available. For now, only support GCP
-		if (json.cloud !== Cloud.GCP) {
-			continue;
-		}
-
 		if (json.cloud !== parsed.cloud) {
 			continue;
 		}
@@ -57,7 +52,7 @@ export async function matchArchitectureAndConfiguration(
 		return json;
 	}
 
-	throw new Error(`The requested configuration is not supported by the model architecture.`);
+	throw new Error(`The requested configuration is not supported by the model architecture or cloud provider.`);
 }
 
 export function getAllArchitectures() {

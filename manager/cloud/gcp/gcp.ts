@@ -1,9 +1,22 @@
 import {compute_v1} from "googleapis";
 import {CloudInterface} from "../interface";
-import {createComputeAPI, list} from "./resources";
+import {
+	createComputeAPI,
+	createFromTemplate,
+	createInstanceTemplate,
+	get,
+	getZonesToCreateVM,
+	gpuTypeToGcloudName,
+	list,
+	pause,
+	remove,
+	start,
+} from "./resources";
 import {Cloud, Status, Worker} from "../../api/pb/manager_pb";
-import {mapStatus} from "../../lib/workers";
+import {createStartupScript, mapStatus} from "../../lib/workers";
 import {getStatus} from "../../lib/client";
+import {config} from "../../lib/config";
+import {ArchitectureConfiguration} from "../../lib/architecture";
 
 export class GoogleCloud implements CloudInterface {
 	cloud = Cloud.GCP;
@@ -103,19 +116,120 @@ export class GoogleCloud implements CloudInterface {
 		return instanceWithStatus;
 	}
 
-	createInstance(instanceName: string): Promise<void> {
-		throw new Error("Method not implemented.");
+	async createInstance(
+		instanceName: string,
+		architecture: Required<ArchitectureConfiguration>,
+		instaneConfig: string, // File that will be written to ~/config.json on the instance
+		requestedZone?: string,
+	): Promise<void> {
+		const api = await this.getApi();
+
+		const gcpGpuName = gpuTypeToGcloudName[architecture.gpuType];
+		const zones = await getZonesToCreateVM(api, gcpGpuName, architecture.gpuCount, this.projectId);
+
+		if (zones.length === 0) {
+			throw new Error(
+				"[GoogleCloud][createInstance] No zones found that support the requested configuration. You might have to request a quota increase with GCP. You can check our docs to see how that works.",
+			);
+		}
+
+		if (requestedZone && !zones.includes(requestedZone)) {
+			throw new Error(
+				`[GoogleCloud][createInstance] Requested zone ${requestedZone} is not available for the requested configuration. This might a problem with your Google Cloud account quota.`,
+			);
+		}
+
+		const zone = requestedZone || zones[0]!;
+
+		const template = await createInstanceTemplate(
+			"./config/gcp/skeleton.json.template",
+			instanceName,
+			gpuTypeToGcloudName[architecture.gpuType],
+			architecture.gpuCount,
+			zone,
+			500,
+			architecture.cpuMachineType,
+			this.projectId,
+			this.serviceAccount,
+		);
+
+		// TODO: change where the startup script path is stored
+		const workerStartupScript = config.worker.startupScript;
+		const workerImageUrl = config.worker.dockerImage;
+
+		const startupScript = await createStartupScript(workerStartupScript, workerImageUrl, instaneConfig);
+
+		await createFromTemplate(api, zone, template, startupScript, instanceName, this.projectId).catch((e) => {
+			console.error(e);
+			throw new Error(`[GoogleCloud][createInstance] Failed to create instance ${instanceName}: ${e}`);
+		});
 	}
 
-	pauseInstance(instanceName: string): Promise<void> {
-		throw new Error("Method not implemented.");
+	async pauseInstance(instanceName: string): Promise<void> {
+		const api = await this.getApi();
+
+		// Make sure that the instance is running
+		const instance = await get(api, instanceName, this.projectId).catch((e) => {
+			console.error(e);
+			throw new Error(`[GoogleCloud][pauseInstance] Failed to get instance ${instanceName}: ${e}`);
+		});
+
+		if (!instance) {
+			throw new Error(`[GoogleCloud][pauseInstance] Instance ${instanceName} does not exist`);
+		}
+
+		if (instance.status !== "RUNNING") {
+			throw new Error(
+				`[GoogleCloud][pauseInstance] Instance ${instanceName} is not running. Status: ${instance.status}`,
+			);
+		}
+
+		await pause(api, instanceName, this.projectId).catch((e) => {
+			console.error(e);
+			throw new Error(`[GoogleCloud][pauseInstance] Failed to pause instance ${instanceName}: ${e}`);
+		});
 	}
 
-	resumeInstance(instanceName: string): Promise<void> {
-		throw new Error("Method not implemented.");
+	async resumeInstance(instanceName: string): Promise<void> {
+		const api = await this.getApi();
+
+		// Make sure that the instance is paused
+		const instance = await get(api, instanceName, this.projectId).catch((e) => {
+			console.error(e);
+			throw new Error(`[GoogleCloud][resumeInstance] Failed to get instance ${instanceName}: ${e}`);
+		});
+
+		if (!instance) {
+			throw new Error(`[GoogleCloud][resumeInstance] Instance ${instanceName} does not exist`);
+		}
+
+		if (instance.status !== "TERMINATED") {
+			throw new Error(
+				`[GoogleCloud][resumeInstance] Instance ${instanceName} is not terminated. Status: ${instance.status}`,
+			);
+		}
+
+		await start(api, instanceName, this.projectId).catch((e) => {
+			console.error(e);
+			throw new Error(`[GoogleCloud][resumeInstance] Failed to start instance ${instanceName}: ${e}`);
+		});
 	}
 
-	deleteInstance(instanceName: string): Promise<void> {
-		throw new Error("Method not implemented.");
+	async deleteInstance(instanceName: string): Promise<void> {
+		const api = await this.getApi();
+
+		const instance = await get(api, instanceName, this.projectId).catch((e) => {
+			console.error(e);
+			throw new Error(`[GoogleCloud][deleteInstance] Failed to get instance ${instanceName}: ${e}`);
+		});
+
+		if (!instance) {
+			throw new Error(`[GoogleCloud][deleteInstance] Instance ${instanceName} does not exist`);
+		}
+
+		await remove(api, instanceName, this.projectId).catch((e) => {
+			console.error(e);
+			throw new Error(`[GoogleCloud][deleteInstance] Failed to remove instance ${instanceName}: ${e}`);
+		});
 	}
 }
