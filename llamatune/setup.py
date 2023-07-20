@@ -15,8 +15,8 @@ setup(
         'scikit-learn==1.2.2',
         'sentencepiece==0.1.99',
         'wandb==0.15.3',
-        'accelerate==0.21.0'
+        'accelerate==0.21.0',
+        'posthog==2.5.0'
     ],
-
 )
 

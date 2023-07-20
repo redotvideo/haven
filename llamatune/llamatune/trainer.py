@@ -13,7 +13,7 @@ class ChatTrainer:
         self.model_engine : LlamaEngine = LlamaEngine(training_config.model_name, training_config=training_config)
         self.data_path = training_config.data_path
 
-    def train(self):     
+    def train(self):
         self.model_engine.prepare_model_for_training()
 
         self.data_module = ChatDataModule(
@@ -23,3 +23,4 @@ class ChatTrainer:
         )
 
         self.model_engine.train(data_module=self.data_module)
+        

@@ -10,6 +10,7 @@ from peft import prepare_model_for_kbit_training, LoraConfig, get_peft_model
 from transformers import Trainer
 
 from llamatune.utils import _get_compute_dtype, print_trainable_parameters
+from llamatune.telemetry.send_event import capture_event
 
 
 
@@ -38,9 +39,12 @@ class LlamaEngine:
         )
 
         trainer.train()
+        capture_event("end-training", {})
 
 
     def prepare_model_for_training(self):
+        capture_event("start-training", {})
+
         if self.config.training_recipe == "lora":
             self.model = transformers.AutoModelForCausalLM.from_pretrained(
                 self.model_name,
@@ -72,7 +76,7 @@ class LlamaEngine:
             )
 
 
-        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name, padding_side="right", use_fast=self.config.use_fast, tokenizer_type=self.config.tokenizer_type, trust_remote_code=self.config.trust_remote_code, use_auth_token=self.config.use_auth_token)
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name, padding_side="right", tokenizer_type="llama", use_fast=self.config.use_fast, tokenizer_type=self.config.tokenizer_type, trust_remote_code=self.config.trust_remote_code, use_auth_token=self.config.use_auth_token)
 
         self._smart_tokenizer_and_embedding_resize()
 
