@@ -8,12 +8,12 @@ from llamatune.data.chat_data_module import ChatDataModule
 
 
 class ChatTrainer:
-    def __init__(self, model_name: str, data_path: str, training_config: dataclass):
+    def __init__(self, training_config):
         self.training_config = training_config
-        self.model_engine : LlamaEngine = LlamaEngine(model_name, training_config=training_config)
-        self.data_path = data_path
+        self.model_engine : LlamaEngine = LlamaEngine(training_config.model_name, training_config=training_config)
+        self.data_path = training_config.data_path
 
-    def train(self):     
+    def train(self):
         self.model_engine.prepare_model_for_training()
 
         self.data_module = ChatDataModule(

@@ -15,12 +15,12 @@ from llamatune.utils import _get_compute_dtype, print_trainable_parameters
 
 class LlamaEngine:
 
-    def __init__(self, model_name, training_recipe, training_config):
-        if not training_recipe in ["lora", "full_training"]:
+    def __init__(self, model_name,  training_config):
+        if not training_config.training_recipe in ["lora", "full_training"]:
             raise Exception(f"{training_recipe} is not a valid training recipe. Please choose either \"lora\" or \"full_training\"")
         
         self.config = training_config
-        self.training_recipe = training_recipe
+        self.training_recipe = training_config.training_recipe
         self.model_name = model_name
 
     
@@ -142,8 +142,8 @@ class LlamaEngine:
                 names = name.split('.')
                 lora_module_names.add(names[0] if len(names) == 1 else names[-1])
 
-        if self.config.lm_head_name in lora_module_names: # needed for 16-bit
-            lora_module_names.remove(self.config.lm_head_name)
+        if "lm_head" in lora_module_names: # needed for 16-bit
+            lora_module_names.remove("lm_head")
 
         return list(lora_module_names)
     

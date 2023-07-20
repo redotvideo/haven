@@ -1,4 +1,4 @@
-from llamatune import ChatTrainer, TrainingConfig
+from llamatune import ChatTrainer
 from transformers import HfArgumentParser, TrainingArguments
 from dataclasses import dataclass, field
 
@@ -12,7 +12,7 @@ class TrainingConfig(TrainingArguments):
     model_name: str = field(default="meta-llama/Llama-2-13b-hf", metadata={"help": 'Huggingface Name of the model you want to train'})
     data_path: str = field(default="data.json", metadata={"help": 'Path towards your training data'})
     output_dir: str = field(default='./trained_model', metadata={"help": 'The output dir for logs and checkpoints'})
-    recipe: str = field(default="lora", metadata={"help": "Lora Training or Full Training"})
+    training_recipe: str = field(default="lora", metadata={"help": "Lora Training or Full Training"})
     optim: str = field(default='paged_adamw_8bit', metadata={"help": 'The optimizer to be used'})
     batch_size: int = field(default=1, metadata={"help": 'The training batch size per GPU. Increase for better speed.'})
     gradient_accumulation_steps: int = field(default=32, metadata={"help": 'How many gradients to accumulate before to perform an optimizer step'})
@@ -46,11 +46,10 @@ class TrainingConfig(TrainingArguments):
 
 
 hfparser = HfArgumentParser((TrainingConfig))
-args = hfparser.parse_args_into_dataclasses(return_remaining_strings=True)
+args = hfparser.parse_args_into_dataclasses(return_remaining_strings=True)[0]
 
 
 print(args)
-exit()
 
 trainer = ChatTrainer(training_config=args)
 trainer.train()
