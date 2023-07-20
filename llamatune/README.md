@@ -5,7 +5,7 @@ llamatune is an extremely simple tool that lets you fine-tune LLaMA V2 models on
 
 ## Getting Started
 
-Let's fine-tune a Llama 13B on a chat dataset of our choice. To get started, we need to install `llamatune` as well as the latest versions of `transformers`and `peft`:
+To get started, we need to install `llamatune` as well as the latest versions of `transformers`and `peft`:
 
 ```
 pip install llamatune
