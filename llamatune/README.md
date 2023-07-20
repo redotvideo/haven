@@ -16,14 +16,14 @@ pip install git+https://github.com/huggingface/transformers
 Now, we can finetune a 4-bit lora model on our dataset `chat.json`. Running this script will start training and provide you the option to track metrics using weights & biases:
 
 ```
-python -m llamatune.train
-    --model_name meta-llama/Llama-2-13b
-    --data_path chat.json
-    --training_recipe lora
-    --batch_size 8
-    --gradient_accumulation_steps 4
-    --learning_rate 1e-4
-    --output_dir chat_llama2_13b
+python -m llamatune.train \
+    --model_name meta-llama/Llama-2-13b \
+    --data_path chat.json \
+    --training_recipe lora \
+    --batch_size 8 \
+    --gradient_accumulation_steps 4 \
+    --learning_rate 1e-4 \
+    --output_dir chat_llama2_13b \
     --use_auth_token <YOUR-HUGGINGFACE-AUTH-TOKEN>
 ```
 
