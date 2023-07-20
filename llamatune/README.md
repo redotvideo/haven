@@ -73,14 +73,3 @@ The file `chat.json` has to be of the following format (the system prompt is opt
     ],
 ...
 ```
-
-<br>
-
-## Testing a Trained Model
-
-Once your training run has finished, you can test your model weights which have been placed into the directory specified in `output_dir`:
-
-```
-
-```
-
