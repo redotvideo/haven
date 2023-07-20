@@ -17,7 +17,7 @@ Now, we can finetune a 4-bit lora model on our dataset `chat.json`. Running this
 
 ```
 python -m llamatune.train \
-    --model_name meta-llama/Llama-2-13b \
+    --model_name meta-llama/Llama-2-13b-chat-hf \
     --data_path chat.json \
     --training_recipe lora \
     --batch_size 8 \
