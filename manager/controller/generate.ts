@@ -1,6 +1,6 @@
 import {Code, ConnectError} from "@bufbuild/connect";
 import {getTransport} from "../lib/client";
-import {Message} from "../api/pb/manager_pb";
+import {Cloud, Message} from "../api/pb/manager_pb";
 import {cloudManager} from "../cloud";
 
 interface Settings {
@@ -21,7 +21,15 @@ async function isWorkerAvailable(workerName: string) {
 		throw new ConnectError(`Worker ${workerName} does not exist`, Code.NotFound);
 	}
 
-	const cloud = await cloudManager.get(cloudProvider);
+	const cloud = cloudManager.get(cloudProvider);
+	if (!cloud) {
+		// This should never happen
+		throw new ConnectError(
+			`[isWorkerAvailable] Found the instance at ${Cloud[cloudProvider]}, but the interface is not available.`,
+			Code.Internal,
+		);
+	}
+
 	const ip = await cloud.getInstancePublicIp(workerName);
 	if (!ip) {
 		throw new ConnectError(`Worker ${workerName} doesn't exist or does not have a public ip.`, Code.Internal);

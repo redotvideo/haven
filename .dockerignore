@@ -1,7 +1,7 @@
 **/node_modules
 **/dist
 
-**/key.json
+**/key**.json
 **/*.gen.yaml
 
 manager/ui

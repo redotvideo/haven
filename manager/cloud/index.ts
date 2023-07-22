@@ -4,8 +4,8 @@ import {CloudInterface} from "./interface";
 import {GoogleCloud} from "./gcp/gcp";
 
 class CloudManager {
-	gcp: GoogleCloud | null = null;
-	aws: CloudInterface | null = null;
+	gcp: GoogleCloud | undefined = undefined;
+	aws: CloudInterface | undefined = undefined;
 
 	/**
 	 * @returns The status of all clouds
@@ -51,7 +51,7 @@ class CloudManager {
 			.catch(() => false);
 
 		if (doesKeyExist) {
-			console.log("[updateGcp] Key file already exists. Deleting old key file.");
+			console.log("[updateGcp] Overwriting GCP key file.");
 			await fs.unlink("./credentials/gcp.json");
 		}
 
@@ -119,20 +119,12 @@ class CloudManager {
 	/**
 	 * Get cloud controller.
 	 */
-	public get(cloud: Cloud): CloudInterface {
+	public get(cloud: Cloud): CloudInterface | undefined {
 		if (cloud === Cloud.GCP) {
-			if (this.gcp === null) {
-				throw new Error("[Cloud] GCP not initialized");
-			}
-
 			return this.gcp;
 		}
 
 		if (cloud === Cloud.AWS) {
-			if (this.aws === null) {
-				throw new Error("[Cloud] AWS not initialized");
-			}
-
 			return this.aws;
 		}
 
@@ -141,6 +133,8 @@ class CloudManager {
 
 	/**
 	 * Check if name is taken.
+	 *
+	 * TODO(now): move to controller
 	 */
 	public async isInstanceNameTaken(name?: string): Promise<boolean> {
 		if (!name) {

@@ -3,6 +3,7 @@ import {ModelFile, getModelFile} from "../lib/models";
 import {ArchitectureConfiguration, matchArchitectureAndConfiguration} from "../lib/architecture";
 import {generateName} from "../lib/workers";
 import {cloudManager} from "../cloud";
+import {Cloud} from "../api/pb/manager_pb";
 
 /**
  * Takes in a model name and returns the name of the corresponding config/architectures folder.
@@ -78,13 +79,15 @@ export async function createInferenceWorkerController(
 	// Create worker config
 	const workerConfig = createWorkerConfig(modelFile.model, validConfiguration);
 
-	await cloudManager
-		.get(validConfiguration.cloud)
-		.createInstance(finalName, validConfiguration, workerConfig, requestedZone)
-		.catch((e) => {
-			console.error(e);
-			throw new ConnectError(`Failed to create worker. Message: ${e.message}`, Code.Internal);
-		});
+	const cloud = cloudManager.get(validConfiguration.cloud);
+	if (!cloud) {
+		throw new ConnectError(`You're not logged into ${Cloud[validConfiguration.cloud]}.`, Code.InvalidArgument);
+	}
+
+	await cloud.createInstance(finalName, validConfiguration, workerConfig, requestedZone).catch((e) => {
+		console.error(e);
+		throw new ConnectError(`Failed to create worker. Message: ${e.message}`, Code.Internal);
+	});
 
 	return finalName;
 }

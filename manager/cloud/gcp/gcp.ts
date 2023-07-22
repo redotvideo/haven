@@ -38,6 +38,15 @@ export class GoogleCloud implements CloudInterface {
 		this.clientId = clientId;
 	}
 
+	private async getApi(): Promise<compute_v1.Compute> {
+		const api = await this.api;
+
+		if (!api) {
+			throw new Error("GCP API not initialized. Credentials might be invalid.");
+		}
+		return api;
+	}
+
 	private getWorkerIP(worker: compute_v1.Schema$Instance | undefined) {
 		return worker?.networkInterfaces?.[0]?.accessConfigs?.[0]?.natIP;
 	}
@@ -61,15 +70,6 @@ export class GoogleCloud implements CloudInterface {
 		}
 
 		return ip;
-	}
-
-	private async getApi(): Promise<compute_v1.Compute> {
-		const api = await this.api;
-
-		if (!api) {
-			throw new Error("GCP API not initialized. Credentials might be invalid.");
-		}
-		return api;
 	}
 
 	async isAvailable(): Promise<boolean> {

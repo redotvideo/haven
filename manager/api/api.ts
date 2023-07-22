@@ -6,6 +6,7 @@ import typia from "typia";
 import {Haven} from "./pb/manager_connect";
 import {
 	ChatCompletionRequest,
+	Cloud,
 	CompletionRequest,
 	CompletionResponse,
 	CreateInferenceWorkerRequest,
@@ -252,6 +253,13 @@ async function pauseWorker(req: InferenceWorker) {
 	}
 
 	const cloud = cloudManager.get(cloudProvider);
+	if (!cloud) {
+		// This should never happen
+		throw new ConnectError(
+			`Found an instance at ${Cloud[cloudProvider]} but the interface is not avaiable.`,
+			Code.Internal,
+		);
+	}
 
 	const ip = await cloud.getInstancePublicIp(workerName);
 	if (ip) {
@@ -288,6 +296,13 @@ async function resumeWorker(req: InferenceWorker) {
 	}
 
 	const cloud = cloudManager.get(cloudProvider);
+	if (!cloud) {
+		// This should never happen
+		throw new ConnectError(
+			`Found an instance at ${Cloud[cloudProvider]} but the interface is not avaiable.`,
+			Code.Internal,
+		);
+	}
 
 	await cloud.resumeInstance(workerName).catch((e) => {
 		console.error(e);
@@ -315,6 +330,13 @@ async function deleteWorker(req: InferenceWorker) {
 	}
 
 	const cloud = cloudManager.get(cloudProvider);
+	if (!cloud) {
+		// This should never happen
+		throw new ConnectError(
+			`Found an instance at ${Cloud[cloudProvider]} but the interface is not avaiable.`,
+			Code.Internal,
+		);
+	}
 
 	const ip = await cloud.getInstancePublicIp(workerName);
 	if (ip) {

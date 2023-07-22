@@ -18,7 +18,7 @@ export async function setup() {
 		.catch(() => false);
 
 	if (doesGcpKeyExist) {
-		console.log("[setup] GCP key file already exists. Adding it to the environment.");
+		console.log("[setup] GCP key file found. Adding it to the environment.");
 		cloudManager.updateCloud(Cloud.GCP, await fs.readFile("./credentials/gcp.json", "utf-8"));
 	}
 
@@ -28,7 +28,7 @@ export async function setup() {
 		.catch(() => false);
 
 	if (doesAwsKeyExist) {
-		console.log("[setup] AWS key file already exists. Adding it to the environment.");
+		console.log("[setup] AWS key file found. Adding it to the environment.");
 		cloudManager.updateCloud(Cloud.AWS, await fs.readFile("./credentials/aws.txt", "utf-8"));
 	}
 
