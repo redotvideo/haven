@@ -1,3 +1,16 @@
+### 🚨 Warning: This repository is not being maintained anymore
+
+ We have decided to move on from maintaining this GitHub repository - particularly, our decision was driven by your feedback on the following points:
+ 
+1. The setup process of this project does not provide the desired simplicity for an LLM deployment tool. Ideally, local deployment should be as simple as using serverless platforms like Replicate, where users can log in to the website, choose a model they want to run, and deploy it with the click of a button.
+2. This project does resource management and orchestration through our own custom manager service - this is something that Kubernetes does out of the box, and much better than we can do it. To replace our manager with Kubernetes, we would essentially have to rewrite the entire codebase.
+
+To address the problems described, we have built a web-based offering of Haven, which strongly simplifies the setup process and is built on top of Kubernetes. You can find it [on our website](https://haven.run/).
+We'd be really happy to hear what you think and are super thankful for the valuable feedback and support we received for this repository 💜. Please contact us on hello@haven.run if you have any questions!
+
+---
+
+
 <br>
 
 <p align="center">
@@ -21,7 +34,9 @@
     Haven lets you build LLM-powered applications <b>hosted entirely on your own infrastructure</b>.<br>
     Just select a model to run - Haven will set up a production-ready 
   API server in your private cloud.
+	
 </p>
+<br>
 
 </div>
 
