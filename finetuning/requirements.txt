@@ -1,0 +1,11 @@
+transformers
+peft
+accelerate
+bitsandbytes
+einops
+evaluate
+scikit-learn==1.2.2
+sentencepiece==0.1.99
+wandb==0.15.3
+trl
+huggingface-hub

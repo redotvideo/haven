@@ -1,0 +1,12 @@
+version: "3.3"
+services:
+  mysql:
+    image: mysql:8.1.0
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: example
+      MYSQL_USER: example
+      MYSQL_PASSWORD: example

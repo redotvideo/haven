@@ -1,7 +1,0 @@
-{
-	"quantization": "float16",
-	"gpuType": "A100",
-	"gpuCount": 2,
-	"cpuMachineType": "a2-highgpu-2g",
-	"contextSize": 28000
-}

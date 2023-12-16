@@ -1,8 +1,0 @@
-version: v1
-plugins:
-  - name: es
-    opt: target=ts
-    out: ./api/pb
-  - name: connect-es
-    opt: target=ts
-    out: ./api/pb
