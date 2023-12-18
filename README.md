@@ -21,7 +21,7 @@
 <br>
 
 <p align="center">
-    Haven gives you tools needed to build specialized large language models. <br>Our platform allows you to fine-tune models through a simple UI and evaluate them based on a wide range of criteria.
+    Haven gives you tools needed to build specialized large language models. <br>Our platform allows you to fine-tune LLMs through a simple UI and evaluate them based on a wide range of criteria.
 	
 </p>
 <br>
