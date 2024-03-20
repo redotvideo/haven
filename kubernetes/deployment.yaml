@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haven-app
+  labels:
+    app: haven
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: haven
+  template:
+    metadata:
+      labels:
+        app: haven
+    spec:
+      containers:
+      - name: haven-app
+        image: haven:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1

@@ -26,7 +26,7 @@ async function getResponse(host: string, modelId: string | undefined, validatedB
 
 	console.log("sending request", body, host);
 
-	return fetch(host, {
+	return fetch('haven-service', {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
 
 	const baseModel = model?.baseModel || defaultModelLoopup[validatedBody.modelId as keyof typeof defaultModelLoopup];
 	const baseModelValidated = y.string().oneOf(modelsToFinetune).required().validateSync(baseModel);
-	const host = inferenceEndpoints[baseModelValidated];
+	
 
 	return retryInference(
 		async () => {
