@@ -6,6 +6,7 @@ import DatasetTable from "./table";
 import {getDatasets} from "~/server/database/dataset";
 
 import type {Dataset} from "@prisma/client";
+import DatasetVisualization from './visualization';
 
 function updatedAtToPrettyString(updatedAt: Date) {
 	const now = new Date();
@@ -69,6 +70,7 @@ export default async function Page() {
 			</Padding>
 			<div className="mt-6 border-b border-gray-800" />
 			<DatasetTable datasets={filtered} />
+{/* TODO: Modify DatasetTable or its usage to include buttons for dataset visualization and download. Implement event handlers for these actions. */}
 		</Sidebar>
 	);
 }
