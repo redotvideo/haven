@@ -50,6 +50,9 @@ export default function DatasetTable({datasets}: {datasets: DatasetTableProps}) 
 										<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">
 											Created
 										</th>
+										<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">
+											Actions
+										</th>
 									</tr>
 								</thead>
 								<tbody className="divide-y divide-gray-900">
@@ -61,6 +64,10 @@ export default function DatasetTable({datasets}: {datasets: DatasetTableProps}) 
 											{/*<td className="whitespace-nowrap px-3 py-4 text-sm">{dataset.description}</td>*/}
 											<td className="whitespace-nowrap px-3 py-4 text-sm">{dataset.rows}</td>
 											<td className="whitespace-nowrap px-3 py-4 text-sm">{dataset.created}</td>
+										<td className="whitespace-nowrap px-3 py-4 text-sm">
+											<Button onClick={() => {/* visualization logic here */}}>Visualize</Button>
+											<Button as="a" href={dataset.downloadUrl} download>Download</Button>
+										</td>
 											{/*
 											<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
 												<a href="#" className="text-gray-100 underline">
